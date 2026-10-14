@@ -4,7 +4,7 @@ import { Buckets } from '@uipath/uipath-typescript/buckets'
 import { Entities } from '@uipath/uipath-typescript/entities'
 import { ProcessInstances } from '@uipath/uipath-typescript/maestro-processes'
 import type { ProcessInstanceGetResponse } from '@uipath/uipath-typescript/maestro-processes'
-import { ENTITY, FOLDER_PATH, all } from './data'
+import { ENTITY, FOLDER, all } from './data'
 import { PROPOSALS_BUCKET } from './intake'
 import { PROCESS_PACKAGE, RUNNING } from './maestro'
 import type { Solicitation } from './types'
@@ -38,10 +38,10 @@ async function filesUnder(buckets: Buckets, bucket: string, solicitationId: stri
   // The prefix must not end in "/" (Orchestrator rejects it as an invalid blob path), so list by the number and keep
   // only this solicitation's own folder: the prefix alone would also match a longer number.
   const paths: string[] = []
-  let page = await buckets.getFileMetaData({ name: bucket }, { folderPath: FOLDER_PATH, prefix: solicitationId, pageSize: 200 })
+  let page = await buckets.getFileMetaData({ name: bucket }, { ...FOLDER, prefix: solicitationId, pageSize: 200 })
   paths.push(...(page.items ?? []).map((f) => f.path))
   while (page.hasNextPage && page.nextCursor) {
-    page = await buckets.getFileMetaData({ name: bucket }, { folderPath: FOLDER_PATH, prefix: solicitationId, pageSize: 200, cursor: page.nextCursor })
+    page = await buckets.getFileMetaData({ name: bucket }, { ...FOLDER, prefix: solicitationId, pageSize: 200, cursor: page.nextCursor })
     paths.push(...(page.items ?? []).map((f) => f.path))
   }
   return paths.filter((p) => p.replace(/^\//, '').startsWith(`${solicitationId}/`))
@@ -50,10 +50,10 @@ async function filesUnder(buckets: Buckets, bucket: string, solicitationId: stri
 /** Delete one stored file. Listings return paths without a leading "/", the SDK's examples use one: try both forms. */
 async function removeFile(buckets: Buckets, bucket: string, path: string) {
   try {
-    await buckets.deleteFile({ name: bucket }, path, { folderPath: FOLDER_PATH })
+    await buckets.deleteFile({ name: bucket }, path, FOLDER)
   } catch (first) {
     const other = path.startsWith('/') ? path.slice(1) : `/${path}`
-    try { await buckets.deleteFile({ name: bucket }, other, { folderPath: FOLDER_PATH }) } catch { throw first }
+    try { await buckets.deleteFile({ name: bucket }, other, FOLDER) } catch { throw first }
   }
 }
 
@@ -84,11 +84,11 @@ export async function leftoverFolders(sdk: UiPath, known: string[]): Promise<Lef
   const buckets = new Buckets(sdk)
   const count = new Map<string, number>()
   for (const bucket of [PROPOSALS_BUCKET, RECORDS_BUCKET]) {
-    let page = await buckets.getFileMetaData({ name: bucket }, { folderPath: FOLDER_PATH, pageSize: 500 })
+    let page = await buckets.getFileMetaData({ name: bucket }, { ...FOLDER, pageSize: 500 })
     const take = () => { for (const f of page.items ?? []) { const top = f.path.replace(/^\//, '').split('/')[0]; if (top && f.path.includes('/')) count.set(top, (count.get(top) ?? 0) + 1) } }
     take()
     while (page.hasNextPage && page.nextCursor) {
-      page = await buckets.getFileMetaData({ name: bucket }, { folderPath: FOLDER_PATH, pageSize: 500, cursor: page.nextCursor })
+      page = await buckets.getFileMetaData({ name: bucket }, { ...FOLDER, pageSize: 500, cursor: page.nextCursor })
       take()
     }
   }

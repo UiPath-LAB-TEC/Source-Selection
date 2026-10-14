@@ -4,7 +4,7 @@ import { Buckets } from '@uipath/uipath-typescript/buckets'
 import { Entities } from '@uipath/uipath-typescript/entities'
 import { Jobs } from '@uipath/uipath-typescript/jobs'
 import { Processes } from '@uipath/uipath-typescript/processes'
-import { FOLDER_PATH, PROCESS_FOLDER } from './data'
+import { FOLDER, PROCESS_FOLDER } from './data'
 import { NUMBER_FORMAT, volumeName } from '@forms/lib/terms'
 import type { Framework } from '@forms/lib/terms'
 import { SCORING_GUIDE } from '@forms/lib/ratings'
@@ -373,10 +373,10 @@ export function camel<T>(v: unknown): T {
 async function runAgent<T>(sdk: UiPath, agent: string, what: string, inputs: Record<string, string>, onState: (s: string) => void): Promise<T> {
   let started: Awaited<ReturnType<Processes['start']>>
   try {
-    started = await new Processes(sdk).start({ name: agent }, { folderPath: PROCESS_FOLDER, inputArguments: JSON.stringify(inputs) })
+    started = await new Processes(sdk).start({ name: agent }, { ...PROCESS_FOLDER, inputArguments: JSON.stringify(inputs) })
   } catch (e) {
     // Only a failed start means the agent is missing; errors once it is running say what actually went wrong.
-    if (/could not be found|not found/i.test((e as Error).message)) throw new Error(`The ${SECTION_M_AGENT_LABEL} for ${what} isn't deployed to the ${PROCESS_FOLDER} folder yet — enter it below.`)
+    if (/could not be found|not found/i.test((e as Error).message)) throw new Error(`The ${SECTION_M_AGENT_LABEL} for ${what} isn't deployed yet — enter it below.`)
     throw e
   }
   const job = started[0]
@@ -421,7 +421,7 @@ export function warmAgents(sdk: UiPath) {
     localStorage.setItem(WARM_KEY, String(Date.now()))
   } catch { /* no storage: warm anyway */ }
   void new Processes(sdk).start({ name: SOLICITATION_AGENT }, {
-    folderPath: PROCESS_FOLDER,
+    ...PROCESS_FOLDER,
     inputArguments: JSON.stringify({ solicitationText: 'Warm-up run with no solicitation attached. Return empty values.' }),
   }).catch(() => undefined)
 }
@@ -438,7 +438,7 @@ export function runIgceAgent(sdk: UiPath, solicitationId: string, igceText: stri
 
 /** Offeror code -> volumes found under SS-Proposals/<solicitationId>/<code>/<volume>.pdf */
 export async function listProposals(sdk: UiPath, solicitationId: string): Promise<Record<string, string[]>> {
-  const res = await new Buckets(sdk).getFileMetaData({ name: PROPOSALS_BUCKET }, { folderPath: FOLDER_PATH, prefix: solicitationId })
+  const res = await new Buckets(sdk).getFileMetaData({ name: PROPOSALS_BUCKET }, { ...FOLDER, prefix: solicitationId })
   return group((res.items ?? []).map((b) => b.path))
 }
 
@@ -452,7 +452,7 @@ export function group(paths: string[]): Record<string, string[]> {
 }
 
 export async function uploadProposal(sdk: UiPath, solicitationId: string, code: string, volume: string, file: File) {
-  await new Buckets(sdk).uploadFile({ name: PROPOSALS_BUCKET }, `${solicitationId}/${code}/${volume}.pdf`, file, { folderPath: FOLDER_PATH })
+  await new Buckets(sdk).uploadFile({ name: PROPOSALS_BUCKET }, `${solicitationId}/${code}/${volume}.pdf`, file, FOLDER)
 }
 
 /** Guess a volume from a file name (technical.pdf, "Vol III Past Performance.pdf", "Section 3 References.pdf", …). */

@@ -9,17 +9,17 @@ from typing import Any, Callable
 
 from uipath.platform import UiPath
 
-# Buckets live in the SourceSelection folder; the agents are deployed with the solution, into the folder
-# this job runs in. Function jobs get UIPATH_FOLDER_KEY but not UIPATH_FOLDER_PATH, so prefer the key and
-# fall back to the solution folder — never the bucket folder, where no agents are deployed.
-FOLDER = os.environ.get("SS_FOLDER", "SourceSelection")
-RUN_FOLDER_KEY = os.environ.get("UIPATH_FOLDER_KEY")
-RUN_FOLDER = os.environ.get("UIPATH_FOLDER_PATH") or os.environ.get("SS_AGENT_FOLDER", "SourceSelection/Solution")
+# Buckets live in the SourceSelection folder, referenced by key so they survive the folder being moved or
+# renamed. The agents are deployed with the solution, into the folder this job runs in. Function jobs get
+# UIPATH_FOLDER_KEY but not UIPATH_FOLDER_PATH, so prefer the key and fall back to the solution folder —
+# never the bucket folder, where no agents are deployed.
+FOLDER_KEY = os.environ.get("SS_FOLDER_KEY", "08605f4c-2b90-4971-81b7-2f4310a2b81a")
+RUN_FOLDER_KEY = os.environ.get("UIPATH_FOLDER_KEY") or os.environ.get("SS_AGENT_FOLDER_KEY", "2459fe05-621d-4696-9c52-53458ca92c49")
 
 
 def run_folder() -> dict[str, str]:
     """Folder arguments for starting and polling agent jobs alongside this one."""
-    return {"folder_key": RUN_FOLDER_KEY} if RUN_FOLDER_KEY else {"folder_path": RUN_FOLDER}
+    return {"folder_key": RUN_FOLDER_KEY}
 PROPOSALS_BUCKET = "SS-Proposals"
 RECORDS_BUCKET = "SS-Records"
 ACTOR = "SS_Robots"
@@ -129,7 +129,7 @@ def list_files(bucket: str, prefix: str) -> list[str]:
     paths: list[str] = []
     token = None
     while True:
-        page = retry(lambda: sdk().buckets.list_files(name=bucket, prefix=prefix, continuation_token=token, folder_path=FOLDER))
+        page = retry(lambda: sdk().buckets.list_files(name=bucket, prefix=prefix, continuation_token=token, folder_key=FOLDER_KEY))
         items = getattr(page, "items", page)
         paths += [getattr(f, "full_path", None) or getattr(f, "path", None) or f.get("FullPath") for f in items]
         token = getattr(page, "continuation_token", None)
@@ -138,11 +138,11 @@ def list_files(bucket: str, prefix: str) -> list[str]:
 
 
 def download(bucket: str, path: str, dest: str) -> None:
-    retry(lambda: sdk().buckets.download(name=bucket, blob_file_path=path, destination_path=dest, folder_path=FOLDER))
+    retry(lambda: sdk().buckets.download(name=bucket, blob_file_path=path, destination_path=dest, folder_key=FOLDER_KEY))
 
 
 def upload(bucket: str, path: str, content: bytes, content_type: str = "application/pdf") -> None:
-    retry(lambda: sdk().buckets.upload(name=bucket, blob_file_path=path, content=content, content_type=content_type, folder_path=FOLDER))
+    retry(lambda: sdk().buckets.upload(name=bucket, blob_file_path=path, content=content, content_type=content_type, folder_key=FOLDER_KEY))
 
 
 # ── Agents ──────────────────────────────────────────────────────────────────

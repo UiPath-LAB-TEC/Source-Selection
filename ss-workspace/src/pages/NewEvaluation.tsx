@@ -13,7 +13,7 @@ import { Stepper } from '@uipath/apollo-wind/components/ui/stepper'
 import { Textarea } from '@uipath/apollo-wind/components/ui/textarea'
 import { PersonaAvatar } from '../components/Flair'
 import { usePersona } from '../hooks/usePersona'
-import { DEMO_PANEL_EMAIL, PROCESS_FOLDER, planOf, startCase, useData } from '../lib/data'
+import { DEMO_PANEL_EMAIL, planOf, startCase, useData } from '../lib/data'
 import { money, when } from '../lib/eval'
 import {
   BASES, SECTION_M_AGENT_LABEL, TEMPLATES, runIgceAgent, runSolicitationAgent, VOLUMES, applySectionM, blankCriteria, check, warmAgents, defaultAssignments, defaultFactors, draftFromPlan, emptyDraft,
@@ -913,7 +913,7 @@ function Wizard({ framework }: { framework: Framework }) {
             toast.success(`${t.Process} started for ${plan.solicitationId}. Robots are ingesting proposals.`)
           } catch (e) {
             const msg = (e as Error).message
-            toast.error(/could not be found/i.test(msg) ? `Saved. The SourceSelection case is not deployed to the ${PROCESS_FOLDER} folder yet.` : `Saved, but the case did not start: ${msg}`)
+            toast.error(/could not be found/i.test(msg) ? 'Saved. The evaluation process is not deployed yet.' : `Saved, but the case did not start: ${msg}`)
           }
         } else toast.success('Draft saved to Data Fabric.')
         await reload()

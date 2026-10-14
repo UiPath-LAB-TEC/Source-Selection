@@ -13,19 +13,19 @@
       }
     ],
     "spec": {
-      "fileName": "ss-taskforms.1.0.27.nupkg",
-      "fileReference": "ss-taskforms_1.0.27",
+      "fileName": "ss-taskforms.1.0.29.nupkg",
+      "fileReference": "ss-taskforms_1.0.29",
       "name": "ss-taskforms"
     },
     "locks": [],
-    "key": "ss-taskforms:1.0.27",
+    "key": "ss-taskforms:1.0.29",
     "files": [
       {
-        "key": "ss-taskforms_1.0.27",
-        "name": "ss-taskforms.1.0.27.nupkg",
-        "url": "https://cloud.uipath.com/uipathlabs/Playground/orchestrator_/odata/Processes/UiPath.Server.Configuration.OData.DownloadPackage(key='ss-taskforms:1.0.27')?feedId=93949a13-9388-45bb-af90-5783a67e1b33",
+        "key": "ss-taskforms_1.0.29",
+        "name": "ss-taskforms.1.0.29.nupkg",
+        "url": "https://cloud.uipath.com/uipathlabs/Playground/orchestrator_/odata/Processes/UiPath.Server.Configuration.OData.DownloadPackage(key='ss-taskforms:1.0.29')?feedId=93949a13-9388-45bb-af90-5783a67e1b33",
         "kind": "Package",
-        "version": "1.0.27"
+        "version": "1.0.29"
       }
     ]
   }

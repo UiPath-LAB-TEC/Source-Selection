@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '../hooks/useAuth'
 import { termsFor } from '@forms/lib/terms'
-import { DEMO_PANEL_EMAIL, PROCESS_FOLDER, planOf, startCase, useData } from './data'
+import { DEMO_PANEL_EMAIL, planOf, startCase, useData } from './data'
 
 /** Starts the SourceSelection case for a solicitation and refreshes the dataset. */
 export function useStartCase() {
@@ -21,7 +21,7 @@ export function useStartCase() {
     } catch (e) {
       const msg = (e as Error).message
       toast.error(/could not be found/i.test(msg)
-        ? `The SourceSelection case is not deployed to the ${PROCESS_FOLDER} folder yet.`
+        ? 'The evaluation process is not deployed yet.'
         : `Could not start the case: ${msg}`)
     } finally {
       setStarting(undefined)

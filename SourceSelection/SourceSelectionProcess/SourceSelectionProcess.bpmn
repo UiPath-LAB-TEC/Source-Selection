@@ -57,7 +57,7 @@
         <uipath:binding id="bDw6Rk3Pn" name="name" type="string" default="SS_DecisionWriter" resource="process" resourceSubType="Agent" resourceKey="solution_folder.SS_DecisionWriter" propertyAttribute="name" />
         <uipath:binding id="bDf2Lx7Gc" name="folderPath" type="string" default="" resource="process" resourceSubType="Agent" resourceKey="solution_folder.SS_DecisionWriter" propertyAttribute="folderPath" />
         <uipath:binding id="bTf5Nv8Qe" name="name" type="string" default="Source Selection Task Forms" resource="app" resourceKey="SourceSelection.Source Selection Task Forms" propertyAttribute="name" />
-        <uipath:binding id="bTp9Mc4Ra" name="folderPath" type="string" default="SourceSelection" resource="app" resourceKey="SourceSelection.Source Selection Task Forms" propertyAttribute="folderPath" />
+        <uipath:binding id="bTp9Mc4Ra" name="folderPath" type="string" default="AMER Presales/Public Sector/Source Selection/SourceSelection" resource="app" resourceKey="SourceSelection.Source Selection Task Forms" propertyAttribute="folderPath" />
       </uipath:bindings>
     </bpmn:extensionElements>
     <bpmn:startEvent id="Start_SourceSelection" name="Start source selection">

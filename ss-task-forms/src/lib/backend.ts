@@ -92,8 +92,11 @@ function loadApp(ms: number) {
 }
 
 /** Task data can arrive as an object or, from some hosts, as a JSON string. */
-/** Where proposals live: SS-Proposals/<solicitationId>/<offeror code>/<volume>.pdf in the SourceSelection folder. */
-export const PROPOSALS = { bucket: 'SS-Proposals', folderPath: 'SourceSelection' }
+/**
+ * Where proposals live: SS-Proposals/<solicitationId>/<offeror code>/<volume>.pdf in the SourceSelection folder, referenced
+ * by key so it keeps working when the folder is moved or renamed.
+ */
+export const PROPOSALS = { bucket: 'SS-Proposals', folderKey: '08605f4c-2b90-4971-81b7-2f4310a2b81a' }
 export const proposalPath = (solicitationId: string, offerorCode: string, volume: string) => `${solicitationId}/${offerorCode}/${volume}.pdf`
 
 /** A browser copy of each draft, so work survives even where the host can't store it on the task. */
@@ -194,7 +197,7 @@ class ActionCenterBackend implements Backend {
 
   async documentUrl(solicitationId: string, offerorCode: string, volume: string) {
     const r = await new Buckets(new UiPath()).getReadUri({ name: PROPOSALS.bucket }, proposalPath(solicitationId, offerorCode, volume),
-      { folderPath: PROPOSALS.folderPath, expiryInMinutes: 30 })
+      { folderKey: PROPOSALS.folderKey, expiryInMinutes: 30 })
     return r.uri
   }
 

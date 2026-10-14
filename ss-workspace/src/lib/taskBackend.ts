@@ -67,7 +67,7 @@ export class WorkspaceBackend implements Backend {
 
   async documentUrl(solicitationId: string, offerorCode: string, volume: string) {
     const r = await new Buckets(this.sdk).getReadUri({ name: PROPOSALS.bucket }, proposalPath(solicitationId, offerorCode, volume),
-      { folderPath: PROPOSALS.folderPath, expiryInMinutes: 30 })
+      { folderKey: PROPOSALS.folderKey, expiryInMinutes: 30 })
     return r.uri
   }
 

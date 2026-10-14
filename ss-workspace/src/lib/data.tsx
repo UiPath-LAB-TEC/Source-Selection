@@ -7,15 +7,18 @@ import { Tasks, TaskType } from '@uipath/uipath-typescript/tasks'
 import type { TaskGetResponse } from '@uipath/uipath-typescript/tasks'
 import type { Dataset, Plan, Solicitation } from './types'
 
-/** Buckets and the task-forms app live in the parent folder. */
-export const FOLDER_PATH = 'SourceSelection'
+/**
+ * Buckets and the task-forms app live in the SourceSelection folder. Folders are referenced by key or id, never by path,
+ * so they keep working when the folder is moved or renamed in Orchestrator.
+ */
+export const FOLDER = { folderKey: '08605f4c-2b90-4971-81b7-2f4310a2b81a' }
 /**
  * The same folder's numeric id: every Action Center task the process raises lands here. Listing this one folder takes
  * under a second; listing across every folder in the shared Playground tenant took close to a minute.
  */
 export const TASK_FOLDER_ID = 2212168
-/** The solution deploy (Maestro process, agents, SS_Robots) lands in its own child folder. */
-export const PROCESS_FOLDER = 'SourceSelection/Solution2'
+/** The solution deploy (Maestro process, agents, SS_Robots) lands in its own child folder, Solution2. */
+export const PROCESS_FOLDER = { folderKey: '2459fe05-621d-4696-9c52-53458ca92c49' }
 /** The Maestro BPMN process that runs the source selection end to end. */
 export const CASE_PROCESS = 'SourceSelectionProcess'
 /** Demo: every panel role is assigned to the signed-in demo user. */
@@ -117,7 +120,7 @@ export async function startCase(sdk: UiPath, plan: Plan, panelEmail: string) {
     evaluator1: evaluator(1), evaluator2: evaluator(2), evaluator3: evaluator(3),
     ssebChair: panelEmail, contractingOfficer: panelEmail, sourceSelectionAuthority: panelEmail,
   }
-  const started = await new Processes(sdk).start({ name: CASE_PROCESS }, { folderPath: PROCESS_FOLDER, inputArguments: JSON.stringify(args) })
+  const started = await new Processes(sdk).start({ name: CASE_PROCESS }, { ...PROCESS_FOLDER, inputArguments: JSON.stringify(args) })
   // A Maestro process job's key is its instance id — record it so the workspace finds the live instance directly.
   const key = started[0]?.key
   if (key) {
