@@ -1,0 +1,36 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "Source Selection Task Forms",
+    "kind": "app",
+    "type": "codedAction",
+    "apiVersion": "apps.uipath.com/v1",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "Package",
+        "name": "ss-taskforms"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "Source Selection Task Forms",
+      "version": "1.0.27",
+      "package": {
+        "name": "ss-taskforms",
+        "key": "ss-taskforms:1.0.27"
+      },
+      "externalClientId": "90b28584-7e8a-4022-9e86-b18f1f663e7c",
+      "appSystemName": "ID6a25fd7c3d4a4824b8a3e1aa556e2701",
+      "actionSchema": "{\"key\":\"70e5dde2-4ce9-5c39-b33d-30000a86662f\",\"version\":17,\"description\":\"Action Schema\",\"id\":\"ID8c02866960b851c8a43e202f2639df36\",\"name\":\"ActionSchema\",\"inputs\":[{\"name\":\"actionType\",\"key\":\"60fcb658-73c6-5f5f-850d-f276c5cbb64d\",\"required\":true,\"description\":\"Which form to render: releaseToEvaluation, individualEvaluation, consensus, priceDetermination, awardDecision, clarification\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"solicitationId\",\"key\":\"8bd1042b-09f4-589c-b5dc-5441e8817b0a\",\"required\":true,\"description\":\"Solicitation number; key into Data Fabric\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"evaluatorSlot\",\"key\":\"7d905e8f-ee8f-57c6-886d-c37193ada688\",\"required\":false,\"description\":\"Evaluator panel slot (1-3) for individual evaluation\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.Int64\",\"properties\":[]},{\"name\":\"complianceSummary\",\"key\":\"dfcb982b-96b8-5a1e-85f8-0529c2fc8a7c\",\"required\":false,\"description\":\"Compliance screen result (JSON)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"consensusDraft\",\"key\":\"840225e4-af48-5967-8642-552afc173b75\",\"required\":false,\"description\":\"SS_ConsensusAnalyst proposed consensus (JSON)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"priceAnalysis\",\"key\":\"b8967405-6fd3-5780-ae4c-5d3f5d72516a\",\"required\":false,\"description\":\"Price analysis result (JSON)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"ssddDraft\",\"key\":\"ccb8b87b-b049-5e46-82e8-4631d9e5d4ac\",\"required\":false,\"description\":\"SS_DecisionWriter SSDD draft (markdown)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"recommendedAwardee\",\"key\":\"bf4dd420-981f-5587-a3e6-63aa6db8e411\",\"required\":false,\"description\":\"Offeror recommended by the decision writer\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"chairQuestions\",\"key\":\"223cc504-893a-573b-b54c-62e6c70bda3d\",\"required\":false,\"description\":\"SSEB Chair questions for evaluators\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]}],\"outputs\":[{\"name\":\"decision\",\"key\":\"66095b7f-e9e9-5416-a74f-baf5259163e4\",\"required\":false,\"description\":\"Routing decision: Release/Cancel (release), Approve/Reconvene (consensus), Proceed/Cancel (price), Submitted (evaluation, clarification), Signed (award)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"notes\",\"key\":\"b050f57e-4e9f-57fd-878d-59c42d29fe1b\",\"required\":false,\"description\":\"Rationale, price reasonableness determination, or clarification notes\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"payload\",\"key\":\"67614071-45d5-53ce-be5e-13df4bb7ecc4\",\"required\":false,\"description\":\"Structured result: evaluator ratings (JSON), consensus ratings (JSON) or Chair questions, or the signed SSDD text\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"awardee\",\"key\":\"d2f9dac8-d1c3-510b-afb7-fbcabe778ebd\",\"required\":false,\"description\":\"Offeror selected by the Source Selection Authority\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]}],\"inOuts\":[{\"name\":\"draft\",\"key\":\"81a96bf2-9828-5cef-98ed-33dcce1e5809\",\"required\":false,\"description\":\"Work in progress saved without submitting (JSON written and read by the form)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]}],\"outcomes\":[{\"name\":\"Release\",\"key\":\"68e35f0b-d2eb-518e-942d-4551c9ef076c\",\"required\":false,\"type\":\"System.String\",\"typeNamespace\":\"system\",\"isList\":false,\"properties\":[],\"version\":0},{\"name\":\"CancelSolicitation\",\"key\":\"5abe6350-a7ff-5e93-a853-94924a87c9dd\",\"required\":false,\"type\":\"System.String\",\"typeNamespace\":\"system\",\"isList\":false,\"properties\":[],\"version\":0},{\"name\":\"Submit\",\"key\":\"75c771d2-9d80-5cf5-95e2-1a6c7ec59c5f\",\"required\":false,\"type\":\"System.String\",\"typeNamespace\":\"system\",\"isList\":false,\"properties\":[],\"version\":0},{\"name\":\"SignReport\",\"key\":\"d64bd909-53b3-5416-9c04-02f3f741ad28\",\"required\":false,\"type\":\"System.String\",\"typeNamespace\":\"system\",\"isList\":false,\"properties\":[],\"version\":0},{\"name\":\"Reconvene\",\"key\":\"cf7812e1-c989-5ac0-9f89-13ffa0b5b3ee\",\"required\":false,\"type\":\"System.String\",\"typeNamespace\":\"system\",\"isList\":false,\"properties\":[],\"version\":0},{\"name\":\"Proceed\",\"key\":\"176fe1b0-e9a3-564d-8ed5-33fa1c1857f7\",\"required\":false,\"type\":\"System.String\",\"typeNamespace\":\"system\",\"isList\":false,\"properties\":[],\"version\":0},{\"name\":\"SignDecision\",\"key\":\"7df8765d-7755-583a-af7c-cffbf3f92f18\",\"required\":false,\"type\":\"System.String\",\"typeNamespace\":\"system\",\"isList\":false,\"properties\":[],\"version\":0}],\"__isDeleted\":false,\"dateLastModified\":\"2026-10-13T21:35:57.553Z\"}"
+    },
+    "locks": [],
+    "key": "06bf155e-59ba-4ba6-88b8-a5b1362510e3",
+    "files": []
+  }
+}

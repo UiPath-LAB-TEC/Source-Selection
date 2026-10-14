@@ -1,0 +1,49 @@
+{
+ "displayName": "SS Rating",
+ "description": "Individual and consensus ratings per offeror and factor",
+ "fields": [
+  {
+   "name": "RatingId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "OfferorId",
+   "type": "STRING"
+  },
+  {
+   "name": "FactorId",
+   "type": "STRING"
+  },
+  {
+   "name": "Level",
+   "type": "STRING"
+  },
+  {
+   "name": "EvaluatorSlot",
+   "type": "DECIMAL",
+   "decimalPrecision": 0
+  },
+  {
+   "name": "Rating",
+   "type": "STRING"
+  },
+  {
+   "name": "Rationale",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "RatedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "RatedAt",
+   "type": "DATETIME_WITH_TZ"
+  }
+ ]
+}

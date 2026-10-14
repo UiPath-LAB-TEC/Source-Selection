@@ -1,0 +1,33 @@
+{
+ "displayName": "SS Proposal Page",
+ "description": "Page-level proposal text for citations",
+ "fields": [
+  {
+   "name": "PageId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "OfferorId",
+   "type": "STRING"
+  },
+  {
+   "name": "Volume",
+   "type": "STRING"
+  },
+  {
+   "name": "PageNumber",
+   "type": "DECIMAL",
+   "decimalPrecision": 0
+  },
+  {
+   "name": "PageText",
+   "type": "MULTILINE_TEXT"
+  }
+ ]
+}

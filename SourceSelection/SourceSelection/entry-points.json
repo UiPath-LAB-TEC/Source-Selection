@@ -1,0 +1,33 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "/content/caseplan.json.bpmn#trigger_Hk4pW2",
+            "uniqueId": "12170618-b3d0-4729-aa68-712dafb012ac",
+            "type": "CaseManagement",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "solicitationId": { "type": "string", "title": "solicitationId", "default": "FA8771-27-R-0012" },
+                    "evaluator1": { "type": "string", "title": "evaluator1", "default": "anagh.bhave@uipath.com" },
+                    "evaluator2": { "type": "string", "title": "evaluator2", "default": "anagh.bhave@uipath.com" },
+                    "evaluator3": { "type": "string", "title": "evaluator3", "default": "anagh.bhave@uipath.com" },
+                    "ssebChair": { "type": "string", "title": "ssebChair", "default": "anagh.bhave@uipath.com" },
+                    "contractingOfficer": { "type": "string", "title": "contractingOfficer", "default": "anagh.bhave@uipath.com" },
+                    "sourceSelectionAuthority": { "type": "string", "title": "sourceSelectionAuthority", "default": "anagh.bhave@uipath.com" }
+                },
+                "required": []
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "awardeeName": { "type": "string", "title": "awardeeName" },
+                    "awardRecordUri": { "type": "string", "title": "awardRecordUri" }
+                },
+                "required": []
+            },
+            "displayName": "Start Source Selection"
+        }
+    ]
+}

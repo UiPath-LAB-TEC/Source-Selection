@@ -1,0 +1,77 @@
+{
+  "solicitationId": "W52P1J-27-R-0023",
+  "title": "Army Logistics Data Analytics Platform",
+  "agency": "Department of the Army",
+  "office": "Army Contracting Command — Rock Island",
+  "contractType": "Firm-fixed-price with labor-hour CLINs, 1 base year and 4 option years",
+  "basisForAward": "Best value tradeoff (FAR 15.101-1)",
+  "ratingMethod": "color",
+  "relativeImportance": "Technical Approach is more important than Management Approach, which is of equal importance to Past Performance. All non-price factors combined are significantly more important than Price.",
+  "factors": [
+    {
+      "id": "F1",
+      "name": "Technical Approach",
+      "order": 1,
+      "scale": "technical",
+      "volume": "technical",
+      "subfactors": [
+        "Predictive maintenance analytics",
+        "Data integration with GCSS-Army",
+        "Cybersecurity and RMF"
+      ],
+      "criteria": "The Government will evaluate the soundness of the offeror's approach to forecasting equipment failures from Army maintenance data, integrating with GCSS-Army and legacy STAMIS feeds (including for units operating disconnected), and achieving and maintaining an authorization to operate under the Army RMF."
+    },
+    {
+      "id": "F2",
+      "name": "Management Approach",
+      "order": 2,
+      "scale": "technical",
+      "volume": "management",
+      "subfactors": [
+        "Staffing and key personnel",
+        "Transition-in plan",
+        "Quality control"
+      ],
+      "criteria": "The Government will evaluate the qualifications and committed availability of the Program Manager and Lead Data Scientist, the realism of the 60-day transition-in plan, and the offeror's quality control approach."
+    },
+    {
+      "id": "F3",
+      "name": "Past Performance",
+      "order": 2,
+      "scale": "confidence",
+      "volume": "pastPerformance",
+      "subfactors": [
+        "Recency",
+        "Relevancy",
+        "Quality"
+      ],
+      "criteria": "The Government will assess its confidence that the offeror will successfully perform, based on recent (within 5 years) and relevant performance on Army or DoD logistics and analytics efforts, using CPARS, FAPIIS and references."
+    },
+    {
+      "id": "PRICE",
+      "name": "Price",
+      "order": 3,
+      "evaluatedNotRated": true,
+      "volume": "price",
+      "criteria": "Price will be evaluated for reasonableness and balance. Total evaluated price is the sum of all CLINs for the base and option periods."
+    }
+  ],
+  "scales": {
+    "technical": ["Outstanding", "Good", "Acceptable", "Marginal", "Unacceptable"],
+    "confidence": ["Substantial Confidence", "Satisfactory Confidence", "Neutral Confidence", "Limited Confidence", "No Confidence"]
+  },
+  "findingKinds": ["Strength", "Significant Strength", "Weakness", "Significant Weakness", "Deficiency", "Risk"],
+  "panel": {
+    "evaluators": [
+      {"slot": 1, "title": "Technical Evaluator", "factors": ["F1", "F2"]},
+      {"slot": 2, "title": "Technical Evaluator", "factors": ["F1", "F2"]},
+      {"slot": 3, "title": "Past Performance Evaluator", "factors": ["F1", "F3"]}
+    ]
+  },
+  "igce": {"total": 18200000, "lines": {"0001": 7400000, "0002": 4600000, "0003": 3300000, "0004": 1900000, "0005": 1000000}},
+  "submission": {
+    "volumes": ["technical", "management", "pastPerformance", "price"],
+    "pageLimits": {"technical": 25, "management": 15, "pastPerformance": 10}
+  },
+  "offerors": ["BLUESTEM", "IRONWOOD", "KEYSTONE"]
+}

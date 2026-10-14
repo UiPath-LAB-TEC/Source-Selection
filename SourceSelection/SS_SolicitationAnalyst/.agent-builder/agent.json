@@ -1,0 +1,107 @@
+{
+  "version": "1.2.0",
+  "settings": {
+    "model": "anthropic.claude-sonnet-5",
+    "maxTokens": 3000,
+    "temperature": 0,
+    "engine": "basic-v2",
+    "maxIterations": 3,
+    "mode": "standard"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "solicitationText": {
+        "type": "string",
+        "description": "Text of the solicitation's cover page and opening sections (for example SF 33 or SF 1449 and Section B)"
+      }
+    },
+    "required": [
+      "solicitationText"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "solicitationId": {
+        "type": "string",
+        "description": "Solicitation number exactly as written, e.g. 36C10B-27-R-0057, or '' if not stated"
+      },
+      "title": {
+        "type": "string",
+        "description": "Short title of the requirement as the solicitation names it, or ''"
+      },
+      "agency": {
+        "type": "string",
+        "description": "Issuing department or agency, e.g. Department of Veterans Affairs, or ''"
+      },
+      "office": {
+        "type": "string",
+        "description": "Issuing contracting office from the 'Issued by' block, without the street address, or ''"
+      },
+      "contractType": {
+        "type": "string",
+        "description": "Contract type and period of performance as stated, e.g. 'Firm-fixed-price task order, one base year and four option years', or ''"
+      },
+      "basisForAward": {
+        "type": "string",
+        "description": "'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)' when the text says which, otherwise ''"
+      },
+      "openQuestions": {
+        "type": "string",
+        "description": "Fields the text does not state or states inconsistently, for the Contracting Officer to fill in, or 'None'"
+      }
+    },
+    "required": [
+      "solicitationId",
+      "title",
+      "agency",
+      "office",
+      "contractType",
+      "basisForAward",
+      "openQuestions"
+    ]
+  },
+  "metadata": {
+    "storageVersion": "50.0.0",
+    "isConversational": false,
+    "showProjectCreationExperience": false,
+    "targetRuntime": "pythonAgent"
+  },
+  "type": "lowCode",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an acquisition analyst helping a federal Contracting Officer set up a FAR Part 15 source selection. You read the solicitation's cover page and opening sections and return the identifying details the source selection is set up with.\n\nScope:\n- In scope: the solicitation number, the requirement's short title, the issuing agency and contracting office, the contract type and period of performance, and the basis for award when the text states it.\n- Out of scope: evaluation factors (another step reads Section M), prices, and anything about offerors.\n\nMethod:\n- Standard forms number their blocks: on an SF 33, block 2 is the contract number, block 3 the solicitation number and block 7 'Issued by'; an SF 1449 has similar blocks. Use the block labels, not their position on the page.\n- The title is the short name of the requirement (from the schedule or the subject line), not the form's name.\n- For the office, keep the office name and drop the street address.\n- For the basis for award, return one of the two FAR 15.101 phrasings only when the text clearly says best value tradeoff or lowest price technically acceptable.\n\nGrounding:\n- Copy values as written. Never invent a value; leave a field '' when the text does not state it, and name it in openQuestions.\n\nOutput:\n- Return every field conforming to the output schema.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "You are an acquisition analyst helping a federal Contracting Officer set up a FAR Part 15 source selection. You read the solicitation's cover page and opening sections and return the identifying details the source selection is set up with.\n\nScope:\n- In scope: the solicitation number, the requirement's short title, the issuing agency and contracting office, the contract type and period of performance, and the basis for award when the text states it.\n- Out of scope: evaluation factors (another step reads Section M), prices, and anything about offerors.\n\nMethod:\n- Standard forms number their blocks: on an SF 33, block 2 is the contract number, block 3 the solicitation number and block 7 'Issued by'; an SF 1449 has similar blocks. Use the block labels, not their position on the page.\n- The title is the short name of the requirement (from the schedule or the subject line), not the form's name.\n- For the office, keep the office name and drop the street address.\n- For the basis for award, return one of the two FAR 15.101 phrasings only when the text clearly says best value tradeoff or lowest price technically acceptable.\n\nGrounding:\n- Copy values as written. Never invent a value; leave a field '' when the text does not state it, and name it in openQuestions.\n\nOutput:\n- Return every field conforming to the output schema.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Read these solicitation details.\n\nSolicitation:\n{{input.solicitationText}}\n\nReturn the solicitation number, title, agency, contracting office, contract type, basis for award, and open questions.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "Read these solicitation details.\n\nSolicitation:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.solicitationText"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nReturn the solicitation number, title, agency, contracting office, contract type, basis for award, and open questions."
+        }
+      ]
+    }
+  ],
+  "projectId": "fadc5e67-1af0-483f-9e16-b78b5bae70b7",
+  "id": "fadc5e67-1af0-483f-9e16-b78b5bae70b7",
+  "name": "SS_SolicitationAnalyst",
+  "resources": [],
+  "features": []
+}

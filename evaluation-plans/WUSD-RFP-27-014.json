@@ -1,0 +1,82 @@
+{
+  "solicitationId": "WUSD-RFP-27-014",
+  "title": "Student Information System",
+  "agency": "Willowmere Unified School District",
+  "framework": "sled",
+  "office": "Willowmere USD Purchasing Department",
+  "contractType": "Firm fixed price, 3-year initial term with two optional 1-year renewals",
+  "basisForAward": "Most advantageous proposal — highest total score out of 100 points",
+  "ratingMethod": "points",
+  "relativeImportance": "Proposals are scored out of 100 points: Functional and Technical Fit 35, Implementation, Data Migration and Training 20, Experience and References 15, and Cost 30. Cost points are awarded by formula: the lowest total cost receives 30 points and each other proposal receives (lowest cost ÷ its cost) × 30.",
+  "factors": [
+    {
+      "id": "T1",
+      "name": "Functional and Technical Fit",
+      "order": 1,
+      "scale": "technical",
+      "volume": "technical",
+      "weight": 35,
+      "subfactors": [
+        "State reporting, enrollment and attendance",
+        "Scheduling, gradebook and special education",
+        "Parent and student portal, security and privacy"
+      ],
+      "criteria": "The District will evaluate how well the proposed system meets the District's functional requirements, including Ed-Fi state reporting, attendance, master scheduling, gradebook and report cards, special education and IEP management within the system, and a multilingual parent and student portal, and how it protects student data under FERPA and COPPA with SSO/SAML sign-in."
+    },
+    {
+      "id": "T2",
+      "name": "Implementation, Data Migration and Training",
+      "order": 2,
+      "scale": "technical",
+      "volume": "management",
+      "weight": 20,
+      "subfactors": [
+        "Implementation schedule and data migration",
+        "Training and change management",
+        "Support, service levels and uptime"
+      ],
+      "criteria": "The District will evaluate the realism of the implementation schedule and its timing relative to the school year, the completeness of the data migration plan (field mapping, trial conversions and validation of historical records), the training and change management approach for staff and families, and the proposed support hours, response times and uptime commitment."
+    },
+    {
+      "id": "T3",
+      "name": "Experience and References",
+      "order": 3,
+      "scale": "technical",
+      "volume": "pastPerformance",
+      "weight": 15,
+      "subfactors": [
+        "Recency",
+        "Relevance to K-12 districts of similar size",
+        "Reference ratings"
+      ],
+      "criteria": "The District will evaluate the proposer's experience implementing student information systems in K-12 districts of similar size and complexity within the last five years, based on the references provided and the ratings those districts give."
+    },
+    {
+      "id": "PRICE",
+      "name": "Cost",
+      "order": 4,
+      "evaluatedNotRated": true,
+      "volume": "price",
+      "weight": 30,
+      "criteria": "The District will award cost points by formula on the total five-year cost, which is the sum of all four price items. The lowest total cost receives 30 points and each other proposal receives (lowest cost ÷ its cost) × 30. The District will also review individual price items for balance against its cost estimate."
+    }
+  ],
+  "scales": {
+    "technical": ["Excellent", "Good", "Satisfactory", "Poor", "Unacceptable"],
+    "confidence": ["Excellent", "Good", "Satisfactory", "Poor", "Unacceptable"]
+  },
+  "findingKinds": ["Strength", "Significant Strength", "Weakness", "Significant Weakness", "Deficiency", "Risk"],
+  "panel": {
+    "evaluators": [
+      {"slot": 1, "title": "Evaluation Committee Member", "factors": ["T1", "T2"]},
+      {"slot": 2, "title": "Evaluation Committee Member", "factors": ["T1", "T2"]},
+      {"slot": 3, "title": "Evaluation Committee Member", "factors": ["T1", "T3"]}
+    ]
+  },
+  "igce": {"total": 2400000, "lines": {"0001": 1400000, "0002": 240000, "0003": 160000, "0004": 600000}},
+  "submission": {
+    "volumes": ["technical", "management", "pastPerformance", "price"],
+    "pageLimits": {"technical": 30, "management": 15, "pastPerformance": 8}
+  },
+  "offerors": ["HARBORVIEW", "IRONLEAF", "KESTREL"]
+}

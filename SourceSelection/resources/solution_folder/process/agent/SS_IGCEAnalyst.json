@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_IGCEAnalyst",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "bf550e0d-a21e-412e-bd9d-306e6eafea56",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SS_IGCEAnalyst"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "SS_IGCEAnalyst",
+      "package": {
+        "key": "9a50c868-5019-4b51-8201-eafd7c08a00a"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"f04ad6f3-ad44-4482-b70a-4c67257d20de\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\",\n            \"description\": \"Solicitation number\"\n          },\n          \"igceText\": {\n            \"type\": \"string\",\n            \"description\": \"Text of the Independent Government Cost Estimate (IGCE), including its CLIN summary table\"\n          }\n        },\n        \"required\": [\n          \"solicitationId\",\n          \"igceText\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"clins\": {\n            \"type\": \"array\",\n            \"description\": \"One line per CLIN in the IGCE's CLIN summary, in the order the IGCE lists them\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"clin\": {\n                  \"type\": \"string\",\n                  \"description\": \"CLIN number exactly as written, e.g. 0001\"\n                },\n                \"description\": {\n                  \"type\": \"string\",\n                  \"description\": \"CLIN description as written in the IGCE\"\n                },\n                \"amount\": {\n                  \"type\": \"number\",\n                  \"description\": \"Estimated amount in US dollars for this CLIN across the base and all option periods, as a plain number\"\n                },\n                \"sourceQuote\": {\n                  \"type\": \"string\",\n                  \"description\": \"Verbatim text from the IGCE line this CLIN was read from\"\n                }\n              },\n              \"required\": [\n                \"clin\",\n                \"description\",\n                \"amount\",\n                \"sourceQuote\"\n              ]\n            }\n          },\n          \"total\": {\n            \"type\": \"number\",\n            \"description\": \"Total estimate in US dollars as the IGCE states it, or the sum of the CLINs when no total is stated\"\n          },\n          \"openQuestions\": {\n            \"type\": \"string\",\n            \"description\": \"Inconsistencies or missing information the Contracting Officer should resolve (for example, CLIN amounts that do not add up to the stated total), or 'None'\"\n          }\n        },\n        \"required\": [\n          \"clins\",\n          \"total\",\n          \"openQuestions\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "f04ad6f3-ad44-4482-b70a-4c67257d20de"
+    },
+    "locks": [],
+    "key": "290699b4-c216-466a-83bf-d777b055e47b",
+    "files": []
+  }
+}

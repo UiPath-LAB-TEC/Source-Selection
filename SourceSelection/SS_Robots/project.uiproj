@@ -1,0 +1,6 @@
+{
+  "ProjectType": "Function",
+  "Name": "SS_Robots",
+  "Description": "Deterministic tasks of the UiPath Source Selection case: proposal ingest, compliance screening, agent drafting, evaluation compilation, price analysis and official records",
+  "MainFile": null
+}

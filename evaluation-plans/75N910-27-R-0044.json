@@ -1,0 +1,137 @@
+{
+  "solicitationId": "75N910-27-R-0044",
+  "title": "Research Data Platform and Analytics Support",
+  "agency": "Department of Health and Human Services \u2014 National Institutes of Health",
+  "office": "NIH Office of Acquisitions \u2014 Research Programs",
+  "contractType": "Time-and-materials with fixed-price CLINs, 3 base years and 2 option years",
+  "basisForAward": "Best value tradeoff (FAR 15.101-1)",
+  "relativeImportance": "Technical Capability and Key Personnel are of equal importance and each is more important than Past Performance. Non-price factors combined are approximately equal to Price.",
+  "factors": [
+    {
+      "id": "T1",
+      "name": "Technical Capability",
+      "order": 1,
+      "scale": "technical",
+      "volume": "technical",
+      "subfactors": [
+        "Data platform architecture",
+        "Privacy and controlled-access data protection",
+        "Researcher self-service analytics"
+      ],
+      "criteria": "The Government will evaluate the offeror's architecture for a secure, scalable research data platform, its protection of controlled-access human-subjects data, and its approach to self-service analytics for intramural researchers."
+    },
+    {
+      "id": "T2",
+      "name": "Key Personnel",
+      "order": 2,
+      "scale": "technical",
+      "volume": "management",
+      "subfactors": [
+        "Program Manager",
+        "Chief Data Architect",
+        "Commitment and availability"
+      ],
+      "criteria": "The Government will evaluate the qualifications, relevant experience and committed availability of the proposed Program Manager and Chief Data Architect."
+    },
+    {
+      "id": "T3",
+      "name": "Past Performance",
+      "order": 3,
+      "scale": "confidence",
+      "volume": "pastPerformance",
+      "subfactors": [
+        "Recency",
+        "Relevancy",
+        "Quality"
+      ],
+      "criteria": "The Government will assess confidence based on recent and relevant performance on research data, health IT or scientific computing efforts."
+    },
+    {
+      "id": "PRICE",
+      "name": "Price",
+      "order": 4,
+      "evaluatedNotRated": true,
+      "volume": "price",
+      "criteria": "Price will be evaluated for reasonableness. Total evaluated price is the sum of fixed-price CLINs and T&M ceilings for all periods."
+    }
+  ],
+  "scales": {
+    "technical": [
+      "Outstanding",
+      "Good",
+      "Acceptable",
+      "Marginal",
+      "Unacceptable"
+    ],
+    "confidence": [
+      "Substantial Confidence",
+      "Satisfactory Confidence",
+      "Neutral Confidence",
+      "Limited Confidence",
+      "No Confidence"
+    ]
+  },
+  "findingKinds": [
+    "Strength",
+    "Significant Strength",
+    "Weakness",
+    "Significant Weakness",
+    "Deficiency",
+    "Risk"
+  ],
+  "panel": {
+    "evaluators": [
+      {
+        "slot": 1,
+        "title": "Technical Evaluator",
+        "factors": [
+          "T1",
+          "T2"
+        ]
+      },
+      {
+        "slot": 2,
+        "title": "Technical Evaluator",
+        "factors": [
+          "T1",
+          "T2"
+        ]
+      },
+      {
+        "slot": 3,
+        "title": "Past Performance Evaluator",
+        "factors": [
+          "T1",
+          "T3"
+        ]
+      }
+    ]
+  },
+  "igce": {
+    "total": 14600000,
+    "lines": {
+      "0001": 5900000,
+      "0002": 3700000,
+      "0003": 2800000,
+      "0004": 2200000
+    }
+  },
+  "submission": {
+    "volumes": [
+      "technical",
+      "management",
+      "pastPerformance",
+      "price"
+    ],
+    "pageLimits": {
+      "technical": 20,
+      "management": 10,
+      "pastPerformance": 10
+    }
+  },
+  "offerors": [
+    "HELIX",
+    "LUMINA",
+    "NORTHBRIDGE"
+  ]
+}

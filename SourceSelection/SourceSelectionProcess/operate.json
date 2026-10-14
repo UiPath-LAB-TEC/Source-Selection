@@ -1,0 +1,11 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/operate",
+  "projectId": "9926b1f1-75c0-459a-8760-99efa9f024b6",
+  "main": "/content/SourceSelectionProcess.bpmn#Start_SourceSelection",
+  "contentType": "ProcessOrchestration",
+  "targetFramework": "Portable",
+  "runtimeOptions": {
+    "requiresUserInteraction": false,
+    "isAttended": false
+  }
+}

@@ -1,0 +1,36 @@
+{
+ "displayName": "SS Audit Event",
+ "description": "Append-only audit trail for the protest trace",
+ "fields": [
+  {
+   "name": "EventId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "EntityRef",
+   "type": "STRING"
+  },
+  {
+   "name": "Action",
+   "type": "STRING"
+  },
+  {
+   "name": "Actor",
+   "type": "STRING"
+  },
+  {
+   "name": "OccurredAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "Detail",
+   "type": "MULTILINE_TEXT"
+  }
+ ]
+}

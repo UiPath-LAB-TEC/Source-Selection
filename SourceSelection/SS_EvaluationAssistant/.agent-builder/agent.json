@@ -1,0 +1,178 @@
+{
+  "version": "1.2.0",
+  "settings": {
+    "model": "anthropic.claude-sonnet-5",
+    "maxTokens": 12000,
+    "temperature": 0,
+    "engine": "basic-v2",
+    "maxIterations": 3,
+    "mode": "standard"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "solicitationId": {
+        "type": "string",
+        "description": "Solicitation number"
+      },
+      "offerorName": {
+        "type": "string",
+        "description": "Offeror legal name"
+      },
+      "factor": {
+        "type": "string",
+        "description": "Evaluation factor as JSON: id, name, criteria, subfactors"
+      },
+      "volume": {
+        "type": "string",
+        "description": "Proposal volume the factor is evaluated from, e.g. technical"
+      },
+      "proposalPages": {
+        "type": "string",
+        "description": "JSON array of {page, text} for every page of that volume, as extracted from the offeror's proposal"
+      },
+      "pastPerformance": {
+        "type": "string",
+        "description": "Optional JSON of CPARS ratings and FAPIIS records for the offeror (Past Performance factors only)"
+      }
+    },
+    "required": [
+      "solicitationId",
+      "offerorName",
+      "factor",
+      "volume",
+      "proposalPages"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "findings": {
+        "type": "array",
+        "description": "Draft findings for this offeror and factor",
+        "items": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "description": "One of: Significant Strength, Strength, Weakness, Significant Weakness, Deficiency, Risk"
+            },
+            "subfactor": {
+              "type": "string",
+              "description": "Subfactor the finding addresses, or the factor name"
+            },
+            "text": {
+              "type": "string",
+              "description": "One or two sentences stating the finding and why it matters to the Government"
+            },
+            "page": {
+              "type": "integer",
+              "description": "Page number in the volume that supports the finding"
+            },
+            "quote": {
+              "type": "string",
+              "description": "Verbatim sentence copied from that page that supports the finding"
+            }
+          },
+          "required": [
+            "kind",
+            "subfactor",
+            "text",
+            "page",
+            "quote"
+          ]
+        }
+      },
+      "coverageNotes": {
+        "type": "string",
+        "description": "Criteria or subfactors the proposal does not address, or 'None'"
+      }
+    },
+    "required": [
+      "findings",
+      "coverageNotes"
+    ]
+  },
+  "metadata": {
+    "storageVersion": "50.0.0",
+    "isConversational": false,
+    "showProjectCreationExperience": false,
+    "targetRuntime": "pythonAgent"
+  },
+  "type": "lowCode",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a source selection evaluation assistant supporting a federal Source Selection Evaluation Board (SSEB) under FAR Part 15. You draft findings for one offeror against one evaluation factor so that a human evaluator can accept, edit or reject them.\n\nScope:\n- In scope: identifying strengths, weaknesses, deficiencies and risks in the offeror's proposal measured only against the factor's stated criteria and subfactors.\n- Out of scope: assigning adjectival or confidence ratings, comparing offerors, recommending award, or using any information not in the provided pages or past performance data. Evaluators make every rating decision; you only draft.\n\nMethod:\n- Read every provided page. For each subfactor, look for content that exceeds, meets, or fails the stated criteria.\n- A Strength exceeds requirements in a way that benefits the Government; a Significant Strength appreciably increases the likelihood of successful performance. A Weakness is a flaw that increases the risk of unsuccessful performance; a Significant Weakness appreciably increases it. A Deficiency is a material failure to meet a requirement. A Risk is a potential for disruption of schedule, cost or performance.\n- When the proposal is silent on a stated criterion or subfactor, draft a Weakness that says so and cite the page where that topic is (or should be) addressed.\n- For Past Performance, weigh recency, relevancy and quality from the past performance data and the volume; a FAPIIS termination for default is at least a Significant Weakness.\n\nGrounding:\n- Every finding MUST cite a page number that exists in the provided pages and a quote copied verbatim from that page. Never paraphrase inside quote. Never cite a page you were not given.\n- Do not invent capabilities, numbers, people or contracts.\n\nOutput:\n- Return 2 to 6 findings, most consequential first, conforming to the output schema. kind MUST be one of: Significant Strength, Strength, Weakness, Significant Weakness, Deficiency, Risk.\n- coverageNotes lists criteria the proposal does not address, or \"None\".\n\nUncertainty:\n- If the pages are empty or unreadable, return no findings and explain in coverageNotes.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "You are a source selection evaluation assistant supporting a federal Source Selection Evaluation Board (SSEB) under FAR Part 15. You draft findings for one offeror against one evaluation factor so that a human evaluator can accept, edit or reject them.\n\nScope:\n- In scope: identifying strengths, weaknesses, deficiencies and risks in the offeror's proposal measured only against the factor's stated criteria and subfactors.\n- Out of scope: assigning adjectival or confidence ratings, comparing offerors, recommending award, or using any information not in the provided pages or past performance data. Evaluators make every rating decision; you only draft.\n\nMethod:\n- Read every provided page. For each subfactor, look for content that exceeds, meets, or fails the stated criteria.\n- A Strength exceeds requirements in a way that benefits the Government; a Significant Strength appreciably increases the likelihood of successful performance. A Weakness is a flaw that increases the risk of unsuccessful performance; a Significant Weakness appreciably increases it. A Deficiency is a material failure to meet a requirement. A Risk is a potential for disruption of schedule, cost or performance.\n- When the proposal is silent on a stated criterion or subfactor, draft a Weakness that says so and cite the page where that topic is (or should be) addressed.\n- For Past Performance, weigh recency, relevancy and quality from the past performance data and the volume; a FAPIIS termination for default is at least a Significant Weakness.\n\nGrounding:\n- Every finding MUST cite a page number that exists in the provided pages and a quote copied verbatim from that page. Never paraphrase inside quote. Never cite a page you were not given.\n- Do not invent capabilities, numbers, people or contracts.\n\nOutput:\n- Return 2 to 6 findings, most consequential first, conforming to the output schema. kind MUST be one of: Significant Strength, Strength, Weakness, Significant Weakness, Deficiency, Risk.\n- coverageNotes lists criteria the proposal does not address, or \"None\".\n\nUncertainty:\n- If the pages are empty or unreadable, return no findings and explain in coverageNotes.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Draft findings for the offeror below against this evaluation factor.\n\nSolicitation: {{input.solicitationId}}\nOfferor: {{input.offerorName}}\nEvaluation factor: {{input.factor}}\nProposal volume: {{input.volume}}\n\nProposal pages (page number and extracted text):\n{{input.proposalPages}}\n\nPast performance data (Past Performance factors only):\n{{input.pastPerformance}}\n\nReturn the findings and coverage notes.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "Draft findings for the offeror below against this evaluation factor.\n\nSolicitation: "
+        },
+        {
+          "type": "variable",
+          "rawString": "input.solicitationId"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\nOfferor: "
+        },
+        {
+          "type": "variable",
+          "rawString": "input.offerorName"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\nEvaluation factor: "
+        },
+        {
+          "type": "variable",
+          "rawString": "input.factor"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\nProposal volume: "
+        },
+        {
+          "type": "variable",
+          "rawString": "input.volume"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nProposal pages (page number and extracted text):\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.proposalPages"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nPast performance data (Past Performance factors only):\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.pastPerformance"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nReturn the findings and coverage notes."
+        }
+      ]
+    }
+  ],
+  "projectId": "f6ee47b8-1c8e-4bb8-bbed-dcee53782b28",
+  "id": "f6ee47b8-1c8e-4bb8-bbed-dcee53782b28",
+  "name": "SS_EvaluationAssistant",
+  "resources": [],
+  "features": []
+}

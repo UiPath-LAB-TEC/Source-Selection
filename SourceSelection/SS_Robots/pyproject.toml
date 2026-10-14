@@ -1,0 +1,11 @@
+[project]
+name = "SS_Robots"
+version = "1.0.0"
+description = "Deterministic tasks of the UiPath Source Selection case: proposal ingest, compliance screening, agent drafting, evaluation compilation, price analysis and official records"
+authors = [{ name = "Anagh Bhave", email = "anagh.bhave@uipath.com" }]
+dependencies = [
+    "uipath>=2.14.0, <2.15.0",
+    "pypdf>=6.0",
+    "fpdf2>=2.8",
+]
+requires-python = ">=3.11"

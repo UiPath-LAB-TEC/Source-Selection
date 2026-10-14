@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.uipath/
+.venv/
+.DS_Store
+# Local-only: environment files, Studio's per-user state, agent test output, editor config
+.env
+**/.env
+**/userProfile/
+agents-test/
+.claude/
+__pycache__/
+*.pyc

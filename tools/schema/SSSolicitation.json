@@ -1,0 +1,48 @@
+{
+ "displayName": "SS Solicitation",
+ "description": "Source selection solicitations and their evaluation plans",
+ "fields": [
+  {
+   "name": "SolicitationId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "Title",
+   "type": "STRING"
+  },
+  {
+   "name": "Agency",
+   "type": "STRING"
+  },
+  {
+   "name": "PlanJson",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "Stage",
+   "type": "STRING"
+  },
+  {
+   "name": "CaseInstanceId",
+   "type": "STRING"
+  },
+  {
+   "name": "AwardeeName",
+   "type": "STRING"
+  },
+  {
+   "name": "StartedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "AwardedAt",
+   "type": "DATETIME_WITH_TZ"
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_DecisionWriter",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "42d5eab4-b0b0-4911-8ee3-2ec6b4eb83b9",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SS_DecisionWriter"
+    },
+    "locks": [],
+    "key": "d3b109d7-6bac-4676-8fb3-2cd223578199",
+    "files": []
+  }
+}

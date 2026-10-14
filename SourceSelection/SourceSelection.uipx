@@ -1,0 +1,52 @@
+{
+  "DocVersion": "1.0.0",
+  "StudioMinVersion": "2025.10.0",
+  "SolutionId": "ce1b13e5-0a86-4cea-cc42-08df28679dcf",
+  "Projects": [
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "SS_EvaluationAssistant/project.uiproj",
+      "Id": "ff1ab31e-8ccf-4de6-9167-d6cbf536fa31"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "SS_ConsensusAnalyst/project.uiproj",
+      "Id": "bcd075ba-e009-4565-abb0-fccf30a91544"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "SS_DecisionWriter/project.uiproj",
+      "Id": "42d5eab4-b0b0-4911-8ee3-2ec6b4eb83b9"
+    },
+    {
+      "Type": "Function",
+      "ProjectRelativePath": "SS_Robots/project.uiproj",
+      "Id": "5d244f46-29b0-4c26-b71e-2ff8b19924b4"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "SS_SectionMAnalyst/project.uiproj",
+      "Id": "1d846817-c7cf-4578-8071-a2e5f1e5af10"
+    },
+    {
+      "Type": "CaseManagement",
+      "ProjectRelativePath": "SourceSelection/project.uiproj",
+      "Id": "6bcb6405-4e41-4739-a674-7da9b377acc2"
+    },
+    {
+      "Type": "processOrchestration",
+      "ProjectRelativePath": "SourceSelectionProcess/project.uiproj",
+      "Id": "4564917f-5f15-4c02-a1e6-47af1ce88c73"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "SS_IGCEAnalyst/project.uiproj",
+      "Id": "bf550e0d-a21e-412e-bd9d-306e6eafea56"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "SS_SolicitationAnalyst/project.uiproj",
+      "Id": "646c3116-d43a-4624-83f0-3b3c1f71885e"
+    }
+  ]
+}

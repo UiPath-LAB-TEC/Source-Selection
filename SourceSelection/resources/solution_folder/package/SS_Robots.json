@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_Robots",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "5d244f46-29b0-4c26-b71e-2ff8b19924b4",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SS_Robots"
+    },
+    "locks": [],
+    "key": "32db8d72-7bbc-4518-9870-188df827ecf8",
+    "files": []
+  }
+}

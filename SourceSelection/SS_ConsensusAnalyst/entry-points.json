@@ -1,0 +1,95 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "51b29783-91c6-4050-84dc-86f6db78485a",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string",
+            "description": "Solicitation number"
+          },
+          "evaluationSet": {
+            "type": "string",
+            "description": "JSON: for each offeror and factor, every evaluator's rating, rationale, and accepted or edited findings with ids"
+          },
+          "scales": {
+            "type": "string",
+            "description": "JSON rating scales by name, best first, e.g. technical and confidence"
+          }
+        },
+        "required": [
+          "solicitationId",
+          "evaluationSet",
+          "scales"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "proposals": {
+            "type": "array",
+            "description": "One proposed consensus per offeror and factor",
+            "items": {
+              "type": "object",
+              "properties": {
+                "offerorId": {
+                  "type": "string",
+                  "description": "Offeror id as given"
+                },
+                "factorId": {
+                  "type": "string",
+                  "description": "Factor id as given"
+                },
+                "spread": {
+                  "type": "integer",
+                  "description": "Distance in scale steps between the highest and lowest individual rating"
+                },
+                "proposedRating": {
+                  "type": "string",
+                  "description": "Proposed consensus rating, exactly as written in the scale"
+                },
+                "rationale": {
+                  "type": "string",
+                  "description": "Two to four sentences tying the proposed rating to specific findings"
+                },
+                "supportingFindingIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Finding ids the rationale relies on"
+                },
+                "chairQuestions": {
+                  "type": "string",
+                  "description": "Questions the SSEB Chair should resolve with evaluators, or 'None'"
+                }
+              },
+              "required": [
+                "offerorId",
+                "factorId",
+                "spread",
+                "proposedRating",
+                "rationale",
+                "supportingFindingIds",
+                "chairQuestions"
+              ]
+            }
+          },
+          "disagreementCount": {
+            "type": "integer",
+            "description": "Number of offeror-factor pairs whose spread is 2 or more"
+          }
+        },
+        "required": [
+          "proposals",
+          "disagreementCount"
+        ]
+      }
+    }
+  ]
+}

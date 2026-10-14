@@ -1,0 +1,32 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "ss-taskforms",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "fileName": "ss-taskforms.1.0.27.nupkg",
+      "fileReference": "ss-taskforms_1.0.27",
+      "name": "ss-taskforms"
+    },
+    "locks": [],
+    "key": "ss-taskforms:1.0.27",
+    "files": [
+      {
+        "key": "ss-taskforms_1.0.27",
+        "name": "ss-taskforms.1.0.27.nupkg",
+        "url": "https://cloud.uipath.com/uipathlabs/Playground/orchestrator_/odata/Processes/UiPath.Server.Configuration.OData.DownloadPackage(key='ss-taskforms:1.0.27')?feedId=93949a13-9388-45bb-af90-5783a67e1b33",
+        "kind": "Package",
+        "version": "1.0.27"
+      }
+    ]
+  }
+}

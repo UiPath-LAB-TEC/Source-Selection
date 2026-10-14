@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_SolicitationAnalyst",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "646c3116-d43a-4624-83f0-3b3c1f71885e",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SS_SolicitationAnalyst"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "SS_SolicitationAnalyst",
+      "package": {
+        "key": "0efa4279-9b52-4da6-857a-584bb9eb5b31"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"fb792b75-5e8f-4315-a216-cdd1a46e0a17\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationText\": {\n            \"type\": \"string\",\n            \"description\": \"Text of the solicitation's cover page and opening sections (for example SF 33 or SF 1449 and Section B)\"\n          }\n        },\n        \"required\": [\n          \"solicitationText\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\",\n            \"description\": \"Solicitation number exactly as written, e.g. 36C10B-27-R-0057, or '' if not stated\"\n          },\n          \"title\": {\n            \"type\": \"string\",\n            \"description\": \"Short title of the requirement as the solicitation names it, or ''\"\n          },\n          \"agency\": {\n            \"type\": \"string\",\n            \"description\": \"Issuing department or agency, e.g. Department of Veterans Affairs, or ''\"\n          },\n          \"office\": {\n            \"type\": \"string\",\n            \"description\": \"Issuing contracting office from the 'Issued by' block, without the street address, or ''\"\n          },\n          \"contractType\": {\n            \"type\": \"string\",\n            \"description\": \"Contract type and period of performance as stated, e.g. 'Firm-fixed-price task order, one base year and four option years', or ''\"\n          },\n          \"basisForAward\": {\n            \"type\": \"string\",\n            \"description\": \"'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)' for a federal solicitation, or 'Most advantageous proposal — highest total score out of 100 points' or 'Lowest responsive and responsible proposal' for a state or local RFP, when the text says which; otherwise ''\"\n          },\n          \"openQuestions\": {\n            \"type\": \"string\",\n            \"description\": \"Fields the text does not state or states inconsistently, for the Contracting Officer to fill in, or 'None'\"\n          }\n        },\n        \"required\": [\n          \"solicitationId\",\n          \"title\",\n          \"agency\",\n          \"office\",\n          \"contractType\",\n          \"basisForAward\",\n          \"openQuestions\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "fb792b75-5e8f-4315-a216-cdd1a46e0a17"
+    },
+    "locks": [],
+    "key": "72f206b2-af0c-41df-9605-1d720e4b4f79",
+    "files": []
+  }
+}

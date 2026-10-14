@@ -1,0 +1,77 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "f04ad6f3-ad44-4482-b70a-4c67257d20de",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string",
+            "description": "Solicitation number"
+          },
+          "igceText": {
+            "type": "string",
+            "description": "Text of the Independent Government Cost Estimate (IGCE), including its CLIN summary table"
+          }
+        },
+        "required": [
+          "solicitationId",
+          "igceText"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "clins": {
+            "type": "array",
+            "description": "One line per CLIN in the IGCE's CLIN summary, in the order the IGCE lists them",
+            "items": {
+              "type": "object",
+              "properties": {
+                "clin": {
+                  "type": "string",
+                  "description": "CLIN number exactly as written, e.g. 0001"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "CLIN description as written in the IGCE"
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Estimated amount in US dollars for this CLIN across the base and all option periods, as a plain number"
+                },
+                "sourceQuote": {
+                  "type": "string",
+                  "description": "Verbatim text from the IGCE line this CLIN was read from"
+                }
+              },
+              "required": [
+                "clin",
+                "description",
+                "amount",
+                "sourceQuote"
+              ]
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total estimate in US dollars as the IGCE states it, or the sum of the CLINs when no total is stated"
+          },
+          "openQuestions": {
+            "type": "string",
+            "description": "Inconsistencies or missing information the Contracting Officer should resolve (for example, CLIN amounts that do not add up to the stated total), or 'None'"
+          }
+        },
+        "required": [
+          "clins",
+          "total",
+          "openQuestions"
+        ]
+      }
+    }
+  ]
+}

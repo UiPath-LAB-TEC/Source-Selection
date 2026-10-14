@@ -1,0 +1,4288 @@
+{
+  "id": "case-Q7sLm2Xv9K",
+  "version": "30.0.0",
+  "name": "SourceSelection",
+  "description": "Runs a FAR Part 15 best-value source selection for one solicitation, from proposal intake through individual evaluation, SSEB consensus, price evaluation and the Source Selection Authority's award decision. Agents draft findings and decision language with proposal-page citations; named officials make every judgment.",
+  "metadata": {
+    "caseIdentifier": "=vars.solicitationId",
+    "caseIdentifierType": "external",
+    "caseAppEnabled": false,
+    "publishVersion": 2,
+    "caseUnifiedSchemaEnabled": true,
+    "caseDirectlyPassTaskOutputs": true,
+    "intsvcActivityConfig": "v2",
+    "caseExitRules": [
+      {
+        "id": "Condition_Ce4Ax9",
+        "displayName": "Award Complete",
+        "marksCaseComplete": true,
+        "rules": [
+          [
+            {
+              "id": "Rule_Ra8Kw2",
+              "rule": "required-stages-completed"
+            }
+          ]
+        ]
+      },
+      {
+        "id": "Condition_Ce7Bz3",
+        "displayName": "Solicitation Cancelled",
+        "marksCaseComplete": false,
+        "rules": [
+          [
+            {
+              "id": "Rule_Rb5Mt7",
+              "rule": "selected-stage-completed",
+              "selectedStageIds": [
+                "Stage_Sc4Jy7"
+              ]
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "bindings": [
+    {
+      "id": "bRb7Kq2Lm",
+      "name": "name",
+      "type": "string",
+      "resource": "process",
+      "resourceKey": "solution_folder.SS_Robots",
+      "default": "SS_Robots",
+      "propertyAttribute": "name"
+    },
+    {
+      "id": "bRf3Np8Xc",
+      "name": "folderPath",
+      "type": "string",
+      "resource": "process",
+      "resourceKey": "solution_folder.SS_Robots",
+      "default": "",
+      "propertyAttribute": "folderPath"
+    },
+    {
+      "id": "bCa4Wm9Ts",
+      "name": "name",
+      "type": "string",
+      "resource": "process",
+      "resourceSubType": "Agent",
+      "resourceKey": "solution_folder.SS_ConsensusAnalyst",
+      "default": "SS_ConsensusAnalyst",
+      "propertyAttribute": "name"
+    },
+    {
+      "id": "bCf8Hq2Vd",
+      "name": "folderPath",
+      "type": "string",
+      "resource": "process",
+      "resourceSubType": "Agent",
+      "resourceKey": "solution_folder.SS_ConsensusAnalyst",
+      "default": "",
+      "propertyAttribute": "folderPath"
+    },
+    {
+      "id": "bDw6Rk3Pn",
+      "name": "name",
+      "type": "string",
+      "resource": "process",
+      "resourceSubType": "Agent",
+      "resourceKey": "solution_folder.SS_DecisionWriter",
+      "default": "SS_DecisionWriter",
+      "propertyAttribute": "name"
+    },
+    {
+      "id": "bDf2Lx7Gc",
+      "name": "folderPath",
+      "type": "string",
+      "resource": "process",
+      "resourceSubType": "Agent",
+      "resourceKey": "solution_folder.SS_DecisionWriter",
+      "default": "",
+      "propertyAttribute": "folderPath"
+    },
+    {
+      "id": "bTf5Nv8Qe",
+      "name": "name",
+      "type": "string",
+      "resource": "app",
+      "resourceKey": "SourceSelection.Source Selection Task Forms",
+      "default": "Source Selection Task Forms",
+      "propertyAttribute": "name"
+    },
+    {
+      "id": "bTp9Mc4Ra",
+      "name": "folderPath",
+      "type": "string",
+      "resource": "app",
+      "resourceKey": "SourceSelection.Source Selection Task Forms",
+      "default": "SourceSelection",
+      "propertyAttribute": "folderPath"
+    }
+  ],
+  "variables": {
+    "inputs": [
+      {
+        "id": "vS9oLi4Ct",
+        "name": "solicitationId",
+        "type": "string",
+        "default": "FA8771-27-R-0012",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "vE1aM7kQz",
+        "name": "evaluator1",
+        "type": "string",
+        "default": "anagh.bhave@uipath.com",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "vE2bN3wRx",
+        "name": "evaluator2",
+        "type": "string",
+        "default": "anagh.bhave@uipath.com",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "vE3cP8tYu",
+        "name": "evaluator3",
+        "type": "string",
+        "default": "anagh.bhave@uipath.com",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "vSh4Qr2Lm",
+        "name": "ssebChair",
+        "type": "string",
+        "default": "anagh.bhave@uipath.com",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "vCo6Tz9Wk",
+        "name": "contractingOfficer",
+        "type": "string",
+        "default": "anagh.bhave@uipath.com",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "vSa2Yx5Np",
+        "name": "sourceSelectionAuthority",
+        "type": "string",
+        "default": "anagh.bhave@uipath.com",
+        "elementId": "trigger_Hk4pW2"
+      }
+    ],
+    "outputs": [
+      {
+        "id": "vAw7Hn3Kd",
+        "name": "awardeeName",
+        "type": "string",
+        "var": "awardeeName"
+      },
+      {
+        "id": "vAr4Jc8Ls",
+        "name": "awardRecordUri",
+        "type": "string",
+        "var": "awardRecordUri"
+      }
+    ],
+    "inputOutputs": [
+      {
+        "id": "solicitationId",
+        "name": "solicitationId",
+        "type": "string",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "evaluator1",
+        "name": "evaluator1",
+        "type": "string",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "evaluator2",
+        "name": "evaluator2",
+        "type": "string",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "evaluator3",
+        "name": "evaluator3",
+        "type": "string",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "ssebChair",
+        "name": "ssebChair",
+        "type": "string",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "contractingOfficer",
+        "name": "contractingOfficer",
+        "type": "string",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "sourceSelectionAuthority",
+        "name": "sourceSelectionAuthority",
+        "type": "string",
+        "elementId": "trigger_Hk4pW2"
+      },
+      {
+        "id": "consensusRatings",
+        "name": "consensusRatings",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "priceAnalysis",
+        "name": "priceAnalysis",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "signedSsdd",
+        "name": "signedSsdd",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "awardeeName",
+        "name": "awardeeName",
+        "type": "string",
+        "default": "",
+        "elementId": "root"
+      },
+      {
+        "id": "awardRecordUri",
+        "name": "awardRecordUri",
+        "type": "string",
+        "default": "",
+        "elementId": "root"
+      },
+      {
+        "id": "offerorCount",
+        "name": "offerorCount",
+        "type": "integer",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "complianceSummary",
+        "name": "complianceSummary",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "releaseDecision",
+        "name": "releaseDecision",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "releaseRationale",
+        "name": "releaseRationale",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "draftFindingCount",
+        "name": "draftFindingCount",
+        "type": "integer",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "evaluator1Ratings",
+        "name": "evaluator1Ratings",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "evaluator2Ratings",
+        "name": "evaluator2Ratings",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "evaluator3Ratings",
+        "name": "evaluator3Ratings",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "evaluationSet",
+        "name": "evaluationSet",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "ratingScales",
+        "name": "ratingScales",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "disagreementCount",
+        "name": "disagreementCount",
+        "type": "integer",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "consensusDecision",
+        "name": "consensusDecision",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "priceDecision",
+        "name": "priceDecision",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "priceDetermination",
+        "name": "priceDetermination",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "planSummary",
+        "name": "planSummary",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "consensusRecord",
+        "name": "consensusRecord",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "ssddDraft",
+        "name": "ssddDraft",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "recommendedAwardee",
+        "name": "recommendedAwardee",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "clarificationNotes",
+        "name": "clarificationNotes",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      },
+      {
+        "id": "cancellationRecordUri",
+        "name": "cancellationRecordUri",
+        "type": "string",
+        "elementId": "root",
+        "custom": true
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "trigger_Hk4pW2",
+      "type": "uipath.case.trigger",
+      "data": {
+        "parentElement": {
+          "id": "root",
+          "type": "case-management:root"
+        },
+        "description": "Contracting Officer starts the case from the SS_Workspace app with the solicitation ID and panel assignments",
+        "typeVersion": "1.0.0",
+        "display": {
+          "label": "Start Source Selection"
+        },
+        "inputs": {
+          "serviceType": "None",
+          "outputs": [
+            {
+              "name": "solicitationId",
+              "type": "string",
+              "source": "=vars.vS9oLi4Ct",
+              "var": "solicitationId"
+            },
+            {
+              "name": "evaluator1",
+              "type": "string",
+              "source": "=vars.vE1aM7kQz",
+              "var": "evaluator1"
+            },
+            {
+              "name": "evaluator2",
+              "type": "string",
+              "source": "=vars.vE2bN3wRx",
+              "var": "evaluator2"
+            },
+            {
+              "name": "evaluator3",
+              "type": "string",
+              "source": "=vars.vE3cP8tYu",
+              "var": "evaluator3"
+            },
+            {
+              "name": "ssebChair",
+              "type": "string",
+              "source": "=vars.vSh4Qr2Lm",
+              "var": "ssebChair"
+            },
+            {
+              "name": "contractingOfficer",
+              "type": "string",
+              "source": "=vars.vCo6Tz9Wk",
+              "var": "contractingOfficer"
+            },
+            {
+              "name": "sourceSelectionAuthority",
+              "type": "string",
+              "source": "=vars.vSa2Yx5Np",
+              "var": "sourceSelectionAuthority"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "Stage_Pi7Kq2",
+      "type": "case-management:Stage",
+      "data": {
+        "label": "Proposal Intake",
+        "description": "Loads every offeror's proposal volumes, extracts structured fields, indexes the text for citation, screens compliance and responsibility, and has the Contracting Officer release proposals to evaluation.",
+        "isRequired": true,
+        "parentElement": {
+          "id": "root",
+          "type": "case-management:root"
+        },
+        "isInvalidDropTarget": false,
+        "isPendingParent": false,
+        "tasks": [
+          [
+            {
+              "id": "tIn4kP9qZ",
+              "type": "rpa",
+              "displayName": "Ingest Proposals",
+              "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Reads each offeror's proposal volumes from the SS-Proposals bucket, extracts the offeror identity and price schedule from the cover letter and price volume, and writes page-level text and offeror records to Data Fabric.",
+              "data": {
+                "name": "=bindings.bRb7Kq2Lm",
+                "folderPath": "=bindings.bRf3Np8Xc",
+                "inputs": [
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "vIg0Tq4Lm",
+                    "var": "vIg0Tq4Lm",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": "IngestProposals"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vIg1Rw7Xz",
+                    "var": "vIg1Rw7Xz",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "includeOfferorIds",
+                    "type": "string",
+                    "id": "vIg2Kp5Vn",
+                    "var": "vIg2Kp5Vn",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": ""
+                  },
+                  {
+                    "name": "agentProcess",
+                    "type": "string",
+                    "id": "vIg3Hs8Bd",
+                    "var": "vIg3Hs8Bd",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddText",
+                    "type": "string",
+                    "id": "vIg4Mc2Yt",
+                    "var": "vIg4Mc2Yt",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": ""
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "vIg5Fj9Qe",
+                    "var": "vIg5Fj9Qe",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": ""
+                  },
+                  {
+                    "name": "signedBy",
+                    "type": "string",
+                    "id": "vIg6Lx3Pw",
+                    "var": "vIg6Lx3Pw",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": ""
+                  },
+                  {
+                    "name": "rationale",
+                    "type": "string",
+                    "id": "vIg7Nz6Ka",
+                    "var": "vIg7Nz6Ka",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": ""
+                  },
+                  {
+                    "name": "cancelledBy",
+                    "type": "string",
+                    "id": "vIg8Dv1Ru",
+                    "var": "vIg8Dv1Ru",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "error_type",
+                    "type": "string",
+                    "id": "errorType",
+                    "var": "errorType",
+                    "value": "errorType",
+                    "source": "=error_type",
+                    "target": "=errorType",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ"
+                  },
+                  {
+                    "name": "error_message",
+                    "type": "string",
+                    "id": "errorMessage",
+                    "var": "errorMessage",
+                    "value": "errorMessage",
+                    "source": "=error_message",
+                    "target": "=errorMessage",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ"
+                  },
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "step",
+                    "var": "step",
+                    "value": "step",
+                    "source": "=step",
+                    "target": "=step",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ"
+                  },
+                  {
+                    "name": "content",
+                    "type": "string",
+                    "id": "content",
+                    "var": "content",
+                    "value": "content",
+                    "source": "=content",
+                    "target": "=content",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ"
+                  },
+                  {
+                    "name": "detail",
+                    "type": "string",
+                    "id": "detail",
+                    "var": "detail",
+                    "value": "detail",
+                    "source": "=detail",
+                    "target": "=detail",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ"
+                  },
+                  {
+                    "name": "count",
+                    "type": "integer",
+                    "id": "count",
+                    "var": "offerorCount",
+                    "originalVar": "count",
+                    "value": "offerorCount",
+                    "source": "=count",
+                    "target": "=count",
+                    "elementId": "Stage_Pi7Kq2-tIn4kP9qZ"
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cIg4Tn8Wq",
+                  "displayName": "Entry Rule 1",
+                  "rules": [
+                    [
+                      {
+                        "id": "rIg7Kp2Xm",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tCs7mW2xR",
+              "type": "rpa",
+              "displayName": "Compliance and Responsibility Screen",
+              "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Checks each offeror's proposal against the plan's submission instructions and checks responsibility data (SAM active registration, exclusions, FAPIIS records), writing a compliance finding per offeror.",
+              "data": {
+                "name": "=bindings.bRb7Kq2Lm",
+                "folderPath": "=bindings.bRf3Np8Xc",
+                "inputs": [
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "vSc0Tq4Lm",
+                    "var": "vSc0Tq4Lm",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": "ScreenCompliance"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vSc1Rw7Xz",
+                    "var": "vSc1Rw7Xz",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "includeOfferorIds",
+                    "type": "string",
+                    "id": "vSc2Kp5Vn",
+                    "var": "vSc2Kp5Vn",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": ""
+                  },
+                  {
+                    "name": "agentProcess",
+                    "type": "string",
+                    "id": "vSc3Hs8Bd",
+                    "var": "vSc3Hs8Bd",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddText",
+                    "type": "string",
+                    "id": "vSc4Mc2Yt",
+                    "var": "vSc4Mc2Yt",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": ""
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "vSc5Fj9Qe",
+                    "var": "vSc5Fj9Qe",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": ""
+                  },
+                  {
+                    "name": "signedBy",
+                    "type": "string",
+                    "id": "vSc6Lx3Pw",
+                    "var": "vSc6Lx3Pw",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": ""
+                  },
+                  {
+                    "name": "rationale",
+                    "type": "string",
+                    "id": "vSc7Nz6Ka",
+                    "var": "vSc7Nz6Ka",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": ""
+                  },
+                  {
+                    "name": "cancelledBy",
+                    "type": "string",
+                    "id": "vSc8Dv1Ru",
+                    "var": "vSc8Dv1Ru",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "error_type",
+                    "type": "string",
+                    "id": "errorType2",
+                    "var": "errorType2",
+                    "value": "errorType2",
+                    "source": "=error_type",
+                    "target": "=errorType2",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR"
+                  },
+                  {
+                    "name": "error_message",
+                    "type": "string",
+                    "id": "errorMessage2",
+                    "var": "errorMessage2",
+                    "value": "errorMessage2",
+                    "source": "=error_message",
+                    "target": "=errorMessage2",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR"
+                  },
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "step2",
+                    "var": "step2",
+                    "value": "step2",
+                    "source": "=step",
+                    "target": "=step2",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR"
+                  },
+                  {
+                    "name": "content",
+                    "type": "string",
+                    "id": "content2",
+                    "var": "complianceSummary",
+                    "originalVar": "content2",
+                    "value": "complianceSummary",
+                    "source": "=content",
+                    "target": "=content2",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR"
+                  },
+                  {
+                    "name": "detail",
+                    "type": "string",
+                    "id": "detail2",
+                    "var": "detail2",
+                    "value": "detail2",
+                    "source": "=detail",
+                    "target": "=detail2",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR"
+                  },
+                  {
+                    "name": "count",
+                    "type": "integer",
+                    "id": "count2",
+                    "var": "count2",
+                    "value": "count2",
+                    "source": "=count",
+                    "target": "=count2",
+                    "elementId": "Stage_Pi7Kq2-tCs7mW2xR"
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cSc6Wm3Ry",
+                  "displayName": "Entry Rule 2",
+                  "rules": [
+                    [
+                      {
+                        "id": "rSc2Hv9Ln",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tRl3vN8bK",
+              "type": "action",
+              "displayName": "Release to Evaluation",
+              "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "The Contracting Officer reviews the compliance screen, confirms which offerors proceed, and either releases proposals to the SSEB or cancels the solicitation.",
+              "data": {
+                "taskTitle": "Release proposals to the SSEB",
+                "priority": "High",
+                "recipient": {
+                  "Type": 3,
+                  "Value": "=vars.contractingOfficer"
+                },
+                "labels": "source-selection, contracting-officer",
+                "name": "=bindings.bTf5Nv8Qe",
+                "folderPath": "=bindings.bTp9Mc4Ra",
+                "inputs": [
+                  {
+                    "name": "actionType",
+                    "type": "string",
+                    "id": "vRl0Bq6Xe",
+                    "var": "vRl0Bq6Xe",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": "releaseToEvaluation"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vRl1Cw3Nz",
+                    "var": "vRl1Cw3Nz",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluatorSlot",
+                    "type": "number",
+                    "id": "vRl2Dk8Pm",
+                    "var": "vRl2Dk8Pm",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": ""
+                  },
+                  {
+                    "name": "complianceSummary",
+                    "type": "string",
+                    "id": "vRl3Fs1Gt",
+                    "var": "vRl3Fs1Gt",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": "=vars.content2"
+                  },
+                  {
+                    "name": "consensusDraft",
+                    "type": "string",
+                    "id": "vRl4Hy5Jw",
+                    "var": "vRl4Hy5Jw",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": ""
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vRl5Jn9Lq",
+                    "var": "vRl5Jn9Lq",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "vRl6Lr2Mv",
+                    "var": "vRl6Lr2Mv",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": ""
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "vRl7Mt4Sx",
+                    "var": "vRl7Mt4Sx",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": ""
+                  },
+                  {
+                    "name": "chairQuestions",
+                    "type": "string",
+                    "id": "vRl8Nv7Uc",
+                    "var": "vRl8Nv7Uc",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "decision",
+                    "type": "string",
+                    "id": "decision",
+                    "var": "releaseDecision",
+                    "originalVar": "decision",
+                    "value": "releaseDecision",
+                    "source": "=decision",
+                    "target": "=decision",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "id": "notes",
+                    "var": "releaseRationale",
+                    "originalVar": "notes",
+                    "value": "releaseRationale",
+                    "source": "=notes",
+                    "target": "=notes",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK"
+                  },
+                  {
+                    "name": "payload",
+                    "type": "string",
+                    "id": "payload",
+                    "var": "payload",
+                    "value": "payload",
+                    "source": "=payload",
+                    "target": "=payload",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK"
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "awardee",
+                    "var": "awardee",
+                    "value": "awardee",
+                    "source": "=awardee",
+                    "target": "=awardee",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK"
+                  },
+                  {
+                    "name": "Action",
+                    "type": "string",
+                    "id": "action",
+                    "var": "action",
+                    "value": "action",
+                    "source": "=Action",
+                    "target": "=action",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK"
+                  },
+                  {
+                    "name": "hitlTask",
+                    "type": "jsonSchema",
+                    "id": "hitlTask",
+                    "var": "hitlTask",
+                    "value": "hitlTask",
+                    "source": "=hitlTask",
+                    "target": "=hitlTask",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error",
+                    "var": "error",
+                    "value": "error",
+                    "source": "=Error",
+                    "target": "=error",
+                    "elementId": "Stage_Pi7Kq2-tRl3vN8bK",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cRl8Pq4Tk",
+                  "displayName": "Entry Rule 3",
+                  "rules": [
+                    [
+                      {
+                        "id": "rRl5Zx1Wb",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        "entryConditions": [
+          {
+            "id": "Condition_P1en7K",
+            "displayName": "Case Started",
+            "isInterrupting": false,
+            "rules": [
+              [
+                {
+                  "id": "Rule_P1r4Xa",
+                  "rule": "case-entered"
+                }
+              ]
+            ]
+          }
+        ],
+        "exitConditions": [
+          {
+            "id": "Condition_P1xA3m",
+            "displayName": "Released to Evaluation",
+            "type": "exit-only",
+            "marksStageComplete": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_P1q8Nc",
+                  "rule": "required-tasks-completed",
+                  "conditionExpression": "=js:vars.decision !== \"Cancel\""
+                }
+              ]
+            ]
+          },
+          {
+            "id": "Condition_P1xB6t",
+            "displayName": "Cancelled at Release",
+            "type": "exit-only",
+            "marksStageComplete": false,
+            "rules": [
+              [
+                {
+                  "id": "Rule_P1s2Wd",
+                  "rule": "selected-tasks-completed",
+                  "selectedTasksIds": [
+                    "tRl3vN8bK"
+                  ],
+                  "conditionExpression": "=js:vars.decision === \"Cancel\""
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "Stage_Ev3Nw8",
+      "type": "case-management:Stage",
+      "data": {
+        "label": "Individual Evaluation",
+        "description": "Drafts strengths, weaknesses, deficiencies and risks for every offeror against every evaluation factor, then each SSEB evaluator independently reviews, edits and rates their assigned factors.",
+        "isRequired": true,
+        "parentElement": {
+          "id": "root",
+          "type": "case-management:root"
+        },
+        "isInvalidDropTarget": false,
+        "isPendingParent": false,
+        "tasks": [
+          [
+            {
+              "id": "tGd6pQ1sM",
+              "type": "rpa",
+              "displayName": "Generate Draft Findings",
+              "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "For every offeror and every non-price factor in the evaluation plan, runs the SS_EvaluationAssistant agent grounded on that offeror's proposal and saves its draft findings, each with a proposal page citation, to Data Fabric.",
+              "data": {
+                "name": "=bindings.bRb7Kq2Lm",
+                "folderPath": "=bindings.bRf3Np8Xc",
+                "inputs": [
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "vGd0Tq4Lm",
+                    "var": "vGd0Tq4Lm",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": "GenerateDraftFindings"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vGd1Rw7Xz",
+                    "var": "vGd1Rw7Xz",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "includeOfferorIds",
+                    "type": "string",
+                    "id": "vGd2Kp5Vn",
+                    "var": "vGd2Kp5Vn",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": ""
+                  },
+                  {
+                    "name": "agentProcess",
+                    "type": "string",
+                    "id": "vGd3Hs8Bd",
+                    "var": "vGd3Hs8Bd",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": "SS_EvaluationAssistant"
+                  },
+                  {
+                    "name": "ssddText",
+                    "type": "string",
+                    "id": "vGd4Mc2Yt",
+                    "var": "vGd4Mc2Yt",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": ""
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "vGd5Fj9Qe",
+                    "var": "vGd5Fj9Qe",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": ""
+                  },
+                  {
+                    "name": "signedBy",
+                    "type": "string",
+                    "id": "vGd6Lx3Pw",
+                    "var": "vGd6Lx3Pw",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": ""
+                  },
+                  {
+                    "name": "rationale",
+                    "type": "string",
+                    "id": "vGd7Nz6Ka",
+                    "var": "vGd7Nz6Ka",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": ""
+                  },
+                  {
+                    "name": "cancelledBy",
+                    "type": "string",
+                    "id": "vGd8Dv1Ru",
+                    "var": "vGd8Dv1Ru",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "error_type",
+                    "type": "string",
+                    "id": "errorType3",
+                    "var": "errorType3",
+                    "value": "errorType3",
+                    "source": "=error_type",
+                    "target": "=errorType3",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM"
+                  },
+                  {
+                    "name": "error_message",
+                    "type": "string",
+                    "id": "errorMessage3",
+                    "var": "errorMessage3",
+                    "value": "errorMessage3",
+                    "source": "=error_message",
+                    "target": "=errorMessage3",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM"
+                  },
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "step3",
+                    "var": "step3",
+                    "value": "step3",
+                    "source": "=step",
+                    "target": "=step3",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM"
+                  },
+                  {
+                    "name": "content",
+                    "type": "string",
+                    "id": "content3",
+                    "var": "content3",
+                    "value": "content3",
+                    "source": "=content",
+                    "target": "=content3",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM"
+                  },
+                  {
+                    "name": "detail",
+                    "type": "string",
+                    "id": "detail3",
+                    "var": "detail3",
+                    "value": "detail3",
+                    "source": "=detail",
+                    "target": "=detail3",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM"
+                  },
+                  {
+                    "name": "count",
+                    "type": "integer",
+                    "id": "count3",
+                    "var": "draftFindingCount",
+                    "originalVar": "count3",
+                    "value": "draftFindingCount",
+                    "source": "=count",
+                    "target": "=count3",
+                    "elementId": "Stage_Ev3Nw8-tGd6pQ1sM"
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cGd3Nv7Qa",
+                  "displayName": "Entry Rule 4",
+                  "rules": [
+                    [
+                      {
+                        "id": "rGd8Wk2Tc",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tE1r5Tz8W",
+              "type": "action",
+              "displayName": "Evaluator 1 Review",
+              "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Evaluator 1 reviews the agent's draft findings for their assigned factors across all offerors, accepts, edits or rejects each finding, adds their own, assigns adjectival ratings, and attests to independence.",
+              "data": {
+                "taskTitle": "Individual evaluation - evaluator 1",
+                "priority": "Medium",
+                "recipient": {
+                  "Type": 3,
+                  "Value": "=vars.evaluator1"
+                },
+                "labels": "source-selection, evaluator",
+                "name": "=bindings.bTf5Nv8Qe",
+                "folderPath": "=bindings.bTp9Mc4Ra",
+                "inputs": [
+                  {
+                    "name": "actionType",
+                    "type": "string",
+                    "id": "vEa0Bq6Xe",
+                    "var": "vEa0Bq6Xe",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": "individualEvaluation"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vEa1Cw3Nz",
+                    "var": "vEa1Cw3Nz",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluatorSlot",
+                    "type": "number",
+                    "id": "vEa2Dk8Pm",
+                    "var": "vEa2Dk8Pm",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": "1"
+                  },
+                  {
+                    "name": "complianceSummary",
+                    "type": "string",
+                    "id": "vEa3Fs1Gt",
+                    "var": "vEa3Fs1Gt",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": ""
+                  },
+                  {
+                    "name": "consensusDraft",
+                    "type": "string",
+                    "id": "vEa4Hy5Jw",
+                    "var": "vEa4Hy5Jw",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": ""
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vEa5Jn9Lq",
+                    "var": "vEa5Jn9Lq",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "vEa6Lr2Mv",
+                    "var": "vEa6Lr2Mv",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": ""
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "vEa7Mt4Sx",
+                    "var": "vEa7Mt4Sx",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": ""
+                  },
+                  {
+                    "name": "chairQuestions",
+                    "type": "string",
+                    "id": "vEa8Nv7Uc",
+                    "var": "vEa8Nv7Uc",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "decision",
+                    "type": "string",
+                    "id": "decision2",
+                    "var": "decision2",
+                    "value": "decision2",
+                    "source": "=decision",
+                    "target": "=decision2",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "id": "notes2",
+                    "var": "notes2",
+                    "value": "notes2",
+                    "source": "=notes",
+                    "target": "=notes2",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W"
+                  },
+                  {
+                    "name": "payload",
+                    "type": "string",
+                    "id": "payload2",
+                    "var": "evaluator1Ratings",
+                    "originalVar": "payload2",
+                    "value": "evaluator1Ratings",
+                    "source": "=payload",
+                    "target": "=payload2",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W"
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "awardee2",
+                    "var": "awardee2",
+                    "value": "awardee2",
+                    "source": "=awardee",
+                    "target": "=awardee2",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W"
+                  },
+                  {
+                    "name": "Action",
+                    "type": "string",
+                    "id": "action2",
+                    "var": "action2",
+                    "value": "action2",
+                    "source": "=Action",
+                    "target": "=action2",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W"
+                  },
+                  {
+                    "name": "hitlTask",
+                    "type": "jsonSchema",
+                    "id": "hitlTask2",
+                    "var": "hitlTask2",
+                    "value": "hitlTask2",
+                    "source": "=hitlTask",
+                    "target": "=hitlTask2",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error2",
+                    "var": "error2",
+                    "value": "error2",
+                    "source": "=Error",
+                    "target": "=error2",
+                    "elementId": "Stage_Ev3Nw8-tE1r5Tz8W",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cEa5Rm2Wt",
+                  "displayName": "Entry Rule 5",
+                  "rules": [
+                    [
+                      {
+                        "id": "rEa9Qk4Bn",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "tE2h9Lc4N",
+              "type": "action",
+              "displayName": "Evaluator 2 Review",
+              "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Evaluator 2 independently reviews, edits and rates their assigned factors across all offerors.",
+              "data": {
+                "taskTitle": "Individual evaluation - evaluator 2",
+                "priority": "Medium",
+                "recipient": {
+                  "Type": 3,
+                  "Value": "=vars.evaluator2"
+                },
+                "labels": "source-selection, evaluator",
+                "name": "=bindings.bTf5Nv8Qe",
+                "folderPath": "=bindings.bTp9Mc4Ra",
+                "inputs": [
+                  {
+                    "name": "actionType",
+                    "type": "string",
+                    "id": "vEb0Bq6Xe",
+                    "var": "vEb0Bq6Xe",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": "individualEvaluation"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vEb1Cw3Nz",
+                    "var": "vEb1Cw3Nz",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluatorSlot",
+                    "type": "number",
+                    "id": "vEb2Dk8Pm",
+                    "var": "vEb2Dk8Pm",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": "2"
+                  },
+                  {
+                    "name": "complianceSummary",
+                    "type": "string",
+                    "id": "vEb3Fs1Gt",
+                    "var": "vEb3Fs1Gt",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": ""
+                  },
+                  {
+                    "name": "consensusDraft",
+                    "type": "string",
+                    "id": "vEb4Hy5Jw",
+                    "var": "vEb4Hy5Jw",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": ""
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vEb5Jn9Lq",
+                    "var": "vEb5Jn9Lq",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "vEb6Lr2Mv",
+                    "var": "vEb6Lr2Mv",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": ""
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "vEb7Mt4Sx",
+                    "var": "vEb7Mt4Sx",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": ""
+                  },
+                  {
+                    "name": "chairQuestions",
+                    "type": "string",
+                    "id": "vEb8Nv7Uc",
+                    "var": "vEb8Nv7Uc",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "decision",
+                    "type": "string",
+                    "id": "decision3",
+                    "var": "decision3",
+                    "value": "decision3",
+                    "source": "=decision",
+                    "target": "=decision3",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "id": "notes3",
+                    "var": "notes3",
+                    "value": "notes3",
+                    "source": "=notes",
+                    "target": "=notes3",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N"
+                  },
+                  {
+                    "name": "payload",
+                    "type": "string",
+                    "id": "payload3",
+                    "var": "evaluator2Ratings",
+                    "originalVar": "payload3",
+                    "value": "evaluator2Ratings",
+                    "source": "=payload",
+                    "target": "=payload3",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N"
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "awardee3",
+                    "var": "awardee3",
+                    "value": "awardee3",
+                    "source": "=awardee",
+                    "target": "=awardee3",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N"
+                  },
+                  {
+                    "name": "Action",
+                    "type": "string",
+                    "id": "action3",
+                    "var": "action3",
+                    "value": "action3",
+                    "source": "=Action",
+                    "target": "=action3",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N"
+                  },
+                  {
+                    "name": "hitlTask",
+                    "type": "jsonSchema",
+                    "id": "hitlTask3",
+                    "var": "hitlTask3",
+                    "value": "hitlTask3",
+                    "source": "=hitlTask",
+                    "target": "=hitlTask3",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error3",
+                    "var": "error3",
+                    "value": "error3",
+                    "source": "=Error",
+                    "target": "=error3",
+                    "elementId": "Stage_Ev3Nw8-tE2h9Lc4N",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cEb7Tn4Yq",
+                  "displayName": "Entry Rule 6",
+                  "rules": [
+                    [
+                      {
+                        "id": "rEb2Lm8Hs",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "tE3k2Xv7Q",
+              "type": "action",
+              "displayName": "Evaluator 3 Review",
+              "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Evaluator 3 independently reviews, edits and rates their assigned factors across all offerors.",
+              "data": {
+                "taskTitle": "Individual evaluation - evaluator 3",
+                "priority": "Medium",
+                "recipient": {
+                  "Type": 3,
+                  "Value": "=vars.evaluator3"
+                },
+                "labels": "source-selection, evaluator",
+                "name": "=bindings.bTf5Nv8Qe",
+                "folderPath": "=bindings.bTp9Mc4Ra",
+                "inputs": [
+                  {
+                    "name": "actionType",
+                    "type": "string",
+                    "id": "vEc0Bq6Xe",
+                    "var": "vEc0Bq6Xe",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": "individualEvaluation"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vEc1Cw3Nz",
+                    "var": "vEc1Cw3Nz",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluatorSlot",
+                    "type": "number",
+                    "id": "vEc2Dk8Pm",
+                    "var": "vEc2Dk8Pm",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": "3"
+                  },
+                  {
+                    "name": "complianceSummary",
+                    "type": "string",
+                    "id": "vEc3Fs1Gt",
+                    "var": "vEc3Fs1Gt",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": ""
+                  },
+                  {
+                    "name": "consensusDraft",
+                    "type": "string",
+                    "id": "vEc4Hy5Jw",
+                    "var": "vEc4Hy5Jw",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": ""
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vEc5Jn9Lq",
+                    "var": "vEc5Jn9Lq",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "vEc6Lr2Mv",
+                    "var": "vEc6Lr2Mv",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": ""
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "vEc7Mt4Sx",
+                    "var": "vEc7Mt4Sx",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": ""
+                  },
+                  {
+                    "name": "chairQuestions",
+                    "type": "string",
+                    "id": "vEc8Nv7Uc",
+                    "var": "vEc8Nv7Uc",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "decision",
+                    "type": "string",
+                    "id": "decision4",
+                    "var": "decision4",
+                    "value": "decision4",
+                    "source": "=decision",
+                    "target": "=decision4",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "id": "notes4",
+                    "var": "notes4",
+                    "value": "notes4",
+                    "source": "=notes",
+                    "target": "=notes4",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q"
+                  },
+                  {
+                    "name": "payload",
+                    "type": "string",
+                    "id": "payload4",
+                    "var": "evaluator3Ratings",
+                    "originalVar": "payload4",
+                    "value": "evaluator3Ratings",
+                    "source": "=payload",
+                    "target": "=payload4",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q"
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "awardee4",
+                    "var": "awardee4",
+                    "value": "awardee4",
+                    "source": "=awardee",
+                    "target": "=awardee4",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q"
+                  },
+                  {
+                    "name": "Action",
+                    "type": "string",
+                    "id": "action4",
+                    "var": "action4",
+                    "value": "action4",
+                    "source": "=Action",
+                    "target": "=action4",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q"
+                  },
+                  {
+                    "name": "hitlTask",
+                    "type": "jsonSchema",
+                    "id": "hitlTask4",
+                    "var": "hitlTask4",
+                    "value": "hitlTask4",
+                    "source": "=hitlTask",
+                    "target": "=hitlTask4",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error4",
+                    "var": "error4",
+                    "value": "error4",
+                    "source": "=Error",
+                    "target": "=error4",
+                    "elementId": "Stage_Ev3Nw8-tE3k2Xv7Q",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cEc9Wq3Kv",
+                  "displayName": "Entry Rule 7",
+                  "rules": [
+                    [
+                      {
+                        "id": "rEc4Ns7Jd",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        "slaRules": [
+          {
+            "id": "sla_Ie4Tq8Wm",
+            "displayName": "Individual Evaluation SLA",
+            "expression": "=js:true",
+            "count": 10,
+            "unit": "d",
+            "escalationRule": [
+              {
+                "id": "esc_Ia7Rk2",
+                "displayName": "Individual Evaluation SLA at risk",
+                "triggerInfo": {
+                  "type": "at-risk",
+                  "atRiskPercentage": 70
+                },
+                "action": {
+                  "type": "notification",
+                  "recipients": [
+                    {
+                      "scope": "User",
+                      "target": "0495433d-7446-45c4-b224-03c58e2cdf1b",
+                      "value": "anagh.bhave@uipath.com"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "esc_Ib3Lp9",
+                "displayName": "Individual Evaluation SLA breached",
+                "triggerInfo": {
+                  "type": "sla-breached"
+                },
+                "action": {
+                  "type": "notification",
+                  "recipients": [
+                    {
+                      "scope": "User",
+                      "target": "0495433d-7446-45c4-b224-03c58e2cdf1b",
+                      "value": "anagh.bhave@uipath.com"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "entryConditions": [
+          {
+            "id": "Condition_E2en5R",
+            "displayName": "Proposals Released",
+            "isInterrupting": false,
+            "rules": [
+              [
+                {
+                  "id": "Rule_E2r9Lb",
+                  "rule": "selected-stage-completed",
+                  "selectedStageIds": [
+                    "Stage_Pi7Kq2"
+                  ]
+                }
+              ]
+            ]
+          }
+        ],
+        "exitConditions": [
+          {
+            "id": "Condition_E2xQ4v",
+            "displayName": "Individual Evaluations Complete",
+            "type": "exit-only",
+            "marksStageComplete": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_E2q7Hs",
+                  "rule": "required-tasks-completed"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "Stage_Cn5Rt1",
+      "type": "case-management:Stage",
+      "data": {
+        "label": "Consensus",
+        "description": "Compiles individual evaluations, has the SS_ConsensusAnalyst agent surface disagreements and draft consensus language, and has the SSEB Chair set consensus ratings and sign the SSEB report.",
+        "isRequired": true,
+        "parentElement": {
+          "id": "root",
+          "type": "case-management:root"
+        },
+        "isInvalidDropTarget": false,
+        "isPendingParent": false,
+        "tasks": [
+          [
+            {
+              "id": "tCe8wB3nJ",
+              "type": "rpa",
+              "displayName": "Compile Individual Evaluations",
+              "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+              "isRequired": true,
+              "shouldRunOnlyOnce": false,
+              "description": "Reads every evaluator's findings and ratings from Data Fabric and compiles them, per offeror and factor, into one evaluation set with rating spreads.",
+              "data": {
+                "name": "=bindings.bRb7Kq2Lm",
+                "folderPath": "=bindings.bRf3Np8Xc",
+                "inputs": [
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "vCe0Tq4Lm",
+                    "var": "vCe0Tq4Lm",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": "CompileEvaluations"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vCe1Rw7Xz",
+                    "var": "vCe1Rw7Xz",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "includeOfferorIds",
+                    "type": "string",
+                    "id": "vCe2Kp5Vn",
+                    "var": "vCe2Kp5Vn",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": ""
+                  },
+                  {
+                    "name": "agentProcess",
+                    "type": "string",
+                    "id": "vCe3Hs8Bd",
+                    "var": "vCe3Hs8Bd",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddText",
+                    "type": "string",
+                    "id": "vCe4Mc2Yt",
+                    "var": "vCe4Mc2Yt",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": ""
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "vCe5Fj9Qe",
+                    "var": "vCe5Fj9Qe",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": ""
+                  },
+                  {
+                    "name": "signedBy",
+                    "type": "string",
+                    "id": "vCe6Lx3Pw",
+                    "var": "vCe6Lx3Pw",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": ""
+                  },
+                  {
+                    "name": "rationale",
+                    "type": "string",
+                    "id": "vCe7Nz6Ka",
+                    "var": "vCe7Nz6Ka",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": ""
+                  },
+                  {
+                    "name": "cancelledBy",
+                    "type": "string",
+                    "id": "vCe8Dv1Ru",
+                    "var": "vCe8Dv1Ru",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "error_type",
+                    "type": "string",
+                    "id": "errorType4",
+                    "var": "errorType4",
+                    "value": "errorType4",
+                    "source": "=error_type",
+                    "target": "=errorType4",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ"
+                  },
+                  {
+                    "name": "error_message",
+                    "type": "string",
+                    "id": "errorMessage4",
+                    "var": "errorMessage4",
+                    "value": "errorMessage4",
+                    "source": "=error_message",
+                    "target": "=errorMessage4",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ"
+                  },
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "step4",
+                    "var": "step4",
+                    "value": "step4",
+                    "source": "=step",
+                    "target": "=step4",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ"
+                  },
+                  {
+                    "name": "content",
+                    "type": "string",
+                    "id": "content4",
+                    "var": "evaluationSet",
+                    "originalVar": "content4",
+                    "value": "evaluationSet",
+                    "source": "=content",
+                    "target": "=content4",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ"
+                  },
+                  {
+                    "name": "detail",
+                    "type": "string",
+                    "id": "detail4",
+                    "var": "ratingScales",
+                    "originalVar": "detail4",
+                    "value": "ratingScales",
+                    "source": "=detail",
+                    "target": "=detail4",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ"
+                  },
+                  {
+                    "name": "count",
+                    "type": "integer",
+                    "id": "count4",
+                    "var": "count4",
+                    "value": "count4",
+                    "source": "=count",
+                    "target": "=count4",
+                    "elementId": "Stage_Cn5Rt1-tCe8wB3nJ"
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cCe2Hq8Mv",
+                  "displayName": "Entry Rule 8",
+                  "rules": [
+                    [
+                      {
+                        "id": "rCe6Tz3Kw",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tDc1qR6yH",
+              "type": "agent",
+              "displayName": "Draft Consensus",
+              "elementId": "Stage_Cn5Rt1-tDc1qR6yH",
+              "isRequired": true,
+              "shouldRunOnlyOnce": false,
+              "description": "The SS_ConsensusAnalyst agent identifies where evaluators disagree (rating spread, conflicting findings), proposes consensus ratings with rationale citing the underlying findings, and lists the questions the Chair should resolve.",
+              "data": {
+                "name": "=bindings.bCa4Wm9Ts",
+                "folderPath": "=bindings.bCf8Hq2Vd",
+                "inputs": [
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vDc0Kp3Rx",
+                    "var": "vDc0Kp3Rx",
+                    "elementId": "Stage_Cn5Rt1-tDc1qR6yH",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluationSet",
+                    "type": "string",
+                    "id": "vDc1Wm7Ts",
+                    "var": "vDc1Wm7Ts",
+                    "elementId": "Stage_Cn5Rt1-tDc1qR6yH",
+                    "value": "=vars.content4"
+                  },
+                  {
+                    "name": "scales",
+                    "type": "string",
+                    "id": "vDc2Lq9Hn",
+                    "var": "vDc2Lq9Hn",
+                    "elementId": "Stage_Cn5Rt1-tDc1qR6yH",
+                    "value": "=vars.detail4"
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "proposals",
+                    "type": "jsonSchema",
+                    "subType": "object",
+                    "id": "proposals",
+                    "var": "proposals",
+                    "value": "proposals",
+                    "source": "=proposals",
+                    "target": "=proposals",
+                    "elementId": "Stage_Cn5Rt1-tDc1qR6yH",
+                    "body": {
+                      "type": "array",
+                      "description": "One proposed consensus per offeror and factor",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "offerorId": {
+                            "type": "string",
+                            "description": "Offeror id as given"
+                          },
+                          "factorId": {
+                            "type": "string",
+                            "description": "Factor id as given"
+                          },
+                          "spread": {
+                            "type": "integer",
+                            "description": "Distance in scale steps between the highest and lowest individual rating"
+                          },
+                          "proposedRating": {
+                            "type": "string",
+                            "description": "Proposed consensus rating, exactly as written in the scale"
+                          },
+                          "rationale": {
+                            "type": "string",
+                            "description": "Two to four sentences tying the proposed rating to specific findings"
+                          },
+                          "supportingFindingIds": {
+                            "type": "array",
+                            "description": "Finding ids the rationale relies on",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "chairQuestions": {
+                            "type": "string",
+                            "description": "Questions the SSEB Chair should resolve with evaluators, or 'None'"
+                          }
+                        }
+                      },
+                      "$schema": "http://json-schema.org/draft-07/schema#"
+                    }
+                  },
+                  {
+                    "name": "disagreementCount",
+                    "type": "integer",
+                    "id": "disagreementCount",
+                    "var": "disagreementCount",
+                    "originalVar": "disagreementCount",
+                    "value": "disagreementCount",
+                    "source": "=disagreementCount",
+                    "target": "=disagreementCount",
+                    "elementId": "Stage_Cn5Rt1-tDc1qR6yH"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error5",
+                    "var": "error5",
+                    "value": "error5",
+                    "source": "=Error",
+                    "target": "=error5",
+                    "elementId": "Stage_Cn5Rt1-tDc1qR6yH",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cDc4Ys8Np",
+                  "displayName": "Entry Rule 9",
+                  "rules": [
+                    [
+                      {
+                        "id": "rDc7Gv2Lq",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tSc5mK9pL",
+              "type": "action",
+              "displayName": "SSEB Chair Consensus",
+              "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+              "isRequired": true,
+              "shouldRunOnlyOnce": false,
+              "description": "The SSEB Chair reviews disagreements and the agent's proposed consensus, sets the consensus rating and narrative for each offeror and factor, and either signs the SSEB report or reconvenes evaluators.",
+              "data": {
+                "taskTitle": "Set SSEB consensus ratings",
+                "priority": "High",
+                "recipient": {
+                  "Type": 3,
+                  "Value": "=vars.ssebChair"
+                },
+                "labels": "source-selection, sseb-chair",
+                "name": "=bindings.bTf5Nv8Qe",
+                "folderPath": "=bindings.bTp9Mc4Ra",
+                "inputs": [
+                  {
+                    "name": "actionType",
+                    "type": "string",
+                    "id": "vCh0Bq6Xe",
+                    "var": "vCh0Bq6Xe",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": "consensus"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vCh1Cw3Nz",
+                    "var": "vCh1Cw3Nz",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluatorSlot",
+                    "type": "number",
+                    "id": "vCh2Dk8Pm",
+                    "var": "vCh2Dk8Pm",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": ""
+                  },
+                  {
+                    "name": "complianceSummary",
+                    "type": "string",
+                    "id": "vCh3Fs1Gt",
+                    "var": "vCh3Fs1Gt",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": ""
+                  },
+                  {
+                    "name": "consensusDraft",
+                    "type": "string",
+                    "id": "vCh4Hy5Jw",
+                    "var": "vCh4Hy5Jw",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": "=js:JSON.stringify(vars.proposals)"
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vCh5Jn9Lq",
+                    "var": "vCh5Jn9Lq",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "vCh6Lr2Mv",
+                    "var": "vCh6Lr2Mv",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": ""
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "vCh7Mt4Sx",
+                    "var": "vCh7Mt4Sx",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": ""
+                  },
+                  {
+                    "name": "chairQuestions",
+                    "type": "string",
+                    "id": "vCh8Nv7Uc",
+                    "var": "vCh8Nv7Uc",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "decision",
+                    "type": "string",
+                    "id": "decision5",
+                    "var": "consensusDecision",
+                    "originalVar": "decision5",
+                    "value": "consensusDecision",
+                    "source": "=decision",
+                    "target": "=decision5",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "id": "notes5",
+                    "var": "notes5",
+                    "value": "notes5",
+                    "source": "=notes",
+                    "target": "=notes5",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL"
+                  },
+                  {
+                    "name": "payload",
+                    "type": "string",
+                    "id": "payload5",
+                    "var": "consensusRatings",
+                    "originalVar": "payload5",
+                    "value": "consensusRatings",
+                    "source": "=payload",
+                    "target": "=payload5",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL"
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "awardee5",
+                    "var": "awardee5",
+                    "value": "awardee5",
+                    "source": "=awardee",
+                    "target": "=awardee5",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL"
+                  },
+                  {
+                    "name": "Action",
+                    "type": "string",
+                    "id": "action5",
+                    "var": "action5",
+                    "value": "action5",
+                    "source": "=Action",
+                    "target": "=action5",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL"
+                  },
+                  {
+                    "name": "hitlTask",
+                    "type": "jsonSchema",
+                    "id": "hitlTask5",
+                    "var": "hitlTask5",
+                    "value": "hitlTask5",
+                    "source": "=hitlTask",
+                    "target": "=hitlTask5",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error6",
+                    "var": "error6",
+                    "value": "error6",
+                    "source": "=Error",
+                    "target": "=error6",
+                    "elementId": "Stage_Cn5Rt1-tSc5mK9pL",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cCh6Rw1Zt",
+                  "displayName": "Entry Rule 10",
+                  "rules": [
+                    [
+                      {
+                        "id": "rCh3Mk9Vb",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        "slaRules": [
+          {
+            "id": "sla_Cn6Hv2Xp",
+            "displayName": "Consensus SLA",
+            "expression": "=js:true",
+            "count": 5,
+            "unit": "d",
+            "escalationRule": [
+              {
+                "id": "esc_Ca5Nw8",
+                "displayName": "Consensus SLA at risk",
+                "triggerInfo": {
+                  "type": "at-risk",
+                  "atRiskPercentage": 75
+                },
+                "action": {
+                  "type": "notification",
+                  "recipients": [
+                    {
+                      "scope": "User",
+                      "target": "0495433d-7446-45c4-b224-03c58e2cdf1b",
+                      "value": "anagh.bhave@uipath.com"
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "esc_Cb2Jt4",
+                "displayName": "Consensus SLA breached",
+                "triggerInfo": {
+                  "type": "sla-breached"
+                },
+                "action": {
+                  "type": "notification",
+                  "recipients": [
+                    {
+                      "scope": "User",
+                      "target": "0495433d-7446-45c4-b224-03c58e2cdf1b",
+                      "value": "anagh.bhave@uipath.com"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "entryConditions": [
+          {
+            "id": "Condition_C3en2M",
+            "displayName": "Evaluations In",
+            "isInterrupting": false,
+            "rules": [
+              [
+                {
+                  "id": "Rule_C3r6Tq",
+                  "rule": "selected-stage-completed",
+                  "selectedStageIds": [
+                    "Stage_Ev3Nw8"
+                  ]
+                }
+              ]
+            ]
+          }
+        ],
+        "exitConditions": [
+          {
+            "id": "Condition_C3xK9p",
+            "displayName": "Consensus Reached",
+            "type": "exit-only",
+            "marksStageComplete": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_C3q3Vn",
+                  "rule": "required-tasks-completed",
+                  "conditionExpression": "=js:vars.decision5 !== \"Reconvene\""
+                }
+              ]
+            ]
+          },
+          {
+            "id": "Condition_C3xR5w",
+            "displayName": "Reconvene Requested",
+            "type": "exit-only",
+            "marksStageComplete": false,
+            "rules": [
+              [
+                {
+                  "id": "Rule_C3s8Jd",
+                  "rule": "selected-tasks-completed",
+                  "selectedTasksIds": [
+                    "tSc5mK9pL"
+                  ],
+                  "conditionExpression": "=js:vars.decision5 === \"Reconvene\""
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "Stage_Pr9Lm4",
+      "type": "case-management:Stage",
+      "data": {
+        "label": "Price Evaluation",
+        "description": "Computes each offeror's total evaluated price, compares it with the independent government cost estimate and checks for unbalanced pricing; the Contracting Officer records the price reasonableness determination.",
+        "isRequired": true,
+        "parentElement": {
+          "id": "root",
+          "type": "case-management:root"
+        },
+        "isInvalidDropTarget": false,
+        "isPendingParent": false,
+        "tasks": [
+          [
+            {
+              "id": "tAp2vF7kX",
+              "type": "rpa",
+              "displayName": "Analyze Price Proposals",
+              "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Computes total evaluated price per offeror from the extracted price schedules, variance to the IGCE, and flags line items priced far from the IGCE as potentially unbalanced.",
+              "data": {
+                "name": "=bindings.bRb7Kq2Lm",
+                "folderPath": "=bindings.bRf3Np8Xc",
+                "inputs": [
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "vAp0Tq4Lm",
+                    "var": "vAp0Tq4Lm",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": "AnalyzePrice"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vAp1Rw7Xz",
+                    "var": "vAp1Rw7Xz",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "includeOfferorIds",
+                    "type": "string",
+                    "id": "vAp2Kp5Vn",
+                    "var": "vAp2Kp5Vn",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": ""
+                  },
+                  {
+                    "name": "agentProcess",
+                    "type": "string",
+                    "id": "vAp3Hs8Bd",
+                    "var": "vAp3Hs8Bd",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddText",
+                    "type": "string",
+                    "id": "vAp4Mc2Yt",
+                    "var": "vAp4Mc2Yt",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": ""
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "vAp5Fj9Qe",
+                    "var": "vAp5Fj9Qe",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": ""
+                  },
+                  {
+                    "name": "signedBy",
+                    "type": "string",
+                    "id": "vAp6Lx3Pw",
+                    "var": "vAp6Lx3Pw",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": ""
+                  },
+                  {
+                    "name": "rationale",
+                    "type": "string",
+                    "id": "vAp7Nz6Ka",
+                    "var": "vAp7Nz6Ka",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": ""
+                  },
+                  {
+                    "name": "cancelledBy",
+                    "type": "string",
+                    "id": "vAp8Dv1Ru",
+                    "var": "vAp8Dv1Ru",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "error_type",
+                    "type": "string",
+                    "id": "errorType5",
+                    "var": "errorType5",
+                    "value": "errorType5",
+                    "source": "=error_type",
+                    "target": "=errorType5",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX"
+                  },
+                  {
+                    "name": "error_message",
+                    "type": "string",
+                    "id": "errorMessage5",
+                    "var": "errorMessage5",
+                    "value": "errorMessage5",
+                    "source": "=error_message",
+                    "target": "=errorMessage5",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX"
+                  },
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "step5",
+                    "var": "step5",
+                    "value": "step5",
+                    "source": "=step",
+                    "target": "=step5",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX"
+                  },
+                  {
+                    "name": "content",
+                    "type": "string",
+                    "id": "content5",
+                    "var": "priceAnalysis",
+                    "originalVar": "content5",
+                    "value": "priceAnalysis",
+                    "source": "=content",
+                    "target": "=content5",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX"
+                  },
+                  {
+                    "name": "detail",
+                    "type": "string",
+                    "id": "detail5",
+                    "var": "detail5",
+                    "value": "detail5",
+                    "source": "=detail",
+                    "target": "=detail5",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX"
+                  },
+                  {
+                    "name": "count",
+                    "type": "integer",
+                    "id": "count5",
+                    "var": "count5",
+                    "value": "count5",
+                    "source": "=count",
+                    "target": "=count5",
+                    "elementId": "Stage_Pr9Lm4-tAp2vF7kX"
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cAp8Lt3Wn",
+                  "displayName": "Entry Rule 11",
+                  "rules": [
+                    [
+                      {
+                        "id": "rAp1Qx6Hc",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tPd9nG4sT",
+              "type": "action",
+              "displayName": "Price Determination",
+              "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "The Contracting Officer reviews the price analysis, records the reasonableness determination for each offeror, and proceeds to the award decision or cancels the solicitation.",
+              "data": {
+                "taskTitle": "Determine price reasonableness",
+                "priority": "High",
+                "recipient": {
+                  "Type": 3,
+                  "Value": "=vars.contractingOfficer"
+                },
+                "labels": "source-selection, contracting-officer",
+                "name": "=bindings.bTf5Nv8Qe",
+                "folderPath": "=bindings.bTp9Mc4Ra",
+                "inputs": [
+                  {
+                    "name": "actionType",
+                    "type": "string",
+                    "id": "vPd0Bq6Xe",
+                    "var": "vPd0Bq6Xe",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": "priceDetermination"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vPd1Cw3Nz",
+                    "var": "vPd1Cw3Nz",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluatorSlot",
+                    "type": "number",
+                    "id": "vPd2Dk8Pm",
+                    "var": "vPd2Dk8Pm",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": ""
+                  },
+                  {
+                    "name": "complianceSummary",
+                    "type": "string",
+                    "id": "vPd3Fs1Gt",
+                    "var": "vPd3Fs1Gt",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": ""
+                  },
+                  {
+                    "name": "consensusDraft",
+                    "type": "string",
+                    "id": "vPd4Hy5Jw",
+                    "var": "vPd4Hy5Jw",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": ""
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vPd5Jn9Lq",
+                    "var": "vPd5Jn9Lq",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": "=vars.content5"
+                  },
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "vPd6Lr2Mv",
+                    "var": "vPd6Lr2Mv",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": ""
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "vPd7Mt4Sx",
+                    "var": "vPd7Mt4Sx",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": ""
+                  },
+                  {
+                    "name": "chairQuestions",
+                    "type": "string",
+                    "id": "vPd8Nv7Uc",
+                    "var": "vPd8Nv7Uc",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "decision",
+                    "type": "string",
+                    "id": "decision6",
+                    "var": "priceDecision",
+                    "originalVar": "decision6",
+                    "value": "priceDecision",
+                    "source": "=decision",
+                    "target": "=decision6",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "id": "notes6",
+                    "var": "priceDetermination",
+                    "originalVar": "notes6",
+                    "value": "priceDetermination",
+                    "source": "=notes",
+                    "target": "=notes6",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT"
+                  },
+                  {
+                    "name": "payload",
+                    "type": "string",
+                    "id": "payload6",
+                    "var": "payload6",
+                    "value": "payload6",
+                    "source": "=payload",
+                    "target": "=payload6",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT"
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "awardee6",
+                    "var": "awardee6",
+                    "value": "awardee6",
+                    "source": "=awardee",
+                    "target": "=awardee6",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT"
+                  },
+                  {
+                    "name": "Action",
+                    "type": "string",
+                    "id": "action6",
+                    "var": "action6",
+                    "value": "action6",
+                    "source": "=Action",
+                    "target": "=action6",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT"
+                  },
+                  {
+                    "name": "hitlTask",
+                    "type": "jsonSchema",
+                    "id": "hitlTask6",
+                    "var": "hitlTask6",
+                    "value": "hitlTask6",
+                    "source": "=hitlTask",
+                    "target": "=hitlTask6",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error7",
+                    "var": "error7",
+                    "value": "error7",
+                    "source": "=Error",
+                    "target": "=error7",
+                    "elementId": "Stage_Pr9Lm4-tPd9nG4sT",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cPd5Kv9Ys",
+                  "displayName": "Entry Rule 12",
+                  "rules": [
+                    [
+                      {
+                        "id": "rPd2Wn7Fm",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        "entryConditions": [
+          {
+            "id": "Condition_R4en8B",
+            "displayName": "Consensus Signed",
+            "isInterrupting": false,
+            "rules": [
+              [
+                {
+                  "id": "Rule_R4r1Gk",
+                  "rule": "selected-stage-completed",
+                  "selectedStageIds": [
+                    "Stage_Cn5Rt1"
+                  ]
+                }
+              ]
+            ]
+          }
+        ],
+        "exitConditions": [
+          {
+            "id": "Condition_R4xD7q",
+            "displayName": "Price Determined",
+            "type": "exit-only",
+            "marksStageComplete": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_R4q4Zm",
+                  "rule": "required-tasks-completed",
+                  "conditionExpression": "=js:vars.decision6 !== \"Cancel\""
+                }
+              ]
+            ]
+          },
+          {
+            "id": "Condition_R4xE2s",
+            "displayName": "Cancelled at Price",
+            "type": "exit-only",
+            "marksStageComplete": false,
+            "rules": [
+              [
+                {
+                  "id": "Rule_R4s6Yp",
+                  "rule": "selected-tasks-completed",
+                  "selectedTasksIds": [
+                    "tPd9nG4sT"
+                  ],
+                  "conditionExpression": "=js:vars.decision6 === \"Cancel\""
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "Stage_Aw2Xd6",
+      "type": "case-management:Stage",
+      "data": {
+        "label": "Award Decision",
+        "description": "Drafts the comparative best-value analysis and SSDD, has the Source Selection Authority make and sign the award decision, and publishes the award record with its full audit trail.",
+        "isRequired": true,
+        "parentElement": {
+          "id": "root",
+          "type": "case-management:root"
+        },
+        "isInvalidDropTarget": false,
+        "isPendingParent": false,
+        "tasks": [
+          [
+            {
+              "id": "tPp6hJ2wC",
+              "type": "rpa",
+              "displayName": "Prepare Decision Package",
+              "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Assembles the evaluation plan summary and the SSEB consensus record — each consensus rating with its rationale and the evaluator-accepted findings and proposal citations behind it — for the decision writer.",
+              "data": {
+                "name": "=bindings.bRb7Kq2Lm",
+                "folderPath": "=bindings.bRf3Np8Xc",
+                "inputs": [
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "vPp0Tq4Lm",
+                    "var": "vPp0Tq4Lm",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": "PrepareDecisionPackage"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vPp1Rw7Xz",
+                    "var": "vPp1Rw7Xz",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "includeOfferorIds",
+                    "type": "string",
+                    "id": "vPp2Kp5Vn",
+                    "var": "vPp2Kp5Vn",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": ""
+                  },
+                  {
+                    "name": "agentProcess",
+                    "type": "string",
+                    "id": "vPp3Hs8Bd",
+                    "var": "vPp3Hs8Bd",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddText",
+                    "type": "string",
+                    "id": "vPp4Mc2Yt",
+                    "var": "vPp4Mc2Yt",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": ""
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "vPp5Fj9Qe",
+                    "var": "vPp5Fj9Qe",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": ""
+                  },
+                  {
+                    "name": "signedBy",
+                    "type": "string",
+                    "id": "vPp6Lx3Pw",
+                    "var": "vPp6Lx3Pw",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": ""
+                  },
+                  {
+                    "name": "rationale",
+                    "type": "string",
+                    "id": "vPp7Nz6Ka",
+                    "var": "vPp7Nz6Ka",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": ""
+                  },
+                  {
+                    "name": "cancelledBy",
+                    "type": "string",
+                    "id": "vPp8Dv1Ru",
+                    "var": "vPp8Dv1Ru",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "error_type",
+                    "type": "string",
+                    "id": "errorType6",
+                    "var": "errorType6",
+                    "value": "errorType6",
+                    "source": "=error_type",
+                    "target": "=errorType6",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC"
+                  },
+                  {
+                    "name": "error_message",
+                    "type": "string",
+                    "id": "errorMessage6",
+                    "var": "errorMessage6",
+                    "value": "errorMessage6",
+                    "source": "=error_message",
+                    "target": "=errorMessage6",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC"
+                  },
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "step6",
+                    "var": "step6",
+                    "value": "step6",
+                    "source": "=step",
+                    "target": "=step6",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC"
+                  },
+                  {
+                    "name": "content",
+                    "type": "string",
+                    "id": "content6",
+                    "var": "consensusRecord",
+                    "originalVar": "content6",
+                    "value": "consensusRecord",
+                    "source": "=content",
+                    "target": "=content6",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC"
+                  },
+                  {
+                    "name": "detail",
+                    "type": "string",
+                    "id": "detail6",
+                    "var": "planSummary",
+                    "originalVar": "detail6",
+                    "value": "planSummary",
+                    "source": "=detail",
+                    "target": "=detail6",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC"
+                  },
+                  {
+                    "name": "count",
+                    "type": "integer",
+                    "id": "count6",
+                    "var": "count6",
+                    "value": "count6",
+                    "source": "=count",
+                    "target": "=count6",
+                    "elementId": "Stage_Aw2Xd6-tPp6hJ2wC"
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cPp3Xm7Rv",
+                  "displayName": "Entry Rule 13",
+                  "rules": [
+                    [
+                      {
+                        "id": "rPp9Ks4Tw",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tDs3xL8mV",
+              "type": "agent",
+              "displayName": "Draft Source Selection Decision",
+              "elementId": "Stage_Aw2Xd6-tDs3xL8mV",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "The SS_DecisionWriter agent drafts the comparative analysis and SSDD using the plan's basis for award and factor importance, consensus ratings with their supporting findings, and the price analysis, citing the SSEB record for every discriminator.",
+              "data": {
+                "name": "=bindings.bDw6Rk3Pn",
+                "folderPath": "=bindings.bDf2Lx7Gc",
+                "inputs": [
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vDs0Np4Qe",
+                    "var": "vDs0Np4Qe",
+                    "elementId": "Stage_Aw2Xd6-tDs3xL8mV",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "plan",
+                    "type": "string",
+                    "id": "vDs1Hk8Tw",
+                    "var": "vDs1Hk8Tw",
+                    "elementId": "Stage_Aw2Xd6-tDs3xL8mV",
+                    "value": "=vars.detail6"
+                  },
+                  {
+                    "name": "consensusRecord",
+                    "type": "string",
+                    "id": "vDs2Vb3Ly",
+                    "var": "vDs2Vb3Ly",
+                    "elementId": "Stage_Aw2Xd6-tDs3xL8mV",
+                    "value": "=vars.content6"
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vDs3Gm6Rz",
+                    "var": "vDs3Gm6Rz",
+                    "elementId": "Stage_Aw2Xd6-tDs3xL8mV",
+                    "value": "=vars.priceAnalysis"
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "ssddDraft",
+                    "var": "ssddDraft",
+                    "originalVar": "ssddDraft",
+                    "value": "ssddDraft",
+                    "source": "=ssddDraft",
+                    "target": "=ssddDraft",
+                    "elementId": "Stage_Aw2Xd6-tDs3xL8mV"
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "recommendedAwardee",
+                    "var": "recommendedAwardee",
+                    "originalVar": "recommendedAwardee",
+                    "value": "recommendedAwardee",
+                    "source": "=recommendedAwardee",
+                    "target": "=recommendedAwardee",
+                    "elementId": "Stage_Aw2Xd6-tDs3xL8mV"
+                  },
+                  {
+                    "name": "discriminators",
+                    "type": "jsonSchema",
+                    "subType": "object",
+                    "id": "discriminators",
+                    "var": "discriminators",
+                    "value": "discriminators",
+                    "source": "=discriminators",
+                    "target": "=discriminators",
+                    "elementId": "Stage_Aw2Xd6-tDs3xL8mV",
+                    "body": {
+                      "type": "array",
+                      "description": "The findings that drive the tradeoff",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "offeror": {
+                            "type": "string",
+                            "description": "Offeror name"
+                          },
+                          "factor": {
+                            "type": "string",
+                            "description": "Factor name"
+                          },
+                          "finding": {
+                            "type": "string",
+                            "description": "The discriminating finding"
+                          },
+                          "citation": {
+                            "type": "string",
+                            "description": "Proposal volume and page, or finding id"
+                          }
+                        }
+                      },
+                      "$schema": "http://json-schema.org/draft-07/schema#"
+                    }
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error8",
+                    "var": "error8",
+                    "value": "error8",
+                    "source": "=Error",
+                    "target": "=error8",
+                    "elementId": "Stage_Aw2Xd6-tDs3xL8mV",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cDs6Qn2Hk",
+                  "displayName": "Entry Rule 14",
+                  "rules": [
+                    [
+                      {
+                        "id": "rDs8Jw5Pz",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tSa7bN1qY",
+              "type": "action",
+              "displayName": "SSA Award Decision",
+              "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "The Source Selection Authority reviews the comparative analysis, selects the offeror representing the best value, edits and signs the SSDD.",
+              "data": {
+                "taskTitle": "Make and sign the source selection decision",
+                "priority": "Critical",
+                "recipient": {
+                  "Type": 3,
+                  "Value": "=vars.sourceSelectionAuthority"
+                },
+                "labels": "source-selection, ssa",
+                "name": "=bindings.bTf5Nv8Qe",
+                "folderPath": "=bindings.bTp9Mc4Ra",
+                "inputs": [
+                  {
+                    "name": "actionType",
+                    "type": "string",
+                    "id": "vSa0Bq6Xe",
+                    "var": "vSa0Bq6Xe",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": "awardDecision"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vSa1Cw3Nz",
+                    "var": "vSa1Cw3Nz",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluatorSlot",
+                    "type": "number",
+                    "id": "vSa2Dk8Pm",
+                    "var": "vSa2Dk8Pm",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": ""
+                  },
+                  {
+                    "name": "complianceSummary",
+                    "type": "string",
+                    "id": "vSa3Fs1Gt",
+                    "var": "vSa3Fs1Gt",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": ""
+                  },
+                  {
+                    "name": "consensusDraft",
+                    "type": "string",
+                    "id": "vSa4Hy5Jw",
+                    "var": "vSa4Hy5Jw",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": ""
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vSa5Jn9Lq",
+                    "var": "vSa5Jn9Lq",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "vSa6Lr2Mv",
+                    "var": "vSa6Lr2Mv",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": "=vars.ssddDraft"
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "vSa7Mt4Sx",
+                    "var": "vSa7Mt4Sx",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": "=vars.recommendedAwardee"
+                  },
+                  {
+                    "name": "chairQuestions",
+                    "type": "string",
+                    "id": "vSa8Nv7Uc",
+                    "var": "vSa8Nv7Uc",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "decision",
+                    "type": "string",
+                    "id": "decision7",
+                    "var": "decision7",
+                    "value": "decision7",
+                    "source": "=decision",
+                    "target": "=decision7",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "id": "notes7",
+                    "var": "notes7",
+                    "value": "notes7",
+                    "source": "=notes",
+                    "target": "=notes7",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY"
+                  },
+                  {
+                    "name": "payload",
+                    "type": "string",
+                    "id": "payload7",
+                    "var": "signedSsdd",
+                    "originalVar": "payload7",
+                    "value": "signedSsdd",
+                    "source": "=payload",
+                    "target": "=payload7",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY"
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "awardee7",
+                    "var": "awardeeName",
+                    "originalVar": "awardee7",
+                    "value": "awardeeName",
+                    "source": "=awardee",
+                    "target": "=awardee7",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY"
+                  },
+                  {
+                    "name": "Action",
+                    "type": "string",
+                    "id": "action7",
+                    "var": "action7",
+                    "value": "action7",
+                    "source": "=Action",
+                    "target": "=action7",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY"
+                  },
+                  {
+                    "name": "hitlTask",
+                    "type": "jsonSchema",
+                    "id": "hitlTask7",
+                    "var": "hitlTask7",
+                    "value": "hitlTask7",
+                    "source": "=hitlTask",
+                    "target": "=hitlTask7",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error9",
+                    "var": "error9",
+                    "value": "error9",
+                    "source": "=Error",
+                    "target": "=error9",
+                    "elementId": "Stage_Aw2Xd6-tSa7bN1qY",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cSa9Tv4Lm",
+                  "displayName": "Entry Rule 15",
+                  "rules": [
+                    [
+                      {
+                        "id": "rSa3Bx8Qn",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          [
+            {
+              "id": "tPa4kS9dE",
+              "type": "rpa",
+              "displayName": "Publish Award Record",
+              "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Renders the signed SSDD, SSEB consensus report and full decision audit trail to PDF in the SS-Records bucket and marks the solicitation awarded in Data Fabric.",
+              "data": {
+                "name": "=bindings.bRb7Kq2Lm",
+                "folderPath": "=bindings.bRf3Np8Xc",
+                "inputs": [
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "vPa0Tq4Lm",
+                    "var": "vPa0Tq4Lm",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": "PublishAwardRecord"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vPa1Rw7Xz",
+                    "var": "vPa1Rw7Xz",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "includeOfferorIds",
+                    "type": "string",
+                    "id": "vPa2Kp5Vn",
+                    "var": "vPa2Kp5Vn",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": ""
+                  },
+                  {
+                    "name": "agentProcess",
+                    "type": "string",
+                    "id": "vPa3Hs8Bd",
+                    "var": "vPa3Hs8Bd",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddText",
+                    "type": "string",
+                    "id": "vPa4Mc2Yt",
+                    "var": "vPa4Mc2Yt",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": ""
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "vPa5Fj9Qe",
+                    "var": "vPa5Fj9Qe",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": "=vars.awardeeName"
+                  },
+                  {
+                    "name": "signedBy",
+                    "type": "string",
+                    "id": "vPa6Lx3Pw",
+                    "var": "vPa6Lx3Pw",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": "=vars.sourceSelectionAuthority"
+                  },
+                  {
+                    "name": "rationale",
+                    "type": "string",
+                    "id": "vPa7Nz6Ka",
+                    "var": "vPa7Nz6Ka",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": ""
+                  },
+                  {
+                    "name": "cancelledBy",
+                    "type": "string",
+                    "id": "vPa8Dv1Ru",
+                    "var": "vPa8Dv1Ru",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE",
+                    "value": ""
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "error_type",
+                    "type": "string",
+                    "id": "errorType7",
+                    "var": "errorType7",
+                    "value": "errorType7",
+                    "source": "=error_type",
+                    "target": "=errorType7",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE"
+                  },
+                  {
+                    "name": "error_message",
+                    "type": "string",
+                    "id": "errorMessage7",
+                    "var": "errorMessage7",
+                    "value": "errorMessage7",
+                    "source": "=error_message",
+                    "target": "=errorMessage7",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE"
+                  },
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "step7",
+                    "var": "step7",
+                    "value": "step7",
+                    "source": "=step",
+                    "target": "=step7",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE"
+                  },
+                  {
+                    "name": "content",
+                    "type": "string",
+                    "id": "content7",
+                    "var": "awardRecordUri",
+                    "originalVar": "content7",
+                    "value": "awardRecordUri",
+                    "source": "=content",
+                    "target": "=content7",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE"
+                  },
+                  {
+                    "name": "detail",
+                    "type": "string",
+                    "id": "detail7",
+                    "var": "detail7",
+                    "value": "detail7",
+                    "source": "=detail",
+                    "target": "=detail7",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE"
+                  },
+                  {
+                    "name": "count",
+                    "type": "integer",
+                    "id": "count7",
+                    "var": "count7",
+                    "value": "count7",
+                    "source": "=count",
+                    "target": "=count7",
+                    "elementId": "Stage_Aw2Xd6-tPa4kS9dE"
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cPa2Hn6Wx",
+                  "displayName": "Entry Rule 16",
+                  "rules": [
+                    [
+                      {
+                        "id": "rPa7Lc3Kv",
+                        "rule": "runs-sequentially"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        "entryConditions": [
+          {
+            "id": "Condition_A5en3H",
+            "displayName": "Ready for Award Decision",
+            "isInterrupting": false,
+            "rules": [
+              [
+                {
+                  "id": "Rule_A5r7Fc",
+                  "rule": "selected-stage-completed",
+                  "selectedStageIds": [
+                    "Stage_Pr9Lm4"
+                  ]
+                }
+              ]
+            ]
+          }
+        ],
+        "exitConditions": [
+          {
+            "id": "Condition_A5xW6n",
+            "displayName": "Award Published",
+            "type": "exit-only",
+            "marksStageComplete": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_A5q2Kt",
+                  "rule": "required-tasks-completed"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "Stage_Rc8Vb3",
+      "type": "case-management:Stage",
+      "data": {
+        "stageType": "secondary",
+        "label": "Reconvene Evaluators",
+        "description": "Evaluators respond to the Chair's questions and revise their individual findings or ratings before consensus resumes.",
+        "isRequired": false,
+        "parentElement": {
+          "id": "root",
+          "type": "case-management:root"
+        },
+        "isInvalidDropTarget": false,
+        "isPendingParent": false,
+        "tasks": [
+          [
+            {
+              "id": "tEc2zM5rU",
+              "type": "action",
+              "displayName": "Evaluator Clarification",
+              "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+              "isRequired": true,
+              "shouldRunOnlyOnce": false,
+              "description": "Evaluators answer the Chair's consensus questions and update their findings and ratings in the evaluation record.",
+              "data": {
+                "taskTitle": "Answer SSEB Chair consensus questions",
+                "priority": "High",
+                "recipient": {
+                  "Type": 3,
+                  "Value": "=vars.evaluator1"
+                },
+                "labels": "source-selection, evaluator",
+                "name": "=bindings.bTf5Nv8Qe",
+                "folderPath": "=bindings.bTp9Mc4Ra",
+                "inputs": [
+                  {
+                    "name": "actionType",
+                    "type": "string",
+                    "id": "vEk0Bq6Xe",
+                    "var": "vEk0Bq6Xe",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": "clarification"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vEk1Cw3Nz",
+                    "var": "vEk1Cw3Nz",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "evaluatorSlot",
+                    "type": "number",
+                    "id": "vEk2Dk8Pm",
+                    "var": "vEk2Dk8Pm",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": ""
+                  },
+                  {
+                    "name": "complianceSummary",
+                    "type": "string",
+                    "id": "vEk3Fs1Gt",
+                    "var": "vEk3Fs1Gt",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": ""
+                  },
+                  {
+                    "name": "consensusDraft",
+                    "type": "string",
+                    "id": "vEk4Hy5Jw",
+                    "var": "vEk4Hy5Jw",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": ""
+                  },
+                  {
+                    "name": "priceAnalysis",
+                    "type": "string",
+                    "id": "vEk5Jn9Lq",
+                    "var": "vEk5Jn9Lq",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddDraft",
+                    "type": "string",
+                    "id": "vEk6Lr2Mv",
+                    "var": "vEk6Lr2Mv",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": ""
+                  },
+                  {
+                    "name": "recommendedAwardee",
+                    "type": "string",
+                    "id": "vEk7Mt4Sx",
+                    "var": "vEk7Mt4Sx",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": ""
+                  },
+                  {
+                    "name": "chairQuestions",
+                    "type": "string",
+                    "id": "vEk8Nv7Uc",
+                    "var": "vEk8Nv7Uc",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "value": "=vars.consensusRatings"
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "decision",
+                    "type": "string",
+                    "id": "decision8",
+                    "var": "decision8",
+                    "value": "decision8",
+                    "source": "=decision",
+                    "target": "=decision8",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU"
+                  },
+                  {
+                    "name": "notes",
+                    "type": "string",
+                    "id": "notes8",
+                    "var": "clarificationNotes",
+                    "originalVar": "notes8",
+                    "value": "clarificationNotes",
+                    "source": "=notes",
+                    "target": "=notes8",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU"
+                  },
+                  {
+                    "name": "payload",
+                    "type": "string",
+                    "id": "payload8",
+                    "var": "payload8",
+                    "value": "payload8",
+                    "source": "=payload",
+                    "target": "=payload8",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU"
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "awardee8",
+                    "var": "awardee8",
+                    "value": "awardee8",
+                    "source": "=awardee",
+                    "target": "=awardee8",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU"
+                  },
+                  {
+                    "name": "Action",
+                    "type": "string",
+                    "id": "action8",
+                    "var": "action8",
+                    "value": "action8",
+                    "source": "=Action",
+                    "target": "=action8",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU"
+                  },
+                  {
+                    "name": "hitlTask",
+                    "type": "jsonSchema",
+                    "id": "hitlTask8",
+                    "var": "hitlTask8",
+                    "value": "hitlTask8",
+                    "source": "=hitlTask",
+                    "target": "=hitlTask8",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU"
+                  },
+                  {
+                    "name": "Error",
+                    "type": "jsonSchema",
+                    "id": "error10",
+                    "var": "error10",
+                    "value": "error10",
+                    "source": "=Error",
+                    "target": "=error10",
+                    "elementId": "Stage_Rc8Vb3-tEc2zM5rU",
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "detail": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "number"
+                        },
+                        "element": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cEk4Vs9Pq",
+                  "displayName": "Entry Rule 17",
+                  "rules": [
+                    [
+                      {
+                        "id": "rEk6Mx2Tb",
+                        "rule": "current-stage-entered"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        "entryConditions": [
+          {
+            "id": "Condition_V6en4J",
+            "displayName": "Chair Reconvened",
+            "isInterrupting": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_V6r8Qw",
+                  "rule": "selected-stage-exited",
+                  "selectedStageIds": [
+                    "Stage_Cn5Rt1"
+                  ],
+                  "conditionExpression": "=js:vars.decision5 === \"Reconvene\""
+                }
+              ]
+            ]
+          }
+        ],
+        "exitConditions": [
+          {
+            "id": "Condition_V6xT1c",
+            "displayName": "Clarifications Returned",
+            "type": "return-to-origin",
+            "marksStageComplete": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_V6q5Ln",
+                  "rule": "required-tasks-completed"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "Stage_Sc4Jy7",
+      "type": "case-management:Stage",
+      "data": {
+        "stageType": "secondary",
+        "label": "Solicitation Cancelled",
+        "description": "Records the cancellation and closes the solicitation.",
+        "isRequired": false,
+        "parentElement": {
+          "id": "root",
+          "type": "case-management:root"
+        },
+        "isInvalidDropTarget": false,
+        "isPendingParent": false,
+        "tasks": [
+          [
+            {
+              "id": "tRc8yP3fA",
+              "type": "rpa",
+              "displayName": "Record Cancellation",
+              "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+              "isRequired": true,
+              "shouldRunOnlyOnce": true,
+              "description": "Marks the solicitation cancelled in Data Fabric and writes a cancellation memo with the Contracting Officer's rationale to the SS-Records bucket.",
+              "data": {
+                "name": "=bindings.bRb7Kq2Lm",
+                "folderPath": "=bindings.bRf3Np8Xc",
+                "inputs": [
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "vRc0Tq4Lm",
+                    "var": "vRc0Tq4Lm",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": "RecordCancellation"
+                  },
+                  {
+                    "name": "solicitationId",
+                    "type": "string",
+                    "id": "vRc1Rw7Xz",
+                    "var": "vRc1Rw7Xz",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": "=vars.solicitationId"
+                  },
+                  {
+                    "name": "includeOfferorIds",
+                    "type": "string",
+                    "id": "vRc2Kp5Vn",
+                    "var": "vRc2Kp5Vn",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": ""
+                  },
+                  {
+                    "name": "agentProcess",
+                    "type": "string",
+                    "id": "vRc3Hs8Bd",
+                    "var": "vRc3Hs8Bd",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": ""
+                  },
+                  {
+                    "name": "ssddText",
+                    "type": "string",
+                    "id": "vRc4Mc2Yt",
+                    "var": "vRc4Mc2Yt",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": ""
+                  },
+                  {
+                    "name": "awardee",
+                    "type": "string",
+                    "id": "vRc5Fj9Qe",
+                    "var": "vRc5Fj9Qe",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": ""
+                  },
+                  {
+                    "name": "signedBy",
+                    "type": "string",
+                    "id": "vRc6Lx3Pw",
+                    "var": "vRc6Lx3Pw",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": ""
+                  },
+                  {
+                    "name": "rationale",
+                    "type": "string",
+                    "id": "vRc7Nz6Ka",
+                    "var": "vRc7Nz6Ka",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": "=js:vars.priceDecision === \"Cancel\" ? vars.priceDetermination : vars.releaseRationale"
+                  },
+                  {
+                    "name": "cancelledBy",
+                    "type": "string",
+                    "id": "vRc8Dv1Ru",
+                    "var": "vRc8Dv1Ru",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA",
+                    "value": "=vars.contractingOfficer"
+                  }
+                ],
+                "outputs": [
+                  {
+                    "name": "error_type",
+                    "type": "string",
+                    "id": "errorType8",
+                    "var": "errorType8",
+                    "value": "errorType8",
+                    "source": "=error_type",
+                    "target": "=errorType8",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA"
+                  },
+                  {
+                    "name": "error_message",
+                    "type": "string",
+                    "id": "errorMessage8",
+                    "var": "errorMessage8",
+                    "value": "errorMessage8",
+                    "source": "=error_message",
+                    "target": "=errorMessage8",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA"
+                  },
+                  {
+                    "name": "step",
+                    "type": "string",
+                    "id": "step8",
+                    "var": "step8",
+                    "value": "step8",
+                    "source": "=step",
+                    "target": "=step8",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA"
+                  },
+                  {
+                    "name": "content",
+                    "type": "string",
+                    "id": "content8",
+                    "var": "cancellationRecordUri",
+                    "originalVar": "content8",
+                    "value": "cancellationRecordUri",
+                    "source": "=content",
+                    "target": "=content8",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA"
+                  },
+                  {
+                    "name": "detail",
+                    "type": "string",
+                    "id": "detail8",
+                    "var": "detail8",
+                    "value": "detail8",
+                    "source": "=detail",
+                    "target": "=detail8",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA"
+                  },
+                  {
+                    "name": "count",
+                    "type": "integer",
+                    "id": "count8",
+                    "var": "count8",
+                    "value": "count8",
+                    "source": "=count",
+                    "target": "=count8",
+                    "elementId": "Stage_Sc4Jy7-tRc8yP3fA"
+                  }
+                ]
+              },
+              "entryConditions": [
+                {
+                  "id": "cRc7Wp5Nh",
+                  "displayName": "Entry Rule 18",
+                  "rules": [
+                    [
+                      {
+                        "id": "rRc4Gy9Ls",
+                        "rule": "current-stage-entered"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        ],
+        "entryConditions": [
+          {
+            "id": "Condition_X7enA2",
+            "displayName": "Cancellation from Release",
+            "isInterrupting": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_X7r3Dv",
+                  "rule": "selected-stage-exited",
+                  "selectedStageIds": [
+                    "Stage_Pi7Kq2"
+                  ],
+                  "conditionExpression": "=js:vars.decision === \"Cancel\""
+                }
+              ]
+            ]
+          },
+          {
+            "id": "Condition_X7enB8",
+            "displayName": "Cancellation from Price",
+            "isInterrupting": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_X7r9Mh",
+                  "rule": "selected-stage-exited",
+                  "selectedStageIds": [
+                    "Stage_Pr9Lm4"
+                  ],
+                  "conditionExpression": "=js:vars.decision6 === \"Cancel\""
+                }
+              ]
+            ]
+          }
+        ],
+        "exitConditions": [
+          {
+            "id": "Condition_X7xC5g",
+            "displayName": "Cancellation Recorded",
+            "type": "exit-only",
+            "marksStageComplete": true,
+            "rules": [
+              [
+                {
+                  "id": "Rule_X7q6Bs",
+                  "rule": "required-tasks-completed"
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "edges": [],
+  "layout": {}
+}

@@ -1,0 +1,989 @@
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
+import { Link, useBlocker, useNavigate } from 'react-router-dom'
+import { useWizardBackLink } from '../lib/backlink'
+import { AlertTriangle, ArrowLeft, ArrowRight, Bot, CheckCircle2, FileText, FileUp, FolderInput, ListChecks, Loader2, Play, Plus, Quote, RefreshCw, Save, ShieldCheck, Sparkles, Trash2, Upload, X, XCircle } from 'lucide-react'
+import { toast } from 'sonner'
+import { Button } from '@uipath/apollo-wind/components/ui/button'
+import { Checkbox } from '@uipath/apollo-wind/components/ui/checkbox'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@uipath/apollo-wind/components/ui/dialog'
+import { Input } from '@uipath/apollo-wind/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@uipath/apollo-wind/components/ui/select'
+import { Stepper } from '@uipath/apollo-wind/components/ui/stepper'
+import { Textarea } from '@uipath/apollo-wind/components/ui/textarea'
+import { PersonaAvatar } from '../components/Flair'
+import { usePersona } from '../hooks/usePersona'
+import { DEMO_PANEL_EMAIL, PROCESS_FOLDER, planOf, startCase, useData } from '../lib/data'
+import { money, when } from '../lib/eval'
+import {
+  BASES, SECTION_M_AGENT_LABEL, TEMPLATES, runIgceAgent, runSolicitationAgent, VOLUMES, applySectionM, blankCriteria, check, warmAgents, defaultAssignments, defaultFactors, draftFromPlan, emptyDraft,
+  describeWeights, fwOf, guessVolume, ordered, panelSlots, rated, rerank, resizePanel, runSectionMAgent, saveSolicitation, solicitationRecord, templatesFor, toPlan, totalWeight,
+  uploadProposal, weighEqually, weighFromRanks,
+} from '../lib/intake'
+import type { Draft, DraftFactor, PanelSize, RatingType, SectionMResult } from '../lib/intake'
+import { fileText } from '../lib/pdfText'
+import { RATING_METHODS, SCORING_GUIDE, legend, look } from '../lib/ratings'
+import { CERTIFIED_THROUGH, PERSONAS, annualCertifications } from '../lib/types'
+import type { RatingMethod } from '../lib/types'
+import { NUMBER_FORMAT, POINT_SHARES, titled, useTerms, useVolumeLabel } from '@forms/lib/terms'
+import type { Framework } from '@forms/lib/terms'
+import { frameworkOfSolicitation, useFrameworkMode } from '../hooks/useFramework'
+
+/** The wizard's draft, kept in this browser until the evaluation is created or the officer starts over; one per framework. */
+const draftKey = (fw: Framework) => (fw === 'sled' ? 'ss.newEvaluation.sled' : 'ss.newEvaluation')
+interface SavedDraft { v: 1; savedAt: string; step: number; d: Draft }
+function readSavedDraft(fw: Framework): SavedDraft | undefined {
+  try {
+    const x = JSON.parse(localStorage.getItem(draftKey(fw)) ?? 'null') as SavedDraft | null
+    if (!(x?.v === 1 && x.d)) return undefined
+    // Drafts saved before factors had weights carry only ranks.
+    if (x.d.factors.some((f) => typeof f.weight !== 'number')) x.d = { ...x.d, factors: weighFromRanks(x.d.factors) }
+    return x
+  } catch { return undefined }
+}
+
+const STEPS = [
+  { title: 'Solicitation', description: 'Requirement and IGCE' },
+  { title: 'Evaluation criteria', description: 'Section M factors' },
+  { title: 'Evaluation board', description: 'Who evaluates what' },
+  { title: 'Proposals', description: 'Offeror volumes' },
+  { title: 'Review and start', description: 'Release to the SSEB' },
+]
+const SLED_STEPS = [
+  { title: 'RFP', description: 'Requirement and cost estimate' },
+  { title: 'Scoring criteria', description: 'Points out of 100' },
+  { title: 'Evaluation committee', description: 'Who scores what' },
+  { title: 'Proposals', description: 'Proposer sections' },
+  { title: 'Review and start', description: 'Release to the committee' },
+]
+const RATING_TYPE: Record<RatingType, string> = { merit: 'Merit rating', confidence: 'Confidence assessment', price: 'Price (evaluated, not rated)' }
+/** A District RFP scores every criterion on the same guide; cost points come from the formula. */
+const SLED_RATING_TYPE: Partial<Record<RatingType, string>> = { merit: 'Scored by the committee', price: 'Cost (points by formula)' }
+const ratingTypes = (fw: Framework) => (fw === 'sled' ? SLED_RATING_TYPE : RATING_TYPE)
+const EVALUATORS = PERSONAS.filter((p) => p.slot != null)
+const OFFICIALS = PERSONAS.filter((p) => p.id === 'chair' || p.id === 'ssa')
+const firstNames = (n: number) => EVALUATORS.slice(0, n).map((p) => p.name.split(' ')[0])
+const PANEL_SIZES: { id: `${PanelSize}`; label: string; hint: string }[] = [
+  { id: '3', label: 'Three evaluators', hint: `${firstNames(3).join(', ')}. Maestro opens three individual reviews.` },
+  { id: '2', label: 'Two evaluators', hint: `${firstNames(2).join(' and ')}. ${firstNames(3)[2]} is left off, any factor only ${firstNames(3)[2]} rated moves to ${firstNames(2)[1]}, and Maestro opens two reviews.` },
+]
+
+/** Dev-only sample Section M PDFs (generated by tools/generate_section_m.py) for the ?preview walkthrough. */
+const SAMPLES: Record<string, () => Promise<string>> = import.meta.env.DEV
+  ? import.meta.glob<string>('../../../data/solicitations/*/Section-M.pdf', { query: '?url', import: 'default' })
+  : {}
+
+function Field({ label, hint, children, className = '' }: { label: string; hint?: string; children: ReactNode; className?: string }) {
+  return (
+    <label className={`block space-y-1.5 ${className}`}>
+      <span className="text-sm font-medium">{label}</span>
+      {children}
+      {hint && <span className="block text-xs text-muted-foreground">{hint}</span>}
+    </label>
+  )
+}
+
+function Card({ title, description, icon, action, children }: { title: string; description?: string; icon?: ReactNode; action?: ReactNode; children: ReactNode }) {
+  return (
+    <section className="ss-in space-y-4 rounded-2xl border border-border bg-card p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex items-start gap-2.5">
+          {icon && <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">{icon}</span>}
+          <div><h2 className="text-base font-semibold">{title}</h2>{description && <p className="text-xs text-muted-foreground">{description}</p>}</div>
+        </div>
+        {action}
+      </div>
+      {children}
+    </section>
+  )
+}
+
+function Choice<T extends string>({ value, onChange, options }: { value: T; onChange: (v: T) => void; options: { id: T; label: string; hint?: string; preview?: ReactNode }[] }) {
+  return (
+    <div className="grid gap-2 sm:grid-cols-3">
+      {options.map((o) => (
+        <button key={o.id} type="button" onClick={() => onChange(o.id)}
+          className={`space-y-2 rounded-xl border p-3 text-left transition-colors ${value === o.id ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'border-border hover:border-primary/60'}`}>
+          <span className="flex items-center justify-between gap-2"><span className="text-sm font-semibold">{o.label}</span>{value === o.id && <CheckCircle2 className="h-4 w-4 text-primary" />}</span>
+          {o.hint && <span className="block text-xs text-muted-foreground">{o.hint}</span>}
+          {o.preview}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function ScalePreview({ method }: { method: RatingMethod }) {
+  if (method === 'points') return <PointsGuide />
+  return (
+    <span className="flex flex-wrap gap-1">
+      {legend().map(({ i, word }) => {
+        const l = look(method, i, word)
+        return <span key={i} className="rounded-md px-1.5 py-0.5 text-[11px] font-semibold" style={{ background: l.bg, color: l.fg }}>{method === 'adjectival' ? word : l.text}</span>
+      })}
+    </span>
+  )
+}
+
+/** The District's scoring guide: each step and the share of a criterion's points it earns. */
+function PointsGuide() {
+  return (
+    <span className="flex flex-wrap gap-1">
+      {legend(SCORING_GUIDE).map(({ i, word }) => {
+        const l = look('points', i, word, { words: SCORING_GUIDE })
+        return <span key={i} className="rounded-md px-1.5 py-0.5 text-[11px] font-semibold" style={{ background: l.bg, color: l.fg }}>{word} {Math.round(POINT_SHARES[i] * 100)}%</span>
+      })}
+    </span>
+  )
+}
+
+function Problems({ errors, warnings }: { errors: string[]; warnings: string[] }) {
+  if (!errors.length && !warnings.length) return null
+  return (
+    <ul className="space-y-1.5 text-sm">
+      {errors.map((e) => <li key={e} className="flex items-start gap-2 text-[var(--ss-critical)]"><XCircle className="mt-0.5 h-4 w-4 shrink-0" />{e}</li>)}
+      {warnings.map((w) => <li key={w} className="flex items-start gap-2 text-[var(--ss-warn)]"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />{w}</li>)}
+    </ul>
+  )
+}
+
+// ── Step 1: solicitation ────────────────────────────────────────────────────
+
+type FillState = { phase: 'idle' } | { phase: 'reading'; file: string } | { phase: 'running'; file: string; state: string; pages: number }
+  | { phase: 'done'; file: string; summary: string; notes: string[] } | { phase: 'error'; file: string; message: string }
+
+/**
+ * "Fill from document": the UiPath Agent reads an uploaded document and fills the fields of the card it sits in, for the
+ * Contracting Officer to review. Typing the fields yourself always works too.
+ */
+function AgentFill({ prompt, button, fill }: {
+  prompt: string; button: string; fill: (text: string, onState: (s: string) => void) => Promise<{ summary: string; notes?: string[] }>
+}) {
+  const { preview } = useData()
+  const [st, setSt] = useState<FillState>({ phase: 'idle' })
+  const input = useRef<HTMLInputElement>(null)
+  const busy = st.phase === 'reading' || st.phase === 'running'
+  const analyze = async (file: File) => {
+    setSt({ phase: 'reading', file: file.name })
+    try {
+      const { text, pages } = await fileText(file)
+      if (text.length < 40) throw new Error(`No text found in ${file.name}. Upload a text PDF, or type the fields below.`)
+      if (import.meta.env.DEV && preview) throw new Error('Preview mode has no Orchestrator to run the agent. Type the fields below.')
+      setSt({ phase: 'running', file: file.name, state: 'Pending', pages })
+      const r = await fill(text, (s) => setSt({ phase: 'running', file: file.name, state: s, pages }))
+      setSt({ phase: 'done', file: file.name, summary: r.summary, notes: r.notes ?? [] })
+    } catch (e) {
+      setSt({ phase: 'error', file: file.name, message: (e as Error).message })
+    }
+  }
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-primary/40 bg-primary/5 px-3 py-2.5">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground"><Bot className="h-4 w-4" /></span>
+        <span className="min-w-0 flex-1 text-sm">{prompt}<span className="block text-xs text-muted-foreground">Or type the fields below.</span></span>
+        <input ref={input} type="file" accept=".pdf,.txt" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) analyze(f); e.target.value = '' }} />
+        <Button size="sm" onClick={() => input.current?.click()} disabled={busy}><Upload className="mr-1.5 h-4 w-4" />{st.phase === 'done' ? 'Replace' : button}</Button>
+      </div>
+      {st.phase !== 'idle' && (
+        <div className="px-1 text-sm">
+          {st.phase === 'reading' && <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />Reading {st.file}…</span>}
+          {st.phase === 'running' && (
+            <span className="flex flex-wrap items-center gap-2"><Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <span>{SECTION_M_AGENT_LABEL} is reading {st.pages} page{st.pages > 1 ? 's' : ''} of {st.file}</span>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">Job {st.state}</span>
+            </span>
+          )}
+          {st.phase === 'done' && (
+            <div className="space-y-1.5">
+              <span className="flex items-center gap-2 text-[var(--ss-good)]"><CheckCircle2 className="h-4 w-4" />{st.summary}</span>
+              {st.notes.map((n) => <p key={n} className="flex items-start gap-2 text-[var(--ss-warn)]"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /><span>{n}</span></p>)}
+            </div>
+          )}
+          {st.phase === 'error' && <span className="flex items-start gap-2 text-[var(--ss-critical)]"><XCircle className="mt-0.5 h-4 w-4 shrink-0" />{st.message}</span>}
+        </div>
+      )}
+    </div>
+  )
+}
+
+const isDod = (agency: string) => /Air Force|Army|Navy|Marine|Space Force|Defense|DoD\b/i.test(agency)
+// Agents answer "None" (sometimes followed by their reasoning) when there is nothing for the Contracting Officer to resolve.
+const question = (q?: string, who = 'the Contracting Officer') => (q && q.trim() && !/^none\b/i.test(q.trim()) ? [`Open question for ${who}: ${q.trim()}`] : [])
+
+function SolicitationStep({ d, set, drafts, onLoad, taken }: { d: Draft; set: (p: Partial<Draft>) => void; drafts: { id: string; title: string }[]; onLoad: (id: string) => void; taken?: string }) {
+  const { sdk } = useData()
+  const t = useTerms()
+  const fw = fwOf(d)
+  const bases = BASES[fw]
+  const fillSolicitation = async (text: string, onState: (s: string) => void) => {
+    const r = await runSolicitationAgent(sdk, text, onState)
+    const got: Partial<Draft> = {}
+    if (r.solicitationId?.trim()) got.solicitationId = r.solicitationId.trim().toUpperCase()
+    if (r.title?.trim()) got.title = r.title.trim()
+    if (r.agency?.trim()) got.agency = r.agency.trim()
+    if (r.office?.trim()) got.office = r.office.trim()
+    if (r.contractType?.trim()) got.contractType = r.contractType.trim()
+    if (bases.includes(r.basisForAward)) got.basisForAward = r.basisForAward
+    // The agency also says which acquisition approach applies (DoD source selection procedures or civilian FAR 15.3);
+    // a District RFP has one approach.
+    const template: Draft['template'] | undefined = fw === 'sled' ? undefined : got.agency ? (isDod(got.agency) ? 'dod' : 'civilian') : undefined
+    set({ ...got, ...(template && template !== d.template ? { template, ...(d.sectionM ? {} : blankCriteria(template)) } : {}) })
+    const n = Object.keys(got).length
+    if (!n) throw new Error('The agent found none of these details in the document. Type them below.')
+    return { summary: `Filled ${n} field${n > 1 ? 's' : ''} from the ${t.solicitation}${template ? ` · ${TEMPLATES[template].label} selected` : ''}. Review them below.`, notes: question(r.openQuestions, `the ${t.co}`) }
+  }
+  const fillIgce = async (text: string, onState: (s: string) => void) => {
+    const r = await runIgceAgent(sdk, d.solicitationId || 'unnumbered', text, onState, t.sled ? 'the cost estimate' : 'the IGCE')
+    const lines = (r.clins ?? []).filter((c) => c.clin && Number(c.amount) > 0)
+    if (!lines.length) throw new Error(t.sled ? 'The agent found no price items in the cost estimate. Enter them below.' : 'The agent found no CLINs in the IGCE. Enter them below.')
+    set({ clins: lines.map((c) => ({ clin: String(c.clin), description: c.description ?? '', amount: Math.round(Number(c.amount)) })) })
+    const sum = lines.reduce((t, c) => t + Math.round(Number(c.amount)), 0)
+    const stated = Math.round(Number(r.total) || sum)
+    return {
+      summary: t.sled
+        ? `Filled ${lines.length} price item${lines.length > 1 ? 's' : ''} from the cost estimate · total ${money(sum)}. Review each line below.`
+        : `Filled ${lines.length} CLIN${lines.length > 1 ? 's' : ''} from the IGCE · total ${money(sum)}. Review each line below.`,
+      notes: [...(stated !== sum ? [`The ${t.sled ? 'cost estimate' : 'IGCE'} states a total of ${money(stated)}, but its ${t.sled ? 'items' : 'CLINs'} add up to ${money(sum)}.`] : []), ...question(r.openQuestions, `the ${t.co}`)],
+    }
+  }
+  const total = d.clins.reduce((t, c) => t + (Number(c.amount) || 0), 0)
+  const setClin = (i: number, p: Partial<Draft['clins'][number]>) => set({ clins: d.clins.map((c, k) => (k === i ? { ...c, ...p } : c)) })
+  return (
+    <div className="space-y-6">
+      {drafts.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-border p-3 text-sm">
+          <FileText className="h-4 w-4 text-muted-foreground" />
+          <span className="text-muted-foreground">Continue {t.sled ? 'an RFP' : 'a solicitation'} already received in Data Fabric:</span>
+          <Select onValueChange={onLoad}>
+            <SelectTrigger className="h-8 w-auto min-w-[260px]"><SelectValue placeholder={`Choose ${t.sled ? 'an RFP' : 'a solicitation'}`} /></SelectTrigger>
+            <SelectContent>{drafts.map((x) => <SelectItem key={x.id} value={x.id}>{x.id} · {x.title}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+      )}
+      <Card title={t.sled ? 'Procurement approach' : 'Acquisition approach'} description={t.sled ? 'Sets points scoring out of 100, and the default criteria you can start from if the RFP has none to upload.' : "Sets the rating method, and the default factors you can start from if there's no Section M."}>
+        <Choice value={d.template} onChange={(k) => set({ template: k, ...(d.sectionM ? {} : blankCriteria(k)) })}
+          options={templatesFor(fw).map((k) => ({ id: k, label: TEMPLATES[k].label, hint: TEMPLATES[k].hint }))} />
+      </Card>
+      <Card title={t.sled ? 'Request for Proposals' : 'Solicitation'}>
+        <AgentFill prompt={t.sled ? 'Have the RFP? Upload its cover page and the UiPath Agent fills in these details.' : 'Have the solicitation? Upload its cover page (SF 33 or SF 1449) and the UiPath Agent fills in these details.'}
+          button={t.sled ? 'Upload RFP' : 'Upload solicitation'} fill={fillSolicitation} />
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label={t.solicitationNo}>
+            <Input value={d.solicitationId} onChange={(e) => set({ solicitationId: e.target.value.toUpperCase() })} placeholder={`e.g. ${NUMBER_FORMAT[fw].example}`}
+              aria-invalid={!!taken} aria-describedby={taken ? 'solicitation-taken' : undefined} className={taken ? 'border-[var(--ss-critical)]' : ''} />
+            {taken && <span id="solicitation-taken" role="alert" className="flex items-start gap-1.5 text-xs text-[var(--ss-critical)]"><XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />{taken}</span>}
+          </Field>
+          <Field label="Title"><Input value={d.title} onChange={(e) => set({ title: e.target.value })} placeholder={t.sled ? 'e.g. Student Information System' : 'e.g. Enterprise IT Modernization Services'} /></Field>
+          <Field label={t.agencyLabel}><Input value={d.agency} onChange={(e) => set({ agency: e.target.value })} placeholder={t.sled ? 'e.g. Willowmere Unified School District' : 'e.g. Department of the Air Force'} /></Field>
+          <Field label={t.sled ? 'Purchasing office' : 'Contracting office'}><Input value={d.office} onChange={(e) => set({ office: e.target.value })} placeholder={t.sled ? 'e.g. Purchasing Department' : 'e.g. AFLCMC/HIK'} /></Field>
+          <Field label="Contract type"><Input value={d.contractType} onChange={(e) => set({ contractType: e.target.value })} placeholder={t.sled ? 'e.g. Firm fixed price, 3-year term with two 1-year renewals' : 'e.g. Firm-fixed-price, 5-year IDIQ task order'} /></Field>
+          <Field label="Basis for award">
+            <Select value={d.basisForAward} onValueChange={(v) => set({ basisForAward: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{bases.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+            </Select>
+          </Field>
+        </div>
+      </Card>
+      <Card title={t.sled ? 'District cost estimate' : 'Independent Government Cost Estimate'}
+        description={t.sled ? 'By price item. UiPath compares every proposal to these lines and flags any line more than 25% off.' : 'By CLIN. UiPath compares every offer to these lines and flags any line more than 25% off.'}
+        action={<span className="text-sm font-semibold tabular-nums">Total {money(total)}</span>}>
+        <AgentFill prompt={t.sled ? 'Have the cost estimate? Upload it and the UiPath Agent fills in every price item, adding up the initial term and renewals.' : 'Have the IGCE? Upload it and the UiPath Agent fills in every CLIN, adding up the base and option periods.'}
+          button={t.sled ? 'Upload cost estimate' : 'Upload IGCE'} fill={fillIgce} />
+        <div className="space-y-2">
+          {d.clins.map((c, i) => (
+            <div key={i} className="grid grid-cols-[90px_1fr_160px_36px] items-center gap-2">
+              <Input value={c.clin} onChange={(e) => setClin(i, { clin: e.target.value })} placeholder="0001" className="font-mono" aria-label={t.clin} />
+              <Input value={c.description} onChange={(e) => setClin(i, { description: e.target.value })} placeholder="Description" aria-label="Description" />
+              <Input type="number" min={0} value={c.amount || ''} onChange={(e) => setClin(i, { amount: Number(e.target.value) })} placeholder="Amount" className="text-right tabular-nums" aria-label="Amount" />
+              <Button variant="ghost" size="icon" onClick={() => set({ clins: d.clins.filter((_, k) => k !== i) })} disabled={d.clins.length === 1} aria-label={`Remove ${t.clin.toLowerCase()}`}><Trash2 className="h-4 w-4" /></Button>
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => set({ clins: [...d.clins, { clin: String(d.clins.length + 1).padStart(4, '0'), description: '', amount: 0 }] })}><Plus className="mr-1 h-4 w-4" />{t.sled ? 'Add price item' : 'Add CLIN'}</Button>
+        </div>
+      </Card>
+    </div>
+  )
+}
+
+// ── Step 2: criteria ────────────────────────────────────────────────────────
+
+type AgentState = { phase: 'idle' } | { phase: 'reading'; file: string } | { phase: 'running'; file: string; state: string; pages: number } | { phase: 'done'; file: string } | { phase: 'error'; file: string; message: string }
+
+function SectionMCard({ d, onResult }: { d: Draft; onResult: (r: SectionMResult, file: string) => void }) {
+  const { sdk, preview } = useData()
+  const t = useTerms()
+  const doc = t.sled ? 'the evaluation criteria' : 'Section M'
+  const [st, setSt] = useState<AgentState>(d.sectionM ? { phase: 'done', file: d.sectionM.fileName } : { phase: 'idle' })
+  const input = useRef<HTMLInputElement>(null)
+
+  const analyze = async (file: File) => {
+    setSt({ phase: 'reading', file: file.name })
+    try {
+      const { text, pages } = await fileText(file)
+      if (text.length < 200) throw new Error(`No text found in the file. Upload a text PDF of ${doc}.`)
+      setSt({ phase: 'running', file: file.name, state: 'Pending', pages })
+      let result: SectionMResult
+      if (import.meta.env.DEV && preview) {
+        // Preview has no Orchestrator: return what the agent produced for the matching generated Section M.
+        const fixtures = (await import('../dev/sectionm.json')).default as unknown as Record<string, SectionMResult>
+        const id = Object.keys(fixtures).find((k) => text.includes(k))
+        for (const s of ['Pending', 'Running', 'Running']) { setSt({ phase: 'running', file: file.name, state: s, pages }); await new Promise((r) => setTimeout(r, 1200)) }
+        if (!id) throw new Error('Preview mode only knows the generated Section M samples.')
+        result = fixtures[id]
+      } else {
+        result = await runSectionMAgent(sdk, d.solicitationId, text, (s) => setSt({ phase: 'running', file: file.name, state: s, pages }), doc)
+      }
+      if (!result.factors?.length) throw new Error(`The agent returned no ${t.factors}.`)
+      onResult(result, file.name)
+      setSt({ phase: 'done', file: file.name })
+    } catch (e) {
+      const msg = (e as Error).message
+      setSt({ phase: 'error', file: file.name, message: msg })
+    }
+  }
+
+  const sample = Object.entries(SAMPLES).find(([p]) => p.includes(d.solicitationId)) ?? Object.entries(SAMPLES)[0]
+  const loadSample = async () => {
+    if (!sample) return
+    const url = await sample[1]()
+    const blob = await (await fetch(url)).blob()
+    analyze(new File([blob], 'Section-M.pdf', { type: 'application/pdf' }))
+  }
+
+  return (
+    <section className="ss-in relative overflow-hidden rounded-2xl border border-primary/40 bg-gradient-to-br from-primary/10 via-card to-card p-5">
+      <div className="flex flex-wrap items-start gap-4">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Bot className="h-6 w-6" /></span>
+        <div className="min-w-0 flex-1 space-y-1">
+          <h2 className="flex items-center gap-2 text-base font-semibold">{t.sled ? 'Draft the scoring plan from the RFP' : 'Draft the plan from Section M'}<span className="rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary">Agent</span></h2>
+          <p className="text-sm text-muted-foreground">{t.sled
+            ? 'Upload the RFP’s evaluation criteria section. The criteria analyst agent reads each criterion, its points, the cost formula and page limits, and drafts them below for you to review. Nothing is released until you start the RFP evaluation.'
+            : 'Upload the RFP’s Section M. The Section M analyst agent reads the evaluation factors, subfactors, relative importance, rating definitions and page limits, and drafts them below for you to review. Nothing is released until you start the source selection.'}</p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2">
+          <input ref={input} type="file" accept=".pdf,.txt" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) analyze(f); e.target.value = '' }} />
+          {preview && sample && <Button variant="outline" onClick={loadSample} disabled={st.phase === 'reading' || st.phase === 'running'}>Use sample</Button>}
+          <Button onClick={() => input.current?.click()} disabled={st.phase === 'reading' || st.phase === 'running'}><Upload className="mr-1.5 h-4 w-4" />{st.phase === 'done' ? `Replace ${t.sled ? 'criteria' : 'Section M'}` : `Upload ${t.sled ? 'evaluation criteria' : 'Section M'}`}</Button>
+        </div>
+      </div>
+      {st.phase !== 'idle' && (
+        <div className="mt-4 rounded-xl border border-border bg-background/70 p-3 text-sm">
+          {st.phase === 'reading' && <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />Reading {st.file}…</span>}
+          {st.phase === 'running' && (
+            <span className="flex flex-wrap items-center gap-2"><Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <span>{SECTION_M_AGENT_LABEL} is reading {st.pages} page{st.pages > 1 ? 's' : ''} of {st.file}</span>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">Job {st.state}</span>
+            </span>
+          )}
+          {st.phase === 'done' && (
+            <div className="space-y-2">
+              <span className="flex items-center gap-2 text-[var(--ss-good)]"><CheckCircle2 className="h-4 w-4" />Drafted from {st.file} · {d.factors.length} {t.factors} · {t.sled ? 'points, scoring statement' : 'rating method, relative importance'} and page limits applied. Review each {t.factor} below.</span>
+              {d.sectionM?.openQuestions && d.sectionM.openQuestions !== 'None' && (
+                <p className="flex items-start gap-2 text-[var(--ss-warn)]"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /><span><span className="font-medium">Open question for the {t.co}:</span> {d.sectionM.openQuestions}</span></p>
+              )}
+            </div>
+          )}
+          {st.phase === 'error' && <span className="flex items-start gap-2 text-[var(--ss-critical)]"><XCircle className="mt-0.5 h-4 w-4 shrink-0" />{st.message}</span>}
+        </div>
+      )}
+    </section>
+  )
+}
+
+function FactorEditor({ f, equal, onChange, onRemove }: { f: DraftFactor; equal: boolean; onChange: (p: Partial<DraftFactor>) => void; onRemove: () => void }) {
+  const t = useTerms()
+  const volumeLabel = useVolumeLabel()
+  const types = ratingTypes(t.id)
+  const [quote, setQuote] = useState(false)
+  const id = useId()
+  const lbl = 'mb-1 block text-xs font-medium text-muted-foreground'
+  return (
+    <div className="space-y-3 rounded-xl border border-border bg-background/50 p-4">
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="shrink-0">
+          <label htmlFor={`${id}-weight`} className={lbl}>{t.sled ? 'Points' : 'Weight'}</label>
+          <div className={`flex h-9 items-center gap-1 rounded-lg border px-2 text-sm ${equal ? 'border-transparent bg-muted text-muted-foreground' : 'border-input bg-background focus-within:ring-2 focus-within:ring-ring'}`}
+            title={equal ? `All ${t.factors} are weighted equally` : t.sled ? 'Maximum points out of 100' : 'Share of the evaluation'}>
+            <input id={`${id}-weight`} type="number" inputMode="numeric" min={1} max={100} value={Number.isFinite(f.weight) ? f.weight : ''} disabled={equal} aria-label={`${f.name || t.Factor} ${t.sled ? 'maximum points' : 'weight, percent'}`}
+              onChange={(e) => onChange({ weight: Math.min(100, Math.max(0, Math.round(Number(e.target.value) || 0))) })}
+              className="w-10 bg-transparent text-right font-semibold tabular-nums text-foreground outline-none disabled:text-muted-foreground [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none" />
+            <span aria-hidden>{t.sled ? 'pts' : '%'}</span>
+          </div>
+        </div>
+        <div className="min-w-[200px] flex-1">
+          <label htmlFor={`${id}-name`} className={lbl}>{t.Factor} name</label>
+          <Input id={`${id}-name`} value={f.name} onChange={(e) => onChange({ name: e.target.value })} placeholder={t.sled ? 'e.g. Functional and Technical Fit' : 'e.g. Technical Approach'} className="h-9 font-medium" />
+        </div>
+        <div>
+          <span id={`${id}-type`} className={lbl}>{t.sled ? 'Scoring' : 'Rating type'}</span>
+          <Select value={f.ratingType} onValueChange={(v) => onChange({ ratingType: v as RatingType, ...(v === 'price' ? { volume: 'price' } : v === 'confidence' ? { volume: 'pastPerformance' } : {}) })}>
+            <SelectTrigger id={`${id}-type-value`} aria-labelledby={`${id}-type ${id}-type-value`} className="h-9 w-[210px]"><SelectValue /></SelectTrigger>
+            <SelectContent>{(Object.keys(types) as RatingType[]).map((k) => <SelectItem key={k} value={k}>{types[k]}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <div>
+          <span id={`${id}-volume`} className={lbl}>{t.sled ? 'Proposal section' : 'Proposal volume'}</span>
+          <Select value={f.volume} onValueChange={(v) => onChange({ volume: v })}>
+            <SelectTrigger id={`${id}-volume-value`} aria-labelledby={`${id}-volume ${id}-volume-value`} className="h-9 w-[240px]"><SelectValue /></SelectTrigger>
+            <SelectContent>{VOLUMES.filter((v) => v !== 'cover').map((v) => <SelectItem key={v} value={v}>{volumeLabel(v)}</SelectItem>)}</SelectContent>
+          </Select>
+        </div>
+        <Button variant="ghost" size="icon" onClick={onRemove} aria-label={`Remove ${f.name || t.factor}`}><Trash2 className="h-4 w-4" /></Button>
+      </div>
+      <div>
+        <label htmlFor={`${id}-criteria`} className={lbl}>Evaluation criteria</label>
+        <Textarea id={`${id}-criteria`} value={f.criteria} onChange={(e) => onChange({ criteria: e.target.value })} rows={2} placeholder={`What ${t.buyer} will evaluate`} />
+      </div>
+      <div>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+          <label htmlFor={`${id}-subfactors`} className={lbl}>{t.sled ? 'Sub-criteria' : 'Subfactors'} <span className="font-normal">· separate with semicolons</span></label>
+          {f.sourceQuote && (
+            <button type="button" onClick={() => setQuote(!quote)} className="mb-1 flex items-center gap-1 text-xs text-primary hover:underline"><Quote className="h-3.5 w-3.5" />{quote ? 'Hide' : 'Show'} {t.sled ? 'RFP' : 'Section M'} source</button>
+          )}
+        </div>
+        <Input id={`${id}-subfactors`} value={f.subfactors} onChange={(e) => onChange({ subfactors: e.target.value })} placeholder={t.sled ? 'e.g. State reporting; Special education; Parent portal' : 'e.g. Cloud migration methodology; Cybersecurity'} className="h-9" />
+      </div>
+      {quote && f.sourceQuote && <blockquote className="border-l-2 border-primary pl-3 text-xs italic text-muted-foreground">{f.sourceQuote}</blockquote>}
+    </div>
+  )
+}
+
+function CriteriaStep({ d, set }: { d: Draft; set: (p: Partial<Draft>) => void }) {
+  const t = useTerms()
+  const volumeLabel = useVolumeLabel()
+  // Factors stay in the order they were added or drafted (no re-sorting under the CO's cursor); ranks follow the weights.
+  const factors = d.factors
+  const equal = !!d.equalWeights
+  const total = totalWeight(factors)
+  const update = (k: string, p: Partial<DraftFactor>) => set({ factors: rerank(d.factors.map((f) => (f.key === k ? { ...f, ...p } : f))) })
+  // Equal weights also restate relative importance, so the statement never contradicts the weights.
+  const setEqual = (on: boolean) => {
+    const even = weighEqually(d.factors)
+    set({ equalWeights: on, ...(on ? { factors: even, relativeImportance: describeWeights(even, t.id) } : {}) })
+  }
+  const remove = (k: string) => {
+    const rest = d.factors.filter((x) => x.key !== k)
+    set({ factors: equal ? weighEqually(rest) : rerank(rest), assignments: Object.fromEntries(Object.entries(d.assignments).map(([s, ks]) => [s, ks.filter((x) => x !== k)])) })
+  }
+  const volumes = [...new Set(d.factors.map((f) => f.volume))].filter((v) => v !== 'price')
+  const useDefaults = () => {
+    const defaults = defaultFactors(d.template)
+    set({ ...defaults, assignments: defaultAssignments(defaults.factors, d.panelSize) })
+  }
+  // A new factor takes whatever share is still unassigned (or an equal share), so the total stays easy to balance.
+  const addFactor = () => {
+    const next = [...d.factors, { key: `f${Date.now()}`, name: '', criteria: '', subfactors: '', ratingType: 'merit' as RatingType, volume: 'technical', rank: 1, weight: Math.max(0, 100 - total) }]
+    set({ factors: equal ? weighEqually(next) : rerank(next) })
+  }
+  return (
+    <div className="space-y-6">
+      <SectionMCard d={d} onResult={(r, file) => set(applySectionM(d, r, file))} />
+      {t.sled ? (
+        <Card title="Scoring guide" description="Evaluators score each criterion on the District's five-step guide, and each step earns a share of the criterion's points. Cost points come from the formula, not from evaluators.">
+          <PointsGuide />
+        </Card>
+      ) : (
+        <Card title="Rating method" description="How evaluators record ratings and how the matrix displays them. Past Performance uses the same five steps as a confidence assessment.">
+          <Choice value={d.ratingMethod} onChange={(m) => set({ ratingMethod: m })}
+            options={RATING_METHODS.map((m) => ({ id: m.id, label: m.label, hint: m.hint, preview: <ScalePreview method={m.id} /> }))} />
+        </Card>
+      )}
+      <Card title={t.sled ? 'Scoring criteria' : 'Evaluation factors'}
+        description={t.sled ? 'Give each criterion its maximum points. Points total 100; Cost earns its points by formula.' : 'Weight each factor by its share of the evaluation. Weights total 100%; factors with the same weight are of equal importance.'}
+        action={factors.length > 0 && <Button variant="outline" size="sm" onClick={addFactor}><Plus className="mr-1 h-4 w-4" />Add {t.factor}</Button>}>
+        {factors.length > 0 && (
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-border bg-muted/40 px-4 py-2.5">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+              <Checkbox checked={equal} onCheckedChange={(v) => setEqual(v === true)} />
+              {t.sled ? 'All criteria are worth the same points' : 'All factors are weighted equally'}
+            </label>
+            <span className="ml-auto flex items-center gap-1.5 text-sm tabular-nums" aria-live="polite">
+              {total === 100
+                ? <><CheckCircle2 className="h-4 w-4 text-[var(--ss-good)]" /><span>Total 100{t.sled ? ' points' : '%'}</span></>
+                : <><AlertTriangle className="h-4 w-4 text-amber-600" /><span>Total {total}{t.sled ? ' points' : '%'}</span><span className="text-muted-foreground">· {total < 100 ? `${100 - total}${t.sled ? ' points' : '%'} left to assign` : `${total - 100}${t.sled ? ' points' : '%'} over`}</span></>}
+            </span>
+          </div>
+        )}
+        {!factors.length && (
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border px-6 py-8 text-center">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary"><ListChecks className="h-5 w-5" /></span>
+            <div className="max-w-lg space-y-1">
+              <p className="text-sm font-medium">No {t.factors} yet</p>
+              <p className="text-sm text-muted-foreground">{t.sled
+                ? <>Upload the RFP’s evaluation criteria above and the UiPath Agent drafts each criterion, its points and the page limits. Nothing to upload? Start from the {TEMPLATES[d.template].label} defaults and edit them.</>
+                : <>Upload Section M above and the UiPath Agent drafts the factors, subfactors, relative importance and page limits. No Section M to hand? Start from the {TEMPLATES[d.template].label} defaults and edit them.</>}</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-2">
+              <Button variant="outline" onClick={useDefaults}><Sparkles className="mr-1.5 h-4 w-4" />Use default {t.factors}</Button>
+              <Button variant="ghost" onClick={addFactor}><Plus className="mr-1.5 h-4 w-4" />Add a {t.factor}</Button>
+            </div>
+          </div>
+        )}
+        <div className="space-y-3">
+          {factors.map((f) => (
+            <FactorEditor key={f.key} f={f} equal={equal} onChange={(p) => update(f.key, p)} onRemove={() => remove(f.key)} />
+          ))}
+        </div>
+        {factors.length > 0 && (
+          <Field label={t.sled ? 'Scoring statement' : 'Relative importance'} hint={t.sled ? 'Stated in the RFP, so every proposer knows how points are awarded' : 'FAR 15.304(d) — stated in the solicitation and applied in the tradeoff'}>
+            <Textarea value={d.relativeImportance} onChange={(e) => set({ relativeImportance: e.target.value })} rows={2} />
+            {total === 100 && (
+              <button type="button" onClick={() => set({ relativeImportance: describeWeights(factors, t.id) })} className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                <RefreshCw className="h-3 w-3" />Describe from the {t.sled ? 'points' : 'weights'}
+              </button>
+            )}
+          </Field>
+        )}
+      </Card>
+      {volumes.length > 0 && <Card title="Page limits" description={t.sled ? 'From the RFP’s submission requirements. Robots flag any section over its limit.' : 'From Section L. Robots flag any volume over its limit.'}>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {volumes.map((v) => (
+            <Field key={v} label={volumeLabel(v)}>
+              <Input type="number" min={0} value={d.pageLimits[v] ?? ''} placeholder="No limit" onChange={(e) => set({ pageLimits: { ...d.pageLimits, [v]: Number(e.target.value) } })} />
+            </Field>
+          ))}
+        </div>
+      </Card>}
+    </div>
+  )
+}
+
+// ── Step 3: board ───────────────────────────────────────────────────────────
+
+/** What the board brings with it: annual certifications on each profile; the no-conflict check happens in each person's task. */
+function CertificationsNote() {
+  const t = useTerms()
+  return (
+    <p className="flex items-start gap-2 rounded-xl bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground">
+      <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ss-good)]" />
+      <span>
+        <span className="font-medium text-foreground">Annual certifications are on file for everyone on this {t.sled ? 'committee' : 'board'}:</span> {annualCertifications(t.id).join(' and ')}, current through {CERTIFIED_THROUGH}.
+        Each member also certifies no conflict of interest with these {t.offerors} the first time they open their task, before they see any proposal. It's recorded in the audit trail.
+      </span>
+    </p>
+  )
+}
+
+function BoardStep({ d, set }: { d: Draft; set: (p: Partial<Draft>) => void }) {
+  const t = useTerms()
+  const factors = ordered(rated(d))
+  const slots = panelSlots(d.panelSize)
+  const panel = EVALUATORS.filter((p) => slots.includes(p.slot!)).map((p) => titled(p, t.id))
+  const toggle = (slot: number, k: string, on: boolean) =>
+    set({ assignments: { ...d.assignments, [slot]: on ? [...new Set([...(d.assignments[slot] ?? []), k])] : (d.assignments[slot] ?? []).filter((x) => x !== k) } })
+  return (
+    <div className="space-y-6">
+      <Card title={t.sled ? 'District officials' : 'Source selection officials'}
+        description={t.sled ? 'The Award Authority signs the recommendation of award for the Board; the Committee Chair leads consensus scoring.' : 'FAR 15.303 — the SSA makes the award decision; the SSEB Chair leads consensus.'}>
+        <div className="grid gap-3 md:grid-cols-3">
+          {[PERSONAS.find((p) => p.id === 'co')!, ...OFFICIALS].map((x) => titled(x, t.id)).map((p) => (
+            <div key={p.id} className="flex items-center gap-3 rounded-xl border border-border p-3">
+              <PersonaAvatar id={p.id} short={p.short} size={44} />
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="truncate text-sm font-semibold">{p.name}</div>
+                <div className="truncate text-xs text-muted-foreground">{p.label}{p.id === 'co' ? ' · you' : ''}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+      <Card title={t.sled ? 'Evaluators and criteria assignments' : 'Evaluators and factor assignments'}
+        description={t.sled ? 'Each evaluator scores only the criteria checked here; Action Center routes their score sheets accordingly.' : 'Each evaluator rates only the factors checked here; Action Center routes their worksheets accordingly.'}
+        action={<Button variant="outline" size="sm" onClick={() => set({ assignments: defaultAssignments(d.factors, d.panelSize) })}>Reset to default</Button>}>
+        <div className="space-y-2">
+          <span className="text-sm font-medium">{t.sled ? 'Committee size' : 'Panel size'}</span>
+          <Choice value={`${d.panelSize}` as `${PanelSize}`} onChange={(v) => set(resizePanel(d, Number(v) as PanelSize))} options={PANEL_SIZES} />
+        </div>
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-xs text-muted-foreground">
+                <th className="px-3 py-2 font-medium">Evaluator</th>
+                {factors.map((f) => <th key={f.key} className="px-3 py-2 text-center font-medium">{f.name || 'Untitled'}<span className="block font-normal">{t.sled ? `${f.weight} pts` : f.ratingType === 'confidence' ? `Confidence · ${f.weight}%` : `${f.weight}%`}</span></th>)}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {panel.map((p) => (
+                <tr key={p.id}>
+                  <td className="px-3 py-2.5">
+                    <span className="flex items-center gap-2.5"><PersonaAvatar id={p.id} short={p.short} size={36} />
+                      <span><span className="block font-medium">{p.name}</span><span className="block text-xs text-muted-foreground">{p.label}</span></span>
+                    </span>
+                  </td>
+                  {factors.map((f) => (
+                    <td key={f.key} className="px-3 py-2.5 text-center">
+                      <Checkbox checked={!!d.assignments[p.slot!]?.includes(f.key)} onCheckedChange={(v) => toggle(p.slot!, f.key, v === true)} aria-label={`${p.name} evaluates ${f.name}`} />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              <tr className="bg-muted/30 text-xs text-muted-foreground">
+                <td className="px-3 py-2">Evaluators per {t.factor}</td>
+                {factors.map((f) => <td key={f.key} className="px-3 py-2 text-center tabular-nums">{slots.filter((s) => d.assignments[s]?.includes(f.key)).length}</td>)}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <CertificationsNote />
+      </Card>
+    </div>
+  )
+}
+
+// ── Step 4: proposals ───────────────────────────────────────────────────────
+
+/**
+ * The Contracting Officer uploads each offeror's volumes; the list shows what was uploaded in this setup (kept with
+ * the draft). Uploading the same offeror and volume again replaces the stored file, so a demo can reuse a number.
+ */
+function ProposalsStep({ d, proposals, setProposals }: { d: Draft; proposals: Record<string, string[]>; setProposals: (p: Record<string, string[]>) => void }) {
+  const { sdk, preview } = useData()
+  const t = useTerms()
+  const volumeLabel = useVolumeLabel()
+  const vol = t.sled ? 'section' : 'volume'
+  const [code, setCode] = useState('')
+  const [files, setFiles] = useState<{ file: File; volume: string }[]>([])
+  const [uploading, setUploading] = useState(false)
+  const required = [...new Set(['cover', ...d.factors.map((f) => f.volume)])]
+
+  const upload = async () => {
+    const c = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, '')
+    if (!c || !files.length) return
+    setUploading(true)
+    try {
+      if (!preview) for (const f of files) await uploadProposal(sdk, d.solicitationId, c, f.volume, f.file)
+      setProposals({ ...proposals, [c]: [...new Set([...(proposals[c] ?? []), ...files.map((f) => f.volume)])] })
+      toast.success(`${files.length} ${vol}${files.length > 1 ? 's' : ''} uploaded for ${c}${preview ? ' (preview — not sent)' : ''}`)
+      setFiles([]); setCode('')
+    } catch (e) {
+      toast.error(`Upload failed: ${(e as Error).message}`)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const codes = Object.keys(proposals).sort()
+  return (
+    <div className="space-y-6">
+      <Card title={`Add a ${t.offeror}'s proposal`} description={`Upload each ${t.offeror}'s ${vol}s. Every ${vol} is read when the case starts.`} icon={<Upload className="h-4 w-4" />}>
+        <div className="grid gap-4 md:grid-cols-[220px_1fr]">
+          <Field label={`${t.Offeror} code`} hint={`A short id for the ${t.offeror}, such as ${t.sled ? 'HARBORVIEW' : 'APEX'}`}><Input value={code} onChange={(e) => setCode(e.target.value)} placeholder={t.sled ? 'e.g. HARBORVIEW' : 'e.g. APEX'} /></Field>
+          <Field label={`Proposal ${vol}s`}>
+            <PdfDrop onFiles={(picked) => setFiles([...files.filter((f) => !picked.some((p) => p.name === f.file.name)), ...picked.map((f) => ({ file: f, volume: guessVolume(f.name) }))])} />
+          </Field>
+        </div>
+        {files.length > 0 && (
+          <div className="space-y-2">
+            <ul className="divide-y divide-border rounded-xl border border-border">
+              {files.map((f, i) => (
+                <li key={f.file.name} className="flex flex-wrap items-center gap-3 px-3 py-2 text-sm">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-red-600 dark:text-red-400"><FileText className="h-4 w-4" /></span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium">{f.file.name}</span>
+                    <span className="block text-xs text-muted-foreground">PDF · {fileSize(f.file.size)}</span>
+                  </span>
+                  <Select value={f.volume} onValueChange={(v) => setFiles(files.map((x, k) => (k === i ? { ...x, volume: v } : x)))}>
+                    <SelectTrigger className="h-8 w-[240px]" aria-label={`${t.sled ? 'Section' : 'Volume'} for ${f.file.name}`}><SelectValue /></SelectTrigger>
+                    <SelectContent>{VOLUMES.map((v) => <SelectItem key={v} value={v}>{volumeLabel(v)}</SelectItem>)}</SelectContent>
+                  </Select>
+                  <Button variant="ghost" size="icon" onClick={() => setFiles(files.filter((_, k) => k !== i))} aria-label={`Remove ${f.file.name}`}><X className="h-4 w-4" /></Button>
+                </li>
+              ))}
+            </ul>
+            {(() => {
+              const missing = required.filter((v) => !files.some((f) => f.volume === v))
+              return missing.length
+                ? <p className="text-xs text-[var(--ss-warn)]">Still missing for this {t.offeror}: {missing.map((v) => volumeLabel(v)).join(', ')}.</p>
+                : <p className="flex items-center gap-1.5 text-xs text-[var(--ss-good)]"><CheckCircle2 className="h-3.5 w-3.5" />Every required {vol} is here.</p>
+            })()}
+          </div>
+        )}
+        <Button onClick={upload} disabled={!code.trim() || !files.length || uploading}>{uploading ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Upload className="mr-1.5 h-4 w-4" />}Upload proposal</Button>
+      </Card>
+      <Card title="Proposals received" description={`${t.sled ? 'Sections' : 'Volumes'} uploaded for ${d.solicitationId || `this ${t.solicitation}`}, by ${t.offeror}.`}>
+        {!codes.length && <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">No proposals yet. Upload each {t.offeror}'s {vol}s above.</p>}
+        {codes.length > 0 && (
+          <div className="overflow-x-auto rounded-xl border border-border">
+            <table className="w-full text-sm">
+              <thead><tr className="border-b border-border text-left text-xs text-muted-foreground"><th className="px-3 py-2 font-medium">{t.Offeror}</th>{required.map((v) => <th key={v} className="px-3 py-2 text-center font-medium">{volumeLabel(v).replace(/^(?:Volume [IV]+|Section \d) — /, '')}</th>)}</tr></thead>
+              <tbody className="divide-y divide-border">
+                {codes.map((c) => (
+                  <tr key={c}>
+                    <td className="px-3 py-2.5 font-mono text-xs font-semibold">{c}</td>
+                    {required.map((v) => <td key={v} className="px-3 py-2.5 text-center">{proposals[c].includes(v) ? <CheckCircle2 className="mx-auto h-4 w-4 text-[var(--ss-good)]" aria-label="Received" /> : <XCircle className="mx-auto h-4 w-4 text-[var(--ss-critical)]" aria-label="Missing" />}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <p className="text-xs text-muted-foreground">{t.sled
+          ? 'When the case starts, robots read each proposer’s legal name and vendor ID from the transmittal letter and flag any missing section.'
+          : 'When the case starts, robots read each offeror’s name, UEI and CAGE from the cover letter and flag any missing volume.'}</p>
+      </Card>
+    </div>
+  )
+}
+
+const fileSize = (n: number) => (n < 1024 * 1024 ? `${Math.max(1, Math.round(n / 1024))} KB` : `${(n / 1024 / 1024).toFixed(1)} MB`)
+
+/** A drop zone for PDFs: drag files onto it, or click (or press Enter) to browse. */
+function PdfDrop({ onFiles }: { onFiles: (files: File[]) => void }) {
+  const t = useTerms()
+  const input = useRef<HTMLInputElement>(null)
+  const [over, setOver] = useState(false)
+  const pdfs = (list: FileList | null) => [...(list ?? [])].filter((f) => f.type === 'application/pdf' || /\.pdf$/i.test(f.name))
+  return (
+    <div role="button" tabIndex={0} aria-label={`Add proposal ${t.sled ? 'section' : 'volume'} PDFs`}
+      onClick={() => input.current?.click()}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.current?.click() } }}
+      onDragOver={(e) => { e.preventDefault(); setOver(true) }} onDragLeave={() => setOver(false)}
+      onDrop={(e) => { e.preventDefault(); setOver(false); const got = pdfs(e.dataTransfer.files); if (got.length) onFiles(got); else toast.error('Only PDF files can be added.') }}
+      className={`flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border-2 border-dashed px-4 py-6 text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${over ? 'border-primary bg-primary/10' : 'border-border bg-background/40 hover:border-primary/60 hover:bg-muted/40'}`}>
+      <input ref={input} type="file" accept=".pdf,application/pdf" multiple className="hidden" onChange={(e) => { const got = pdfs(e.target.files); if (got.length) onFiles(got); e.target.value = '' }} />
+      <span className="mb-1 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary"><FileUp className="h-5 w-5" /></span>
+      <span className="text-sm font-medium">Drop the {t.offeror}'s PDFs here, or <span className="text-primary underline underline-offset-2">browse</span></span>
+      <span className="max-w-md text-xs text-muted-foreground">{t.sled
+        ? 'Transmittal letter, functional response, implementation, references and cost proposal. Each file’s section is detected from its name; you can change it below.'
+        : 'Cover letter, technical, management, past performance and price volumes. Each file’s volume is detected from its name; you can change it below.'}</span>
+    </div>
+  )
+}
+
+// ── Step 5: review ──────────────────────────────────────────────────────────
+
+function ReviewStep({ d, offerors }: { d: Draft; offerors: number }) {
+  const t = useTerms()
+  const volumeLabel = useVolumeLabel()
+  const plan = toPlan(d, [])
+  const co = titled(PERSONAS.find((p) => p.id === 'co')!, t.id)
+  return (
+    <div className="space-y-6">
+      <Card title={d.title || `Untitled ${t.solicitation}`} description={`${d.solicitationId} · ${d.agency}${d.office ? ` · ${d.office}` : ''}`}>
+        <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
+          <div><dt className="text-xs text-muted-foreground">Basis for award</dt><dd className="font-medium">{d.basisForAward}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">{t.sled ? 'Cost estimate' : 'IGCE'}</dt><dd className="font-medium tabular-nums">{money(plan.igce.total)} · {Object.keys(plan.igce.lines).length} {t.sled ? 'price items' : 'CLINs'}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">{t.sled ? 'Scoring guide' : 'Rating method'}</dt><dd><ScalePreview method={plan.ratingMethod ?? d.ratingMethod} /></dd></div>
+          <div><dt className="text-xs text-muted-foreground">Proposals</dt><dd className="font-medium">{offerors} {offerors === 1 ? t.offeror : t.offerors}</dd></div>
+        </dl>
+        <p className="text-sm text-muted-foreground">{d.relativeImportance}</p>
+      </Card>
+      <Card title={`${t.Factors} and evaluators`} description={`${plan.panel.evaluators.length} evaluators on ${t.sled ? 'the evaluation committee' : 'the SSEB panel'}`}>
+        <ul className="divide-y divide-border">
+          {plan.factors.map((f) => {
+            const who = plan.panel.evaluators.filter((e) => e.factors.includes(f.id)).map((e) => PERSONAS.find((p) => p.slot === e.slot)!)
+            return (
+              <li key={f.id} className="flex flex-wrap items-center gap-3 py-3">
+                <span className="flex h-7 min-w-11 items-center justify-center rounded-full bg-primary/10 px-2 text-xs font-bold tabular-nums text-primary" title={t.sled ? 'Maximum points' : 'Weight'}>{f.weight != null ? `${f.weight}${t.sled ? ' pts' : '%'}` : f.order}</span>
+                <span className="min-w-0 flex-1"><span className="block font-medium">{f.name}</span>
+                  <span className="block text-xs text-muted-foreground">{t.sled
+                    ? (f.evaluatedNotRated ? 'Cost points by formula, confirmed by the Procurement Officer' : 'Scored by the committee')
+                    : f.evaluatedNotRated ? 'Evaluated by the Contracting Officer for reasonableness' : f.scale === 'confidence' ? 'Confidence assessment' : 'Merit rating'} · {volumeLabel(f.volume)}</span>
+                </span>
+                <span className="flex -space-x-2">{who.map((p) => <PersonaAvatar key={p.id} id={p.id} short={p.short} size={30} />)}</span>
+                <span className="w-40 truncate text-right text-xs text-muted-foreground">{who.map((p) => p.name.split(' ')[0]).join(', ') || (f.evaluatedNotRated ? `${co.name.split(' ')[0]} (${t.sled ? 'Procurement' : 'CO'})` : '—')}</span>
+              </li>
+            )
+          })}
+        </ul>
+      </Card>
+      <Card title="What happens when you start" icon={<Sparkles className="h-4 w-4" />}>
+        <ol className="grid gap-3 text-sm md:grid-cols-4">
+          {(t.sled ? [
+            ['Robots', 'Ingest every section, check vendor registration, the debarment list and page limits.'],
+            ['Agents', 'The evaluation assistant drafts cited findings per proposer and criterion.'],
+            ['Actions', 'Each evaluator gets a score sheet for only their assigned criteria.'],
+            ['Maestro', 'The case moves to consensus scoring, cost points, and the recommendation of award with a full audit trail.'],
+          ] : [
+            ['Robots', 'Ingest every volume, screen SAM, exclusions, FAPIIS and page limits.'],
+            ['Agents', 'The evaluation assistant drafts cited findings per offeror and factor.'],
+            ['Actions', 'Each evaluator gets a worksheet for only their assigned factors.'],
+            ['Maestro', 'The case moves to consensus, price, and the SSA decision with a full audit trail.'],
+          ]).map(([title, x], i) => (
+            <li key={title} className="rounded-xl border border-border p-3"><span className="text-xs font-semibold text-primary">{i + 1} · {title}</span><p className="mt-1 text-muted-foreground">{x}</p></li>
+          ))}
+        </ol>
+      </Card>
+    </div>
+  )
+}
+
+// ── Page ────────────────────────────────────────────────────────────────────
+
+/**
+ * Intake for the framework in use: one wizard per framework, so switching Federal / State & Local starts the other
+ * one with its own saved draft.
+ */
+export function NewEvaluation() {
+  const { framework } = useFrameworkMode()
+  return <Wizard key={framework} framework={framework} />
+}
+
+/** Contracting (or Procurement) Officer intake: solicitation, criteria, evaluation board, proposals — then start the case. */
+function Wizard({ framework }: { framework: Framework }) {
+  const { sdk, preview, data, putLocal, reload } = useData()
+  const { persona } = usePersona()
+  const t = useTerms()
+  const DRAFT_KEY = draftKey(framework)
+  const steps = t.sled ? SLED_STEPS : STEPS
+  const nav = useNavigate()
+  const back = useWizardBackLink((id) => data?.solicitations.find((s) => s.SolicitationId === id)?.Title)
+  // A saved draft resumes where it was left; `clean` is the state as last saved, so any edit since then is unsaved.
+  const [saved, setSaved] = useState<SavedDraft | undefined>(() => readSavedDraft(framework))
+  const [resumed, setResumed] = useState(() => saved?.savedAt)
+  const [step, setStep] = useState(() => saved?.step ?? 0)
+  /** Every step change starts the new step at the top of the page, whichever control made it. */
+  const goTo = (n: number) => { setStep(n); window.scrollTo({ top: 0, behavior: 'smooth' }) }
+  const [d, setD] = useState<Draft>(() => saved?.d ?? emptyDraft(framework))
+  const [clean, setClean] = useState(() => JSON.stringify(saved?.d ?? emptyDraft(framework)))
+  const dirty = JSON.stringify(d) !== clean
+  const leaving = useRef(false)
+  const saveDraft = () => {
+    const record: SavedDraft = { v: 1, savedAt: new Date().toISOString(), step, d }
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(record)) } catch { toast.error('Could not save the draft in this browser.'); return false }
+    setSaved(record); setClean(JSON.stringify(d))
+    toast.success(`Draft saved. Open New ${t.process} to pick up where you left off.`)
+    return true
+  }
+  const startOver = () => {
+    try { localStorage.removeItem(DRAFT_KEY) } catch { /* nothing saved */ }
+    const fresh = emptyDraft(framework)
+    setSaved(undefined); setResumed(undefined); setD(fresh); setClean(JSON.stringify(fresh)); goTo(0)
+  }
+  // Have a cloud robot running by the time the CO uploads the solicitation, IGCE or Section M.
+  useEffect(() => { if (!preview && persona.id === 'co') warmAgents(sdk) }, [sdk, preview, persona.id])
+  // Leaving with unsaved changes asks first: in-app links are held by the router, a reload or closed tab by the browser.
+  const blocker = useBlocker(({ currentLocation, nextLocation }) => dirty && !leaving.current && currentLocation.pathname !== nextLocation.pathname)
+  useEffect(() => {
+    if (!dirty) return
+    const hold = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = '' }
+    window.addEventListener('beforeunload', hold)
+    return () => window.removeEventListener('beforeunload', hold)
+  }, [dirty])
+  // Uploaded volumes by offeror, kept in the draft so Save draft and a reload keep the list.
+  const proposals = d.proposals ?? {}
+  const setProposals = (p: Record<string, string[]>) => set({ proposals: p })
+  const [busy, setBusy] = useState<'save' | 'start'>()
+  const [tried, setTried] = useState(-1)
+  const set = (p: Partial<Draft>) => setD((x) => ({ ...x, ...p }))
+  const offerors = Object.keys(proposals).length
+  // A number already started (in evaluation, awarded or cancelled) can't be started again, so say so on the first step
+  // rather than at Start. A saved-but-not-started one is fine: saving updates it.
+  const taken = data?.solicitations.find((s) => s.SolicitationId === d.solicitationId.trim() && s.Status !== 'Proposals Received')
+  const takenMessage = taken && `${taken.SolicitationId} is already ${taken.Status.toLowerCase()} in this workspace. Use a different ${t.solicitationNo.toLowerCase()}.`
+  const checked = useMemo(() => check(d, step, offerors), [d, step, offerors])
+  const errors = step === 0 && takenMessage ? [takenMessage, ...checked.errors] : checked.errors
+  const { warnings } = checked
+  const drafts = (data?.solicitations ?? []).filter((s) => s.Status === 'Proposals Received' && frameworkOfSolicitation(s) === framework).map((s) => ({ id: s.SolicitationId, title: s.Title }))
+
+  if (persona.id !== 'co') {
+    return (
+      <div className="mx-auto max-w-lg space-y-4 rounded-2xl border border-border bg-card p-8 text-center">
+        <PersonaAvatar id="co" short="DW" size={56} />
+        <h1 className="text-lg font-semibold">Only the {t.co} starts {t.sled ? 'an RFP evaluation' : 'a source selection'}</h1>
+        <p className="text-sm text-muted-foreground">Dana Whitfield, the {t.co}, sets up the {t.solicitation}, evaluation criteria and {t.sled ? 'committee' : 'board'}.</p>
+      </div>
+    )
+  }
+
+  const load = (id: string) => {
+    const s = data?.solicitations.find((x) => x.SolicitationId === id)
+    if (!s) return
+    // Keep the solicitation basics; the factors come from Section M in the next step.
+    const fromPlan = draftFromPlan(planOf(s))
+    set({ ...fromPlan, ...blankCriteria(fromPlan.template), template: fromPlan.template, sectionM: undefined })
+    toast.success(`Loaded ${id}. Upload its ${t.sled ? 'evaluation criteria' : 'Section M'} in the next step.`)
+  }
+
+  const finish = async (start: boolean) => {
+    const plan = toPlan(d, Object.keys(proposals).sort())
+    const existing = data?.solicitations.find((s) => s.SolicitationId === plan.solicitationId)
+    if (existing && existing.Status !== 'Proposals Received') { toast.error(`${plan.solicitationId} is already ${existing.Status.toLowerCase()}.`); return }
+    setBusy(start ? 'start' : 'save')
+    try {
+      if (preview) {
+        putLocal({ Id: existing?.Id ?? `local-${plan.solicitationId}`, ...solicitationRecord(plan), ...(start ? { Status: 'In evaluation', Stage: 'Proposal Intake', StartedAt: new Date().toISOString() } : {}) })
+        toast.success(start ? `Preview: ${t.process} created locally — no case was started.` : 'Preview: draft saved locally.')
+      } else {
+        await saveSolicitation(sdk, plan, existing?.Id)
+        if (start) {
+          try {
+            await startCase(sdk, plan, DEMO_PANEL_EMAIL)
+            toast.success(`${t.Process} started for ${plan.solicitationId}. Robots are ingesting proposals.`)
+          } catch (e) {
+            const msg = (e as Error).message
+            toast.error(/could not be found/i.test(msg) ? `Saved. The SourceSelection case is not deployed to the ${PROCESS_FOLDER} folder yet.` : `Saved, but the case did not start: ${msg}`)
+          }
+        } else toast.success('Draft saved to Data Fabric.')
+        await reload()
+      }
+      leaving.current = true
+      try { localStorage.removeItem(DRAFT_KEY) } catch { /* nothing saved */ }
+      nav(`/s/${encodeURIComponent(plan.solicitationId)}`)
+    } catch (e) {
+      toast.error(`Could not save: ${(e as Error).message}`)
+    } finally {
+      setBusy(undefined)
+    }
+  }
+
+  const last = step === steps.length - 1
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-1">
+          <Button variant="ghost" size="sm" asChild className="-ml-2 max-w-full"><Link to={back.to} state={back.state}><ArrowLeft className="mr-1 h-4 w-4 shrink-0" /><span className="truncate">{back.label}</span></Link></Button>
+          <h1 className="text-2xl font-semibold tracking-tight">New {t.process}</h1>
+          <p className="text-sm text-muted-foreground">{t.sled ? 'Set up the scoring, assign the evaluation committee, and release proposals to it.' : 'Set up the evaluation, assign the board, and release proposals to the SSEB.'}</p>
+        </div>
+        {preview && <span className="rounded-full border border-dashed border-border px-3 py-1 text-xs text-muted-foreground">Preview — nothing is written to the tenant</span>}
+      </div>
+      {resumed && (
+        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-primary/40 bg-primary/5 px-4 py-2.5 text-sm">
+          <Save className="h-4 w-4 shrink-0 text-primary" />
+          <span className="min-w-0 flex-1">Picked up your draft from {when(resumed)}{d.solicitationId ? ` · ${d.solicitationId}` : ''}.</span>
+          <Button variant="ghost" size="sm" onClick={startOver}>Start over</Button>
+        </div>
+      )}
+      <div className="overflow-x-auto rounded-2xl border border-border bg-card px-4 py-4"><Stepper steps={steps} currentStep={step} clickableSteps onStepClick={goTo} className="min-w-[720px]" /></div>
+
+      {step === 0 && <SolicitationStep d={d} set={set} drafts={drafts} onLoad={load} taken={takenMessage || undefined} />}
+      {step === 1 && <CriteriaStep d={d} set={set} />}
+      {step === 2 && <BoardStep d={d} set={set} />}
+      {step === 3 && <ProposalsStep d={d} proposals={proposals} setProposals={setProposals} />}
+      {step === 4 && <ReviewStep d={d} offerors={offerors} />}
+
+      <div className="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center justify-between gap-3 border-t border-border bg-background/90 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
+        <div className="min-w-0 flex-1"><Problems errors={tried >= step ? errors : []} warnings={warnings} /></div>
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          {!dirty && saved && <span className="text-xs text-muted-foreground">Draft saved {when(saved.savedAt)}</span>}
+          <Button variant="ghost" onClick={saveDraft} disabled={!dirty}><Save className="mr-1.5 h-4 w-4" />Save draft</Button>
+          {step > 0 && <Button variant="outline" onClick={() => goTo(step - 1)}><ArrowLeft className="mr-1 h-4 w-4" />Back</Button>}
+          {last ? (
+            <>
+              <Button variant="outline" onClick={() => finish(false)} disabled={!!busy}>{busy === 'save' ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <FolderInput className="mr-1.5 h-4 w-4" />}Save without starting</Button>
+              <Button onClick={() => finish(true)} disabled={!!busy}>{busy === 'start' ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Play className="mr-1.5 h-4 w-4" />}Create and start {t.process}</Button>
+            </>
+          ) : (
+            <Button onClick={() => { if (errors.length) setTried(step); else goTo(step + 1) }}>Next<ArrowRight className="ml-1 h-4 w-4" /></Button>
+          )}
+        </div>
+      </div>
+
+      <Dialog open={blocker.state === 'blocked'} onOpenChange={(open) => { if (!open && blocker.state === 'blocked') blocker.reset() }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Save your progress before leaving?</DialogTitle>
+            <DialogDescription>This {t.process} has changes that aren't saved. Save a draft to pick up where you left off, or leave without saving and lose them.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-wrap gap-2 sm:justify-end">
+            <Button variant="ghost" onClick={() => blocker.reset?.()}>Stay</Button>
+            <Button variant="outline" onClick={() => blocker.proceed?.()}>Leave without saving</Button>
+            <Button onClick={() => { if (saveDraft()) blocker.proceed?.() }}><Save className="mr-1.5 h-4 w-4" />Save draft and leave</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}

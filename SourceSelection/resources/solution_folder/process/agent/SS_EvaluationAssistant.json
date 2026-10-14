@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_EvaluationAssistant",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "ff1ab31e-8ccf-4de6-9167-d6cbf536fa31",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SS_EvaluationAssistant"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "SS_EvaluationAssistant",
+      "package": {
+        "key": "4e63eca8-f01f-4a19-b169-09a274f0b91a"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"70f303c8-6846-4726-84f7-f145e7d37757\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\",\n            \"description\": \"Solicitation number\"\n          },\n          \"offerorName\": {\n            \"type\": \"string\",\n            \"description\": \"Offeror legal name\"\n          },\n          \"factor\": {\n            \"type\": \"string\",\n            \"description\": \"Evaluation factor as JSON: id, name, criteria, subfactors\"\n          },\n          \"volume\": {\n            \"type\": \"string\",\n            \"description\": \"Proposal volume the factor is evaluated from, e.g. technical\"\n          },\n          \"proposalPages\": {\n            \"type\": \"string\",\n            \"description\": \"JSON array of {page, text} for every page of that volume, as extracted from the offeror's proposal\"\n          },\n          \"pastPerformance\": {\n            \"type\": \"string\",\n            \"description\": \"Optional JSON of CPARS ratings and FAPIIS records for the offeror (Past Performance factors only)\"\n          }\n        },\n        \"required\": [\n          \"solicitationId\",\n          \"offerorName\",\n          \"factor\",\n          \"volume\",\n          \"proposalPages\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"findings\": {\n            \"type\": \"array\",\n            \"description\": \"Draft findings for this offeror and factor\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"kind\": {\n                  \"type\": \"string\",\n                  \"description\": \"One of: Significant Strength, Strength, Weakness, Significant Weakness, Deficiency, Risk\"\n                },\n                \"subfactor\": {\n                  \"type\": \"string\",\n                  \"description\": \"Subfactor the finding addresses, or the factor name\"\n                },\n                \"text\": {\n                  \"type\": \"string\",\n                  \"description\": \"One or two sentences stating the finding and why it matters to the Government\"\n                },\n                \"page\": {\n                  \"type\": \"integer\",\n                  \"description\": \"Page number in the volume that supports the finding\"\n                },\n                \"quote\": {\n                  \"type\": \"string\",\n                  \"description\": \"Verbatim sentence copied from that page that supports the finding\"\n                }\n              },\n              \"required\": [\n                \"kind\",\n                \"subfactor\",\n                \"text\",\n                \"page\",\n                \"quote\"\n              ]\n            }\n          },\n          \"coverageNotes\": {\n            \"type\": \"string\",\n            \"description\": \"Criteria or subfactors the proposal does not address, or 'None'\"\n          }\n        },\n        \"required\": [\n          \"findings\",\n          \"coverageNotes\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "70f303c8-6846-4726-84f7-f145e7d37757"
+    },
+    "locks": [],
+    "key": "039e9ae0-94ad-439a-a6f7-b1ac2b8552ce",
+    "files": []
+  }
+}

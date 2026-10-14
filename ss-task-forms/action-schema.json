@@ -1,0 +1,113 @@
+{
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "actionType": {
+        "type": "string",
+        "required": true,
+        "description": "Which form to render: releaseToEvaluation, individualEvaluation, consensus, priceDetermination, awardDecision, clarification"
+      },
+      "solicitationId": {
+        "type": "string",
+        "required": true,
+        "description": "Solicitation number; key into Data Fabric"
+      },
+      "evaluatorSlot": {
+        "type": "integer",
+        "required": false,
+        "description": "Evaluator panel slot (1-3) for individual evaluation"
+      },
+      "complianceSummary": {
+        "type": "string",
+        "required": false,
+        "description": "Compliance screen result (JSON)"
+      },
+      "consensusDraft": {
+        "type": "string",
+        "required": false,
+        "description": "SS_ConsensusAnalyst proposed consensus (JSON)"
+      },
+      "priceAnalysis": {
+        "type": "string",
+        "required": false,
+        "description": "Price analysis result (JSON)"
+      },
+      "ssddDraft": {
+        "type": "string",
+        "required": false,
+        "description": "SS_DecisionWriter SSDD draft (markdown)"
+      },
+      "recommendedAwardee": {
+        "type": "string",
+        "required": false,
+        "description": "Offeror recommended by the decision writer"
+      },
+      "chairQuestions": {
+        "type": "string",
+        "required": false,
+        "description": "SSEB Chair questions for evaluators"
+      }
+    }
+  },
+  "outputs": {
+    "type": "object",
+    "properties": {
+      "decision": {
+        "type": "string",
+        "required": false,
+        "description": "Routing decision: Release/Cancel (release), Approve/Reconvene (consensus), Proceed/Cancel (price), Submitted (evaluation, clarification), Signed (award)"
+      },
+      "notes": {
+        "type": "string",
+        "required": false,
+        "description": "Rationale, price reasonableness determination, or clarification notes"
+      },
+      "payload": {
+        "type": "string",
+        "required": false,
+        "description": "Structured result: evaluator ratings (JSON), consensus ratings (JSON) or Chair questions, or the signed SSDD text"
+      },
+      "awardee": {
+        "type": "string",
+        "required": false,
+        "description": "Offeror selected by the Source Selection Authority"
+      }
+    }
+  },
+  "inOuts": {
+    "type": "object",
+    "properties": {
+      "draft": {
+        "type": "string",
+        "required": false,
+        "description": "Work in progress saved without submitting (JSON written and read by the form)"
+      }
+    }
+  },
+  "outcomes": {
+    "type": "object",
+    "properties": {
+      "Release": {
+        "type": "string"
+      },
+      "CancelSolicitation": {
+        "type": "string"
+      },
+      "Submit": {
+        "type": "string"
+      },
+      "SignReport": {
+        "type": "string"
+      },
+      "Reconvene": {
+        "type": "string"
+      },
+      "Proceed": {
+        "type": "string"
+      },
+      "SignDecision": {
+        "type": "string"
+      }
+    }
+  }
+}

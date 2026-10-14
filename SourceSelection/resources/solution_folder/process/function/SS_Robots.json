@@ -1,0 +1,42 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_Robots",
+    "kind": "process",
+    "type": "function",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "5d244f46-29b0-4c26-b71e-2ff8b19924b4",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SS_Robots"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Function",
+      "name": "SS_Robots",
+      "package": {
+        "key": "32db8d72-7bbc-4518-9870-188df827ecf8"
+      },
+      "packageName": "SourceSelection.function.SS_Robots",
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n    \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n    \"$id\": \"entry-points.json\",\n    \"entryPoints\": [\n        {\n            \"filePath\": \"SS_Robots\",\n            \"uniqueId\": \"ab0e12ba-b2b6-45ab-9993-b6cf2d58fb9b\",\n            \"type\": \"function\",\n            \"input\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"step\": {\n                        \"default\": \"\",\n                        \"title\": \"Step\",\n                        \"type\": \"string\"\n                    },\n                    \"solicitationId\": {\n                        \"default\": \"\",\n                        \"title\": \"Solicitationid\",\n                        \"type\": \"string\"\n                    },\n                    \"includeOfferorIds\": {\n                        \"default\": \"\",\n                        \"title\": \"Includeofferorids\",\n                        \"type\": \"string\"\n                    },\n                    \"agentProcess\": {\n                        \"default\": \"SS_EvaluationAssistant\",\n                        \"title\": \"Agentprocess\",\n                        \"type\": \"string\"\n                    },\n                    \"ssddText\": {\n                        \"default\": \"\",\n                        \"title\": \"Ssddtext\",\n                        \"type\": \"string\"\n                    },\n                    \"awardee\": {\n                        \"default\": \"\",\n                        \"title\": \"Awardee\",\n                        \"type\": \"string\"\n                    },\n                    \"signedBy\": {\n                        \"default\": \"\",\n                        \"title\": \"Signedby\",\n                        \"type\": \"string\"\n                    },\n                    \"rationale\": {\n                        \"default\": \"\",\n                        \"title\": \"Rationale\",\n                        \"type\": \"string\"\n                    },\n                    \"cancelledBy\": {\n                        \"default\": \"\",\n                        \"title\": \"Cancelledby\",\n                        \"type\": \"string\"\n                    }\n                },\n                \"required\": [],\n                \"title\": \"RobotInput\"\n            },\n            \"output\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"error_type\": {\n                        \"default\": \"\",\n                        \"title\": \"Error Type\",\n                        \"type\": \"string\"\n                    },\n                    \"error_message\": {\n                        \"default\": \"\",\n                        \"title\": \"Error Message\",\n                        \"type\": \"string\"\n                    },\n                    \"step\": {\n                        \"default\": \"\",\n                        \"title\": \"Step\",\n                        \"type\": \"string\"\n                    },\n                    \"content\": {\n                        \"default\": \"\",\n                        \"title\": \"Content\",\n                        \"type\": \"string\"\n                    },\n                    \"detail\": {\n                        \"default\": \"\",\n                        \"title\": \"Detail\",\n                        \"type\": \"string\"\n                    },\n                    \"count\": {\n                        \"default\": 0,\n                        \"title\": \"Count\",\n                        \"type\": \"integer\"\n                    }\n                },\n                \"required\": [],\n                \"title\": \"RobotOutput\"\n            },\n            \"graph\": {\n                \"nodes\": [\n                    {\n                        \"id\": \"main.py:481\",\n                        \"name\": \"run\",\n                        \"type\": \"function\",\n                        \"metadata\": {\n                            \"file\": \"main.py\"\n                        }\n                    }\n                ],\n                \"edges\": []\n            }\n        }\n    ]\n}",
+      "entryPointName": "SS_Robots",
+      "entryPointUniqueId": "ab0e12ba-b2b6-45ab-9993-b6cf2d58fb9b"
+    },
+    "locks": [],
+    "key": "a3eecc90-05d7-4b22-bd11-8a63120c0aa3",
+    "files": []
+  }
+}

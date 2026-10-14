@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_DecisionWriter",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "42d5eab4-b0b0-4911-8ee3-2ec6b4eb83b9",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SS_DecisionWriter"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "SS_DecisionWriter",
+      "package": {
+        "key": "d3b109d7-6bac-4676-8fb3-2cd223578199"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"ec1dc4d2-898c-400c-b956-0d10df101f47\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\",\n            \"description\": \"Solicitation number\"\n          },\n          \"plan\": {\n            \"type\": \"string\",\n            \"description\": \"JSON evaluation plan: title, agency, basisForAward, relativeImportance, factors\"\n          },\n          \"consensusRecord\": {\n            \"type\": \"string\",\n            \"description\": \"JSON SSEB consensus record: per offeror and factor the consensus rating, rationale, and supporting findings with proposal citations\"\n          },\n          \"priceAnalysis\": {\n            \"type\": \"string\",\n            \"description\": \"JSON price analysis: total evaluated price, variance to IGCE, potentially unbalanced CLINs per offeror\"\n          }\n        },\n        \"required\": [\n          \"solicitationId\",\n          \"plan\",\n          \"consensusRecord\",\n          \"priceAnalysis\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"ssddDraft\": {\n            \"type\": \"string\",\n            \"description\": \"Draft Source Selection Decision Document in plain text with numbered sections, under 8,000 characters, incorporating the SSEB consensus report by reference\"\n          },\n          \"recommendedAwardee\": {\n            \"type\": \"string\",\n            \"description\": \"Offeror name the analysis supports, exactly as given\"\n          },\n          \"discriminators\": {\n            \"type\": \"array\",\n            \"description\": \"The findings that drive the tradeoff\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"offeror\": {\n                  \"type\": \"string\",\n                  \"description\": \"Offeror name\"\n                },\n                \"factor\": {\n                  \"type\": \"string\",\n                  \"description\": \"Factor name\"\n                },\n                \"finding\": {\n                  \"type\": \"string\",\n                  \"description\": \"The discriminating finding\"\n                },\n                \"citation\": {\n                  \"type\": \"string\",\n                  \"description\": \"Proposal volume and page, or finding id\"\n                }\n              },\n              \"required\": [\n                \"offeror\",\n                \"factor\",\n                \"finding\",\n                \"citation\"\n              ]\n            }\n          }\n        },\n        \"required\": [\n          \"ssddDraft\",\n          \"recommendedAwardee\",\n          \"discriminators\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "ec1dc4d2-898c-400c-b956-0d10df101f47"
+    },
+    "locks": [],
+    "key": "593c15ec-d141-4c18-8f54-dd6e955a8422",
+    "files": []
+  }
+}

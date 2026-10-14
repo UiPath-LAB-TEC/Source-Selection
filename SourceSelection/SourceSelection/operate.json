@@ -1,0 +1,10 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/operate",
+    "projectId": "9c771cbc-2987-41ab-8673-f5a9877c6c73",
+    "contentType": "CaseManagement",
+    "targetFramework": "Portable",
+    "runtimeOptions": {
+        "requiresUserInteraction": false,
+        "isAttended": false
+    }
+}

@@ -1,0 +1,87 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "ec1dc4d2-898c-400c-b956-0d10df101f47",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string",
+            "description": "Solicitation number"
+          },
+          "plan": {
+            "type": "string",
+            "description": "JSON evaluation plan: title, agency, basisForAward, relativeImportance, factors"
+          },
+          "consensusRecord": {
+            "type": "string",
+            "description": "JSON SSEB consensus record: per offeror and factor the consensus rating, rationale, and supporting findings with proposal citations"
+          },
+          "priceAnalysis": {
+            "type": "string",
+            "description": "JSON price analysis: total evaluated price, variance to IGCE, potentially unbalanced CLINs per offeror"
+          }
+        },
+        "required": [
+          "solicitationId",
+          "plan",
+          "consensusRecord",
+          "priceAnalysis"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "ssddDraft": {
+            "type": "string",
+            "description": "Draft Source Selection Decision Document in plain text with numbered sections, under 8,000 characters, incorporating the SSEB consensus report by reference"
+          },
+          "recommendedAwardee": {
+            "type": "string",
+            "description": "Offeror name the analysis supports, exactly as given"
+          },
+          "discriminators": {
+            "type": "array",
+            "description": "The findings that drive the tradeoff",
+            "items": {
+              "type": "object",
+              "properties": {
+                "offeror": {
+                  "type": "string",
+                  "description": "Offeror name"
+                },
+                "factor": {
+                  "type": "string",
+                  "description": "Factor name"
+                },
+                "finding": {
+                  "type": "string",
+                  "description": "The discriminating finding"
+                },
+                "citation": {
+                  "type": "string",
+                  "description": "Proposal volume and page, or finding id"
+                }
+              },
+              "required": [
+                "offeror",
+                "factor",
+                "finding",
+                "citation"
+              ]
+            }
+          }
+        },
+        "required": [
+          "ssddDraft",
+          "recommendedAwardee",
+          "discriminators"
+        ]
+      }
+    }
+  ]
+}

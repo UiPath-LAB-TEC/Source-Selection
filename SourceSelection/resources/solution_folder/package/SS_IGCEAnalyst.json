@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_IGCEAnalyst",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "bf550e0d-a21e-412e-bd9d-306e6eafea56",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SS_IGCEAnalyst"
+    },
+    "locks": [],
+    "key": "9a50c868-5019-4b51-8201-eafd7c08a00a",
+    "files": []
+  }
+}

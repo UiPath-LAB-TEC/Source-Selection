@@ -1,0 +1,251 @@
+/* Tailwind base + utilities, Apollo design tokens, light/dark overrides. */
+@import '@uipath/apollo-wind/tailwind.css';
+
+@source '../node_modules/@uipath/apollo-wind/dist';
+@source './';
+/* The in-app task dialog renders ss-task-forms' forms from source. */
+@source '../../ss-task-forms/src/forms';
+@source '../../ss-task-forms/src/components';
+
+/* Forms are full-page in Action Center; inside the dialog they fill the dialog's scroll area instead. */
+.ss-embed .min-h-screen { min-height: 100%; }
+/* …and use the dialog's full width: the forms' page container is capped for a full browser tab. */
+.ss-embed .max-w-6xl { max-width: none; }
+
+/* Tailwind v4's preflight resets buttons to the default arrow — everything clickable gets the hand cursor. */
+@layer base {
+  a[href], button, summary, select, label[for],
+  input[type='checkbox'], input[type='radio'], input[type='range'], input[type='file'],
+  [role='button'], [role='tab'], [role='radio'], [role='checkbox'], [role='switch'],
+  [role='option'], [role='menuitem'], [role='menuitemradio'], [role='menuitemcheckbox'], [role='combobox'] {
+    cursor: pointer;
+  }
+  button:disabled, [aria-disabled='true'], input:disabled, select:disabled, fieldset:disabled button {
+    cursor: not-allowed;
+  }
+}
+
+/* Ordinal rating ramp (one hue, light to dark) and finding-kind accents.
+   Prefixed `ss-` so Apollo's own tokens never override them. */
+:root {
+  --ss-rate-1: #104281; --ss-rate-2: #2a78d6; --ss-rate-3: #6da7ec; --ss-rate-4: #b7d3f6; --ss-rate-5: #e4eefb;
+  --ss-good: #0ca30c; --ss-warn: #fab219; --ss-serious: #ec835a; --ss-critical: #d03b3b;
+  --ss-highlight: #fff1b8;
+}
+.dark {
+  --ss-rate-1: #86b6ef; --ss-rate-2: #3987e5; --ss-rate-3: #1c5cab; --ss-rate-4: #184f95; --ss-rate-5: #13305a;
+  --ss-highlight: #5c4a00;
+}
+.ss-doc { font-family: 'Georgia', 'Times New Roman', serif; }
+
+/* ------------------------------------------------------------------ flare */
+:root {
+  --ss-brand-1: #1d3a8a; --ss-brand-2: #2a78d6; --ss-brand-3: #14b8a6;
+  --ss-glow: rgba(42, 120, 214, 0.16);
+}
+.dark { --ss-glow: rgba(57, 135, 229, 0.22); }
+
+/* Soft mesh behind the top of every page. */
+.ss-backdrop {
+  background:
+    radial-gradient(900px 380px at 12% -8%, var(--ss-glow), transparent 70%),
+    radial-gradient(700px 300px at 92% -12%, color-mix(in srgb, var(--ss-brand-3) 14%, transparent), transparent 70%);
+}
+.ss-hero {
+  position: relative; overflow: hidden; color: #fff;
+  background: linear-gradient(120deg, var(--ss-brand-1) 0%, var(--ss-brand-2) 58%, var(--ss-brand-3) 130%);
+}
+.ss-hero::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.18;
+  background-image: radial-gradient(rgba(255,255,255,.55) 1px, transparent 1px);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(90deg, transparent 30%, #000 100%);
+}
+.ss-hero-tile { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22); backdrop-filter: blur(6px); }
+.ss-lift { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.ss-lift:hover { box-shadow: 0 10px 30px -12px rgba(16,24,40,.35); } /* no lift: moving under the cursor made avatars and tooltips flicker */
+.ss-accent { background: linear-gradient(180deg, var(--ss-brand-2), var(--ss-brand-3)); }
+@keyframes ss-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.ss-in { animation: ss-in .35s ease both; }
+/* A page's loading note fades in only after a beat, so a fast load never flashes it. */
+@keyframes ss-loading { from { opacity: 0; } to { opacity: 1; } }
+.ss-loading { animation: ss-loading .3s ease .4s both; }
+@media (prefers-reduced-motion: reduce) { .ss-in { animation: none; }  }
+.ss-paper { box-shadow: 0 1px 2px rgba(16,24,40,.06), 0 12px 32px -12px rgba(16,24,40,.28); }
+.ss-chain::before {
+  content: ''; position: absolute; left: 15px; top: 20px; bottom: 20px; width: 2px;
+  background: linear-gradient(180deg, var(--ss-brand-2), var(--ss-brand-3));
+  opacity: .5;
+}
+
+/* ---------------------------------------------------------- hero orbit */
+.ss-orbit { --orbit-radius: 118px; position: relative; width: 300px; height: 300px; }
+.ss-ring { position: absolute; inset: 0; border-radius: 9999px; border: 1px solid rgba(255,255,255,.28); }
+.ss-ring.inner { inset: 52px; border-style: dashed; border-color: rgba(255,255,255,.35); animation: ss-drift 60s linear infinite; }
+.ss-ring.outer { inset: 12px; border-color: rgba(255,255,255,.18); animation: ss-drift 90s linear infinite reverse; }
+.ss-ring.outer::before, .ss-ring.inner::before {
+  content: ''; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; margin-left: -4px;
+  border-radius: 9999px; background: #fff; box-shadow: 0 0 12px 3px rgba(255,255,255,.7);
+}
+.ss-orbit-item {
+  position: absolute; top: 50%; left: 50%; width: 52px; height: 52px; margin: -26px;
+  animation: ss-orbit 36s linear infinite; will-change: transform;
+}
+.ss-orbit-chip {
+  display: flex; width: 100%; height: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  border-radius: 16px; background: rgba(255,255,255,.95); color: var(--ss-brand-1);
+  box-shadow: 0 8px 24px -8px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.6);
+  transition: transform .2s ease;
+}
+.ss-orbit-chip:hover { transform: scale(1.12); }
+.ss-orbit-chip span { font-size: 8px; font-weight: 700; line-height: 1; color: #344054; white-space: nowrap; text-align: center; letter-spacing: -.01em; }
+.ss-core {
+  position: absolute; inset: 86px; border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), rgba(255,255,255,.12) 60%, transparent 72%);
+  box-shadow: 0 0 60px 10px rgba(255,255,255,.18), inset 0 0 0 1px rgba(255,255,255,.35);
+  display: flex; align-items: center; justify-content: center;
+  animation: ss-breathe 5s ease-in-out infinite;
+}
+.ss-core img { width: 112px; height: 112px; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,.35)); animation: ss-bob 4.5s ease-in-out infinite; }
+@keyframes ss-orbit {
+  from { transform: rotate(0turn) translateX(var(--orbit-radius)) rotate(0turn); }
+  to   { transform: rotate(1turn) translateX(var(--orbit-radius)) rotate(-1turn); }
+}
+@keyframes ss-drift { to { transform: rotate(1turn); } }
+@keyframes ss-breathe { 50% { box-shadow: 0 0 80px 18px rgba(255,255,255,.26), inset 0 0 0 1px rgba(255,255,255,.45); } }
+@keyframes ss-bob { 50% { transform: translateY(-6px) rotate(-2deg); } }
+
+/* Light sweep across the hero gradient. */
+.ss-hero.sheen::before {
+  content: ''; position: absolute; inset: -40% -10%; pointer-events: none; z-index: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.14) 50%, transparent 60%);
+  transform: translateX(-60%); animation: ss-sheen 7s ease-in-out 1s infinite;
+}
+@keyframes ss-sheen { 0% { transform: translateX(-60%); } 45%, 100% { transform: translateX(60%); } }
+
+/* Staggered rise for hero copy. */
+.ss-rise { animation: ss-rise .6s cubic-bezier(.22,.9,.3,1) var(--d, 0s) both; }
+/* Sign-in screen on the way back from UiPath: shown as it was left, without replaying its entrance. */
+.ss-still .ss-rise, .ss-still .ss-in { animation: none; }
+@keyframes ss-rise { from { opacity: 0; transform: translateY(14px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-orbit-item, .ss-ring.inner, .ss-ring.outer, .ss-core, .ss-core img, .ss-hero.sheen::before, .ss-rise { animation: none !important; }
+}
+@media (max-width: 640px) { .ss-orbit { --orbit-radius: 96px; width: 248px; height: 248px; } .ss-core { inset: 70px; } .ss-core img { width: 90px; height: 90px; } }
+
+/* ------------------------------------------------------- process journey */
+.ss-track { position: absolute; left: 10%; right: 10%; top: 36px; height: 6px; border-radius: 9999px; background: color-mix(in srgb, currentColor 14%, transparent); }
+.ss-track-fill { position: absolute; inset: 0 auto 0 0; border-radius: 9999px; background: linear-gradient(90deg, var(--ss-brand-2), var(--ss-brand-3)); box-shadow: 0 0 12px var(--ss-brand-2); transition: width .7s cubic-bezier(.45,0,.2,1); }
+.ss-runner { position: absolute; top: -34px; width: 64px; margin-left: -32px; transition: left .7s cubic-bezier(.45,0,.2,1); z-index: 3; pointer-events: none; }
+.ss-runner img { width: 64px; height: 64px; object-fit: contain; transform-origin: 50% 100%; filter: drop-shadow(0 8px 10px rgba(0,0,0,.28)); }
+.ss-runner .hop img { animation: ss-hop .7s cubic-bezier(.45,0,.2,1) both; }
+.ss-runner .idle img { animation: ss-idle 2.4s ease-in-out infinite; }
+.ss-runner-shadow { margin: -4px auto 0; width: 34px; height: 6px; border-radius: 50%; background: rgba(0,0,0,.25); filter: blur(2px); }
+.ss-runner .hop .ss-runner-shadow { animation: ss-shadow .7s cubic-bezier(.45,0,.2,1) both; }
+@keyframes ss-hop {
+  0%   { transform: translateY(0) scale(1.08, .9); }
+  15%  { transform: translateY(-6px) scale(.95, 1.06) rotate(-6deg); }
+  50%  { transform: translateY(-46px) scale(1, 1) rotate(4deg); }
+  85%  { transform: translateY(-4px) scale(1, 1); }
+  92%  { transform: translateY(0) scale(1.12, .86); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes ss-shadow { 50% { transform: scale(.55); opacity: .4; } }
+@keyframes ss-idle { 50% { transform: translateY(-3px) rotate(-2deg); } }
+.ss-station { position: relative; z-index: 2; display: flex; height: 48px; width: 48px; align-items: center; justify-content: center; border-radius: 16px; transition: transform .3s ease, background .3s ease, color .3s ease, box-shadow .3s ease; }
+.ss-station.on { transform: translateY(-2px) scale(1.06); box-shadow: 0 10px 24px -10px var(--ss-brand-2); }
+.ss-station.on::after { content: ''; position: absolute; inset: -6px; border-radius: 20px; border: 2px solid var(--ss-brand-2); animation: ss-ping .9s ease-out both; }
+@keyframes ss-ping { from { opacity: .9; transform: scale(.85); } to { opacity: 0; transform: scale(1.35); } }
+.ss-fade { animation: ss-fade .45s ease both; }
+@keyframes ss-fade { from { opacity: 0; transform: translateY(6px); } }
+.ss-perch { position: absolute; top: -26px; left: 50%; width: 30px; height: 30px; margin-left: -15px; object-fit: contain; z-index: 20; animation: ss-idle 2.4s ease-in-out infinite; filter: drop-shadow(0 4px 4px rgba(0,0,0,.25)); }
+@media (prefers-reduced-motion: reduce) {
+  .ss-runner, .ss-track-fill { transition: none; }
+  .ss-runner img, .ss-runner-shadow, .ss-station.on::after, .ss-fade, .ss-perch { animation: none !important; }
+}
+
+/* ---------------------------------------------- vertical process journey */
+.ss-vtrack { position: absolute; left: 20px; top: 22px; bottom: 22px; width: 6px; border-radius: 9999px; background: color-mix(in srgb, currentColor 12%, transparent); }
+.ss-vtrack-fill { position: absolute; inset: 0 0 auto 0; border-radius: 9999px; background: linear-gradient(180deg, var(--ss-brand-2), var(--ss-brand-3)); box-shadow: 0 0 12px var(--ss-brand-2); transition: height .7s cubic-bezier(.45,0,.2,1); }
+.ss-vrunner { position: absolute; left: -4px; width: 52px; z-index: 3; pointer-events: none; transition: top .7s cubic-bezier(.45,0,.2,1); }
+.ss-vrunner img { width: 52px; height: 52px; object-fit: contain; transform-origin: 50% 100%; filter: drop-shadow(0 6px 8px rgba(0,0,0,.3)); }
+.ss-vrunner .vhop img { animation: ss-vhop .7s cubic-bezier(.45,0,.2,1) both; }
+.ss-vrunner .idle img { animation: ss-idle 2.4s ease-in-out infinite; }
+@keyframes ss-vhop {
+  0%   { transform: scale(1.1, .88); }
+  20%  { transform: translateX(-4px) scale(.94, 1.08) rotate(-8deg); }
+  50%  { transform: translateX(-16px) translateY(-6px) scale(1.06) rotate(-14deg); }
+  85%  { transform: translateX(-2px) rotate(4deg); }
+  93%  { transform: scale(1.12, .86); }
+  100% { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ss-vrunner, .ss-vtrack-fill { transition: none; } .ss-vrunner img { animation: none !important; } }
+.ss-orbit.sm { --orbit-radius: 92px; width: 236px; height: 236px; }
+.ss-orbit.sm .ss-core { inset: 66px; }
+.ss-orbit.sm .ss-core img { width: 84px; height: 84px; }
+.ss-orbit.sm .ss-orbit-item { width: 46px; height: 46px; margin: -23px; }
+.ss-orbit-item { width: 56px; height: 56px; margin: -28px; }
+.ss-orbit.sm .ss-orbit-item { width: 50px; height: 50px; margin: -25px; }
+.ss-orbit.sm .ss-orbit-chip span { font-size: 7.5px; }
+/* Home hero: the UiPath robot reads a proposal page while cited findings pop out (RobotReader). */
+.ss-reader { position: relative; width: 432px; height: 236px; }
+.ss-reader-bot { position: absolute; left: 0; top: 66px; width: 104px; filter: drop-shadow(0 12px 18px rgba(0,0,0,.35)); animation: ss-bob 3.2s ease-in-out infinite; }
+.ss-reader-page-card {
+  position: absolute; left: 92px; top: 16px; width: 136px; height: 184px; padding: 12px; overflow: hidden;
+  display: flex; flex-direction: column; gap: 8px; border-radius: 10px; background: rgba(255,255,255,.96);
+  box-shadow: 0 14px 30px -10px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.6); transform: rotate(-2deg);
+}
+.ss-reader-head { display: flex; flex-direction: column; gap: 1px; margin-bottom: 2px; animation: ss-doc-in .45s ease-out; }
+.ss-reader-vol { font-size: 7.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: #475467; }
+.ss-reader-doc { white-space: nowrap; font-size: 9px; font-weight: 700; line-height: 11px; color: #101828; }
+.ss-reader-line { display: block; height: 5px; flex-shrink: 0; border-radius: 3px; background: #d0d5dd; }
+.ss-reader-scan { position: absolute; left: 6px; right: 6px; top: 41px; height: 14px; animation: ss-scan 5.6s ease-in-out infinite; }
+.ss-reader-band { position: absolute; inset: 0; border-radius: 4px; background: rgba(37,99,235,.2); }
+.ss-reader-lens {
+  position: absolute; right: -6px; top: -7px; display: flex; width: 26px; height: 26px; align-items: center; justify-content: center;
+  border-radius: 9999px; border: 2px solid #2563eb; background: #fff; color: #2563eb; box-shadow: 0 4px 10px rgba(0,0,0,.25);
+}
+.ss-reader-chips { position: absolute; left: 236px; top: 22px; width: 196px; height: 170px; }
+.ss-reader-chip {
+  position: absolute; top: 18px; left: 0; display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px;
+  border-radius: 9999px; background: rgba(255,255,255,.96); color: #101828; font-size: 11px; font-weight: 600; white-space: nowrap;
+  box-shadow: 0 10px 22px -10px rgba(0,0,0,.5);
+  transition: transform 1s cubic-bezier(.22,.8,.3,1), opacity 1.2s ease;
+  animation: ss-chip-in .9s cubic-bezier(.22,.8,.3,1);
+}
+.ss-reader-chip[data-leaving='true'] { opacity: 0; }
+.ss-reader-dot { width: 8px; height: 8px; flex-shrink: 0; border-radius: 9999px; }
+.ss-reader-page { flex-shrink: 0; font-weight: 500; color: #667085; }
+.ss-reader-caption { position: absolute; left: 92px; bottom: 8px; display: flex; align-items: center; gap: 4px; font-size: 10px; color: rgba(255,255,255,.85); }
+@keyframes ss-bob { 50% { transform: translateY(-6px); } }
+@keyframes ss-scan { 50% { transform: translateY(104px); } }
+@keyframes ss-doc-in { from { opacity: 0; transform: translateY(-3px); } }
+/* Entry uses translate/scale, which compose with the inline transform that sets the chip's row. */
+@keyframes ss-chip-in { from { opacity: 0; translate: -16px 0; scale: .94; } }
+@media (prefers-reduced-motion: reduce) {
+  .ss-reader-bot, .ss-reader-scan, .ss-reader-head { animation: none; }
+  .ss-reader-chip { animation: none; transition: none; }
+}
+/* Horizontal journey on the dark hero (login). */
+.ss-hj .ss-track { background: rgba(255,255,255,.18); }
+.ss-hj .ss-station.on::after { border-color: #fff; }
+
+/* Diverging rating scale (blue above midpoint, gray at it, warm below). */
+/* Rating levels, best (0) to worst (4): solid green, tinted green, neutral, tinted amber, solid red. */
+:root {
+  --ss-lvl-0: #047857; --ss-lvl-0-fg: #ffffff;
+  --ss-lvl-1: #d1fae5; --ss-lvl-1-fg: #065f46;
+  --ss-lvl-2: #e5e7eb; --ss-lvl-2-fg: #374151;
+  --ss-lvl-3: #fde68a; --ss-lvl-3-fg: #78350f;
+  --ss-lvl-4: #b91c1c; --ss-lvl-4-fg: #ffffff;
+}
+.dark {
+  --ss-lvl-0: #059669; --ss-lvl-0-fg: #ffffff;
+  --ss-lvl-1: #134e3a; --ss-lvl-1-fg: #a7f3d0;
+  --ss-lvl-2: #374151; --ss-lvl-2-fg: #e5e7eb;
+  --ss-lvl-3: #713f12; --ss-lvl-3-fg: #fde68a;
+  --ss-lvl-4: #dc2626; --ss-lvl-4-fg: #ffffff;
+}
+:root { --ss-div-0: #1c5cab; --ss-div-1: #9ec5f4; --ss-div-2: #e1e0d9; --ss-div-2-fg: #2c2c2a; --ss-div-3: #f5c4b3; --ss-div-4: #d03b3b; }
+.dark { --ss-div-0: #3987e5; --ss-div-1: #9ec5f4; --ss-div-2: #5f5e5a; --ss-div-2-fg: #f1efe8; --ss-div-3: #f5c4b3; --ss-div-4: #e24b4a; }

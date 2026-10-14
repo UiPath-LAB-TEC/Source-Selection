@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_ConsensusAnalyst",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "bcd075ba-e009-4565-abb0-fccf30a91544",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SS_ConsensusAnalyst"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "SS_ConsensusAnalyst",
+      "package": {
+        "key": "e57b7b67-0c32-4b3b-92ca-e1942f363417"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"51b29783-91c6-4050-84dc-86f6db78485a\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\",\n            \"description\": \"Solicitation number\"\n          },\n          \"evaluationSet\": {\n            \"type\": \"string\",\n            \"description\": \"JSON: for each offeror and factor, every evaluator's rating, rationale, and accepted or edited findings with ids\"\n          },\n          \"scales\": {\n            \"type\": \"string\",\n            \"description\": \"JSON rating scales by name, best first, e.g. technical and confidence\"\n          }\n        },\n        \"required\": [\n          \"solicitationId\",\n          \"evaluationSet\",\n          \"scales\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"proposals\": {\n            \"type\": \"array\",\n            \"description\": \"One proposed consensus per offeror and factor\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"offerorId\": {\n                  \"type\": \"string\",\n                  \"description\": \"Offeror id as given\"\n                },\n                \"factorId\": {\n                  \"type\": \"string\",\n                  \"description\": \"Factor id as given\"\n                },\n                \"spread\": {\n                  \"type\": \"integer\",\n                  \"description\": \"Distance in scale steps between the highest and lowest individual rating\"\n                },\n                \"proposedRating\": {\n                  \"type\": \"string\",\n                  \"description\": \"Proposed consensus rating, exactly as written in the scale\"\n                },\n                \"rationale\": {\n                  \"type\": \"string\",\n                  \"description\": \"Two to four sentences tying the proposed rating to specific findings\"\n                },\n                \"supportingFindingIds\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"type\": \"string\"\n                  },\n                  \"description\": \"Finding ids the rationale relies on\"\n                },\n                \"chairQuestions\": {\n                  \"type\": \"string\",\n                  \"description\": \"Questions the SSEB Chair should resolve with evaluators, or 'None'\"\n                }\n              },\n              \"required\": [\n                \"offerorId\",\n                \"factorId\",\n                \"spread\",\n                \"proposedRating\",\n                \"rationale\",\n                \"supportingFindingIds\",\n                \"chairQuestions\"\n              ]\n            }\n          },\n          \"disagreementCount\": {\n            \"type\": \"integer\",\n            \"description\": \"Number of offeror-factor pairs whose spread is 2 or more\"\n          }\n        },\n        \"required\": [\n          \"proposals\",\n          \"disagreementCount\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "51b29783-91c6-4050-84dc-86f6db78485a"
+    },
+    "locks": [],
+    "key": "95f6a4ec-8280-4b81-8750-fcd9b78f8c0d",
+    "files": []
+  }
+}

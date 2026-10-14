@@ -1,0 +1,154 @@
+[
+  {
+    "stage": "Proposal Intake", "task": "Ingest Proposals", "taskType": "rpa",
+    "cacheFile": "local:SourceSelection/SS_Robots/entry-points.json", "searchQuery": "SS_Robots",
+    "matches": [{ "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots", "deployedRelease": { "key": "f833e8dd-56e8-466a-8f88-215fba7fec88", "folder": "SourceSelection/Solution" } }],
+    "selected": { "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots" },
+    "name": "SS_Robots", "taskTypeId": "local:SS_Robots", "folder-path": "",
+    "rationale": "Coded function sibling in the same solution. Function processes are not indexed by the case registry (absent from process-index and the solution-scoped pull), so it binds as an in-solution sibling: resourceKey solution_folder.SS_Robots, co-located folderPath; I/O from its entry-points.json."
+  },
+  {
+    "stage": "Proposal Intake", "task": "Compliance and Responsibility Screen", "taskType": "rpa",
+    "cacheFile": "local:SourceSelection/SS_Robots/entry-points.json", "searchQuery": "SS_Robots",
+    "matches": [{ "name": "SS_Robots", "source": "local", "projectType": "Function" }],
+    "selected": { "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots" },
+    "name": "SS_Robots", "taskTypeId": "local:SS_Robots", "folder-path": "",
+    "rationale": "Same in-solution SS_Robots sibling; step input selects ScreenCompliance."
+  },
+  {
+    "stage": "Proposal Intake", "task": "Release to Evaluation", "taskType": "action",
+    "cacheFile": "action-apps-index.json", "searchQuery": "Source Selection Task Forms",
+    "matches": [{ "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "title": "ss-taskforms", "semVersion": "1.0.1", "systemName": "ID6a25fd7c3d4a4824b8a3e1aa556e2701", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } }],
+    "selected": { "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "semVersion": "1.0.1", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } },
+    "name": "Source Selection Task Forms", "taskTypeId": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "folder-path": "SourceSelection",
+    "recipient": "=vars.contractingOfficer",
+    "rationale": "Exact deploymentTitle match in the SourceSelection folder."
+  },
+  {
+    "stage": "Individual Evaluation", "task": "Generate Draft Findings", "taskType": "rpa",
+    "cacheFile": "local:SourceSelection/SS_Robots/entry-points.json", "searchQuery": "SS_Robots",
+    "matches": [{ "name": "SS_Robots", "source": "local", "projectType": "Function" }],
+    "selected": { "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots" },
+    "name": "SS_Robots", "taskTypeId": "local:SS_Robots", "folder-path": "",
+    "rationale": "Same in-solution SS_Robots sibling; step input selects GenerateDraftFindings."
+  },
+  {
+    "stage": "Individual Evaluation", "task": "Evaluator 1 Review", "taskType": "action",
+    "cacheFile": "action-apps-index.json", "searchQuery": "Source Selection Task Forms",
+    "matches": [{ "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "deploymentFolder": { "fullyQualifiedName": "SourceSelection" } }],
+    "selected": { "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "semVersion": "1.0.1", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } },
+    "name": "Source Selection Task Forms", "taskTypeId": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "folder-path": "SourceSelection",
+    "recipient": "=vars.evaluator1",
+    "rationale": "Exact deploymentTitle match in the SourceSelection folder."
+  },
+  {
+    "stage": "Individual Evaluation", "task": "Evaluator 2 Review", "taskType": "action",
+    "cacheFile": "action-apps-index.json", "searchQuery": "Source Selection Task Forms",
+    "matches": [{ "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "deploymentFolder": { "fullyQualifiedName": "SourceSelection" } }],
+    "selected": { "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "semVersion": "1.0.1", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } },
+    "name": "Source Selection Task Forms", "taskTypeId": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "folder-path": "SourceSelection",
+    "recipient": "=vars.evaluator2",
+    "rationale": "Exact deploymentTitle match in the SourceSelection folder."
+  },
+  {
+    "stage": "Individual Evaluation", "task": "Evaluator 3 Review", "taskType": "action",
+    "cacheFile": "action-apps-index.json", "searchQuery": "Source Selection Task Forms",
+    "matches": [{ "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "deploymentFolder": { "fullyQualifiedName": "SourceSelection" } }],
+    "selected": { "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "semVersion": "1.0.1", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } },
+    "name": "Source Selection Task Forms", "taskTypeId": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "folder-path": "SourceSelection",
+    "recipient": "=vars.evaluator3",
+    "rationale": "Exact deploymentTitle match in the SourceSelection folder."
+  },
+  {
+    "stage": "Consensus", "task": "Compile Individual Evaluations", "taskType": "rpa",
+    "cacheFile": "local:SourceSelection/SS_Robots/entry-points.json", "searchQuery": "SS_Robots",
+    "matches": [{ "name": "SS_Robots", "source": "local", "projectType": "Function" }],
+    "selected": { "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots" },
+    "name": "SS_Robots", "taskTypeId": "local:SS_Robots", "folder-path": "",
+    "rationale": "Same in-solution SS_Robots sibling; step input selects CompileEvaluations."
+  },
+  {
+    "stage": "Consensus", "task": "Draft Consensus", "taskType": "agent",
+    "cacheFile": "agent-index.json", "searchQuery": "SS_ConsensusAnalyst",
+    "matches": [{ "entityKey": "642caf7f-ed77-4432-b810-4255e1af51ed", "name": "SS_ConsensusAnalyst", "entityType": "Process", "source": "Orchestrator", "folders": [{ "fullyQualifiedName": "SourceSelection/Solution" }], "customData": { "ProcessType": "Agent", "ProcessVersion": "1.0.0", "ProcessKey": "SourceSelection.Agent.SS_ConsensusAnalyst" } }],
+    "selected": { "entityKey": "642caf7f-ed77-4432-b810-4255e1af51ed", "name": "SS_ConsensusAnalyst", "folders": [{ "fullyQualifiedName": "SourceSelection/Solution" }], "localSibling": "SS_ConsensusAnalyst" },
+    "name": "SS_ConsensusAnalyst", "taskTypeId": "642caf7f-ed77-4432-b810-4255e1af51ed", "folder-path": "",
+    "rationale": "Exact name match; it is this solution's own agent project, deployed with it to SourceSelection/Solution. Bound as the in-solution sibling (resourceKey solution_folder.SS_ConsensusAnalyst, co-located folderPath) so the case and agent deploy together without a cross-folder link. Schema from tasks describe on the deployed entityKey."
+  },
+  {
+    "stage": "Consensus", "task": "SSEB Chair Consensus", "taskType": "action",
+    "cacheFile": "action-apps-index.json", "searchQuery": "Source Selection Task Forms",
+    "matches": [{ "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "deploymentFolder": { "fullyQualifiedName": "SourceSelection" } }],
+    "selected": { "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "semVersion": "1.0.1", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } },
+    "name": "Source Selection Task Forms", "taskTypeId": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "folder-path": "SourceSelection",
+    "recipient": "=vars.ssebChair",
+    "rationale": "Exact deploymentTitle match in the SourceSelection folder."
+  },
+  {
+    "stage": "Price Evaluation", "task": "Analyze Price Proposals", "taskType": "rpa",
+    "cacheFile": "local:SourceSelection/SS_Robots/entry-points.json", "searchQuery": "SS_Robots",
+    "matches": [{ "name": "SS_Robots", "source": "local", "projectType": "Function" }],
+    "selected": { "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots" },
+    "name": "SS_Robots", "taskTypeId": "local:SS_Robots", "folder-path": "",
+    "rationale": "Same in-solution SS_Robots sibling; step input selects AnalyzePrice."
+  },
+  {
+    "stage": "Price Evaluation", "task": "Price Determination", "taskType": "action",
+    "cacheFile": "action-apps-index.json", "searchQuery": "Source Selection Task Forms",
+    "matches": [{ "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "deploymentFolder": { "fullyQualifiedName": "SourceSelection" } }],
+    "selected": { "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "semVersion": "1.0.1", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } },
+    "name": "Source Selection Task Forms", "taskTypeId": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "folder-path": "SourceSelection",
+    "recipient": "=vars.contractingOfficer",
+    "rationale": "Exact deploymentTitle match in the SourceSelection folder."
+  },
+  {
+    "stage": "Award Decision", "task": "Prepare Decision Package", "taskType": "rpa",
+    "cacheFile": "local:SourceSelection/SS_Robots/entry-points.json", "searchQuery": "SS_Robots",
+    "matches": [{ "name": "SS_Robots", "source": "local", "projectType": "Function" }],
+    "selected": { "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots" },
+    "name": "SS_Robots", "taskTypeId": "local:SS_Robots", "folder-path": "",
+    "rationale": "Same in-solution SS_Robots sibling; step input selects PrepareDecisionPackage."
+  },
+  {
+    "stage": "Award Decision", "task": "Draft Source Selection Decision", "taskType": "agent",
+    "cacheFile": "agent-index.json", "searchQuery": "SS_DecisionWriter",
+    "matches": [{ "entityKey": "c0c04ac1-11eb-4412-b973-f648a5d9e73d", "name": "SS_DecisionWriter", "entityType": "Process", "source": "Orchestrator", "folders": [{ "fullyQualifiedName": "SourceSelection/Solution" }], "customData": { "ProcessType": "Agent", "ProcessVersion": "1.0.0", "ProcessKey": "SourceSelection.Agent.SS_DecisionWriter" } }],
+    "selected": { "entityKey": "c0c04ac1-11eb-4412-b973-f648a5d9e73d", "name": "SS_DecisionWriter", "folders": [{ "fullyQualifiedName": "SourceSelection/Solution" }], "localSibling": "SS_DecisionWriter" },
+    "name": "SS_DecisionWriter", "taskTypeId": "c0c04ac1-11eb-4412-b973-f648a5d9e73d", "folder-path": "",
+    "rationale": "Exact name match; this solution's own agent project. Bound as the in-solution sibling (solution_folder.SS_DecisionWriter, co-located). Schema from tasks describe on the deployed entityKey."
+  },
+  {
+    "stage": "Award Decision", "task": "SSA Award Decision", "taskType": "action",
+    "cacheFile": "action-apps-index.json", "searchQuery": "Source Selection Task Forms",
+    "matches": [{ "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "deploymentFolder": { "fullyQualifiedName": "SourceSelection" } }],
+    "selected": { "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "semVersion": "1.0.1", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } },
+    "name": "Source Selection Task Forms", "taskTypeId": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "folder-path": "SourceSelection",
+    "recipient": "=vars.sourceSelectionAuthority",
+    "rationale": "Exact deploymentTitle match in the SourceSelection folder."
+  },
+  {
+    "stage": "Award Decision", "task": "Publish Award Record", "taskType": "rpa",
+    "cacheFile": "local:SourceSelection/SS_Robots/entry-points.json", "searchQuery": "SS_Robots",
+    "matches": [{ "name": "SS_Robots", "source": "local", "projectType": "Function" }],
+    "selected": { "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots" },
+    "name": "SS_Robots", "taskTypeId": "local:SS_Robots", "folder-path": "",
+    "rationale": "Same in-solution SS_Robots sibling; step input selects PublishAwardRecord."
+  },
+  {
+    "stage": "Reconvene Evaluators", "task": "Evaluator Clarification", "taskType": "action",
+    "cacheFile": "action-apps-index.json", "searchQuery": "Source Selection Task Forms",
+    "matches": [{ "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "deploymentFolder": { "fullyQualifiedName": "SourceSelection" } }],
+    "selected": { "id": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "deploymentTitle": "Source Selection Task Forms", "semVersion": "1.0.1", "deploymentFolder": { "key": "08605f4c-2b90-4971-81b7-2f4310a2b81a", "fullyQualifiedName": "SourceSelection" } },
+    "name": "Source Selection Task Forms", "taskTypeId": "06bf155e-59ba-4ba6-88b8-a5b1362510e3", "folder-path": "SourceSelection",
+    "recipient": "=vars.evaluator1",
+    "rationale": "Exact deploymentTitle match in the SourceSelection folder."
+  },
+  {
+    "stage": "Solicitation Cancelled", "task": "Record Cancellation", "taskType": "rpa",
+    "cacheFile": "local:SourceSelection/SS_Robots/entry-points.json", "searchQuery": "SS_Robots",
+    "matches": [{ "name": "SS_Robots", "source": "local", "projectType": "Function" }],
+    "selected": { "name": "SS_Robots", "source": "local", "projectType": "Function", "entryPoint": "SS_Robots" },
+    "name": "SS_Robots", "taskTypeId": "local:SS_Robots", "folder-path": "",
+    "rationale": "Same in-solution SS_Robots sibling; step input selects RecordCancellation."
+  }
+]

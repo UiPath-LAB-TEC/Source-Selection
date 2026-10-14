@@ -1,0 +1,59 @@
+{
+  "version": "2.0",
+  "resources": [
+    {
+      "resource": "app",
+      "key": "SourceSelection.Source Selection Task Forms",
+      "value": {
+        "name": {
+          "defaultValue": "Source Selection Task Forms"
+        },
+        "folderPath": {
+          "defaultValue": "SourceSelection"
+        }
+      }
+    },
+    {
+      "resource": "process",
+      "key": "solution_folder.SS_ConsensusAnalyst",
+      "value": {
+        "name": {
+          "defaultValue": "SS_ConsensusAnalyst"
+        },
+        "folderPath": {
+          "defaultValue": "solution_folder"
+        }
+      },
+      "metadata": {
+        "subType": "Agent"
+      }
+    },
+    {
+      "resource": "process",
+      "key": "solution_folder.SS_DecisionWriter",
+      "value": {
+        "name": {
+          "defaultValue": "SS_DecisionWriter"
+        },
+        "folderPath": {
+          "defaultValue": "solution_folder"
+        }
+      },
+      "metadata": {
+        "subType": "Agent"
+      }
+    },
+    {
+      "resource": "process",
+      "key": "solution_folder.SS_Robots",
+      "value": {
+        "name": {
+          "defaultValue": "SS_Robots"
+        },
+        "folderPath": {
+          "defaultValue": "solution_folder"
+        }
+      }
+    }
+  ]
+}

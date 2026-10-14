@@ -1,0 +1,107 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SourceSelectionProcess",
+    "kind": "process",
+    "type": "processOrchestration",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "4564917f-5f15-4c02-a1e6-47af1ce88c73",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SourceSelectionProcess"
+      }
+    ],
+    "runtimeDependencies": [
+      {
+        "bindingType": "app",
+        "bindingKey": "SourceSelection.Source Selection Task Forms",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "Source Selection Task Forms",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "SourceSelection",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "App",
+        "resourceKey": "06bf155e-59ba-4ba6-88b8-a5b1362510e3",
+        "resourceName": "Source Selection Task Forms",
+        "folderKey": "08605f4c-2b90-4971-81b7-2f4310a2b81a"
+      },
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.SS_ConsensusAnalyst",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "SS_ConsensusAnalyst",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "bindingMetadata": {},
+        "resourceKind": "Process"
+      },
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.SS_DecisionWriter",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "SS_DecisionWriter",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "bindingMetadata": {},
+        "resourceKind": "Process"
+      },
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.SS_Robots",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "SS_Robots",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "Process"
+      }
+    ],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "ProcessOrchestration",
+      "name": "SourceSelectionProcess",
+      "package": {
+        "key": "7be7f7d2-fde0-4806-8145-ac6ee35bd9a3"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/SourceSelectionProcess.bpmn#Start_SourceSelection\",\n      \"uniqueId\": \"728329c4-4819-4ad3-b8c1-2d096c6446c5\",\n      \"type\": \"ProcessOrchestration\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\"\n          },\n          \"evaluator1\": {\n            \"type\": \"string\"\n          },\n          \"evaluator2\": {\n            \"type\": \"string\"\n          },\n          \"evaluator3\": {\n            \"type\": \"string\"\n          },\n          \"ssebChair\": {\n            \"type\": \"string\"\n          },\n          \"contractingOfficer\": {\n            \"type\": \"string\"\n          },\n          \"sourceSelectionAuthority\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"awardeeName\": {\n            \"type\": \"string\"\n          },\n          \"awardRecordUri\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"displayName\": \"Start source selection\"\n    }\n  ]\n}\n",
+      "entryPointName": "/content/SourceSelectionProcess.bpmn#Start_SourceSelection",
+      "entryPointUniqueId": "728329c4-4819-4ad3-b8c1-2d096c6446c5"
+    },
+    "locks": [],
+    "key": "96bf4cf7-4342-489e-8adf-2a49c041c380",
+    "files": []
+  }
+}

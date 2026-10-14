@@ -1,0 +1,113 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "SS_Robots",
+            "uniqueId": "ab0e12ba-b2b6-45ab-9993-b6cf2d58fb9b",
+            "type": "function",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "step": {
+                        "default": "",
+                        "title": "Step",
+                        "type": "string"
+                    },
+                    "solicitationId": {
+                        "default": "",
+                        "title": "Solicitationid",
+                        "type": "string"
+                    },
+                    "includeOfferorIds": {
+                        "default": "",
+                        "title": "Includeofferorids",
+                        "type": "string"
+                    },
+                    "agentProcess": {
+                        "default": "SS_EvaluationAssistant",
+                        "title": "Agentprocess",
+                        "type": "string"
+                    },
+                    "ssddText": {
+                        "default": "",
+                        "title": "Ssddtext",
+                        "type": "string"
+                    },
+                    "awardee": {
+                        "default": "",
+                        "title": "Awardee",
+                        "type": "string"
+                    },
+                    "signedBy": {
+                        "default": "",
+                        "title": "Signedby",
+                        "type": "string"
+                    },
+                    "rationale": {
+                        "default": "",
+                        "title": "Rationale",
+                        "type": "string"
+                    },
+                    "cancelledBy": {
+                        "default": "",
+                        "title": "Cancelledby",
+                        "type": "string"
+                    }
+                },
+                "required": [],
+                "title": "RobotInput"
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "error_type": {
+                        "default": "",
+                        "title": "Error Type",
+                        "type": "string"
+                    },
+                    "error_message": {
+                        "default": "",
+                        "title": "Error Message",
+                        "type": "string"
+                    },
+                    "step": {
+                        "default": "",
+                        "title": "Step",
+                        "type": "string"
+                    },
+                    "content": {
+                        "default": "",
+                        "title": "Content",
+                        "type": "string"
+                    },
+                    "detail": {
+                        "default": "",
+                        "title": "Detail",
+                        "type": "string"
+                    },
+                    "count": {
+                        "default": 0,
+                        "title": "Count",
+                        "type": "integer"
+                    }
+                },
+                "required": [],
+                "title": "RobotOutput"
+            },
+            "graph": {
+                "nodes": [
+                    {
+                        "id": "main.py:481",
+                        "name": "run",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    }
+                ],
+                "edges": []
+            }
+        }
+    ]
+}

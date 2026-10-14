@@ -1,0 +1,69 @@
+SECTION M — EVALUATION FACTORS FOR AWARD
+
+Solicitation 75N910-27-R-0044 · Research Data Platform and Analytics Support · Department of Health and Human Services — National Institutes of Health
+
+M.1 Basis for Award
+
+The Government intends to award a single contract resulting from this solicitation to the responsible offeror whose proposal, conforming to the solicitation, represents the best value to the Government using a tradeoff process in accordance with FAR 15.101-1. The Government may award to other than the lowest priced offeror or other than the highest technically rated offeror. The Government intends to award without discussions but reserves the right to conduct discussions if determined necessary by the Contracting Officer.
+
+M.2 Evaluation Factors and Relative Importance
+
+Proposals will be evaluated on the following factors: Factor 1, Technical Capability, Factor 2, Key Personnel, Factor 3, Past Performance, Factor 4, Price. Technical Capability and Key Personnel are of equal importance and each is more important than Past Performance. Non-price factors combined are approximately equal to Price.
+
+M.3.1 Factor 1 — Technical Capability
+
+The Government will evaluate the offeror's architecture for a secure, scalable research data platform, its protection of controlled-access human-subjects data, and its approach to self-service analytics for intramural researchers.
+
+The Technical Capability factor consists of the following subfactors, which are of equal importance: (a) Data platform architecture; (b) Privacy and controlled-access data protection; (c) Researcher self-service analytics.
+
+This factor will be evaluated from Volume I — Technical. The Government will assign a combined technical/risk rating.
+
+M.3.2 Factor 2 — Key Personnel
+
+The Government will evaluate the qualifications, relevant experience and committed availability of the proposed Program Manager and Chief Data Architect.
+
+The Key Personnel factor consists of the following subfactors, which are of equal importance: (a) Program Manager; (b) Chief Data Architect; (c) Commitment and availability.
+
+This factor will be evaluated from Volume II — Management. The Government will assign a combined technical/risk rating.
+
+M.3.3 Factor 3 — Past Performance
+
+The Government will assess confidence based on recent and relevant performance on research data, health IT or scientific computing efforts.
+
+The Past Performance factor consists of the following elements: (a) Recency; (b) Relevancy; (c) Quality.
+
+This factor will be evaluated from Volume III — Past Performance. The Government will assign a performance confidence assessment rating.
+
+M.3.4 Factor 4 — Price
+
+Price will be evaluated for reasonableness. Total evaluated price is the sum of fixed-price CLINs and T&M ceilings for all periods. Price will not be rated. The Government will evaluate price for reasonableness in accordance with FAR 15.404-1 and may evaluate for balance. Unbalanced pricing may be grounds for rejection of the proposal.
+
+M.4 Rating Definitions
+
+Technical factors will be assigned the following adjectival ratings:
+
+Outstanding. Proposal indicates an exceptional approach and understanding of the requirements and contains multiple strengths, and risk of unsuccessful performance is low.
+
+Good. Proposal indicates a thorough approach and understanding of the requirements and contains at least one strength, and risk of unsuccessful performance is low to moderate.
+
+Acceptable. Proposal indicates an adequate approach and understanding of the requirements, and risk of unsuccessful performance is no worse than moderate.
+
+Marginal. Proposal has not demonstrated an adequate approach and understanding of the requirements, and/or risk of unsuccessful performance is high.
+
+Unacceptable. Proposal does not meet requirements of the solicitation and, thus, contains one or more deficiencies, and/or risk of unsuccessful performance is unacceptable. Proposal is unawardable.
+
+Past performance will be assigned the following performance confidence assessment ratings:
+
+Substantial Confidence. Based on the offeror's recent/relevant performance record, the Government has a high expectation that the offeror will successfully perform the required effort.
+
+Satisfactory Confidence. Based on the offeror's recent/relevant performance record, the Government has a reasonable expectation that the offeror will successfully perform the required effort.
+
+Neutral Confidence. No recent/relevant performance record is available or the record is so sparse that no meaningful confidence assessment rating can be reasonably assigned. The offeror may not be evaluated favorably or unfavorably on the factor of past performance.
+
+Limited Confidence. Based on the offeror's recent/relevant performance record, the Government has a low expectation that the offeror will successfully perform the required effort.
+
+No Confidence. Based on the offeror's recent/relevant performance record, the Government has no expectation that the offeror will be able to successfully perform the required effort.
+
+SECTION L — EXCERPT: L.4 PROPOSAL VOLUMES AND PAGE LIMITATIONS
+
+Offerors shall submit the following volumes. Pages in excess of the stated limits will not be evaluated. Volume I — Technical: not to exceed 20 pages; Volume II — Management: not to exceed 10 pages; Volume III — Past Performance: not to exceed 10 pages; Volume IV — Price: no page limit.

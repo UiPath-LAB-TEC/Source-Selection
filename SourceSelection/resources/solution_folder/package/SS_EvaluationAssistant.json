@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_EvaluationAssistant",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "ff1ab31e-8ccf-4de6-9167-d6cbf536fa31",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SS_EvaluationAssistant"
+    },
+    "locks": [],
+    "key": "4e63eca8-f01f-4a19-b169-09a274f0b91a",
+    "files": []
+  }
+}

@@ -1,0 +1,62 @@
+{
+ "displayName": "SS Offeror",
+ "description": "Offerors per solicitation with compliance and price results",
+ "fields": [
+  {
+   "name": "OfferorId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "OfferorCode",
+   "type": "STRING"
+  },
+  {
+   "name": "Name",
+   "type": "STRING"
+  },
+  {
+   "name": "UEI",
+   "type": "STRING"
+  },
+  {
+   "name": "CAGE",
+   "type": "STRING"
+  },
+  {
+   "name": "SamStatus",
+   "type": "STRING"
+  },
+  {
+   "name": "Exclusion",
+   "type": "BOOLEAN"
+  },
+  {
+   "name": "ComplianceStatus",
+   "type": "STRING"
+  },
+  {
+   "name": "ComplianceNotes",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "PriceLinesJson",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "TotalEvaluatedPrice",
+   "type": "DECIMAL",
+   "decimalPrecision": 2
+  },
+  {
+   "name": "IgceVariancePct",
+   "type": "DECIMAL",
+   "decimalPrecision": 2
+  }
+ ]
+}

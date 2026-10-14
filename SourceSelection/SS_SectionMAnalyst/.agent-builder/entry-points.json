@@ -1,0 +1,127 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "814eaf2c-211f-41dd-a6e7-375f1ef958e5",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string",
+            "description": "Solicitation number"
+          },
+          "sectionMText": {
+            "type": "string",
+            "description": "Text of RFP Section M (Evaluation Factors for Award), including any Section L page-limit excerpt"
+          }
+        },
+        "required": [
+          "solicitationId",
+          "sectionMText"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "basisForAward": {
+            "type": "string",
+            "description": "Basis for award, e.g. 'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)'"
+          },
+          "relativeImportance": {
+            "type": "string",
+            "description": "The solicitation's relative-importance statement, quoted from Section M"
+          },
+          "factors": {
+            "type": "array",
+            "description": "Every evaluation factor in Section M, including Price",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Factor name as written in Section M"
+                },
+                "criteria": {
+                  "type": "string",
+                  "description": "What the Government will evaluate for this factor, in the solicitation's own words"
+                },
+                "subfactors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Subfactors or elements, empty if none"
+                },
+                "ratingType": {
+                  "type": "string",
+                  "description": "merit (combined technical/risk rating), confidence (past performance confidence assessment), or price (evaluated, not rated)"
+                },
+                "volume": {
+                  "type": "string",
+                  "description": "Proposal volume the factor is evaluated from: technical, management, pastPerformance, price, or other"
+                },
+                "importanceRank": {
+                  "type": "integer",
+                  "description": "1 = most important; factors of equal importance share a rank"
+                },
+                "sourceQuote": {
+                  "type": "string",
+                  "description": "Verbatim sentence from Section M that defines this factor"
+                }
+              },
+              "required": [
+                "name",
+                "criteria",
+                "subfactors",
+                "ratingType",
+                "volume",
+                "importanceRank",
+                "sourceQuote"
+              ]
+            }
+          },
+          "volumes": {
+            "type": "array",
+            "description": "Proposal volumes and page limits from the Section L excerpt",
+            "items": {
+              "type": "object",
+              "properties": {
+                "volume": {
+                  "type": "string",
+                  "description": "technical, management, pastPerformance, price, or other"
+                },
+                "pageLimit": {
+                  "type": "integer",
+                  "description": "Maximum pages, or 0 when no limit is stated"
+                }
+              },
+              "required": [
+                "volume",
+                "pageLimit"
+              ]
+            }
+          },
+          "ratingMethod": {
+            "type": "string",
+            "description": "How merit ratings are expressed in the rating definitions: color (e.g. Blue/Outstanding), adjectival, or numeric. Use adjectival when not stated."
+          },
+          "openQuestions": {
+            "type": "string",
+            "description": "Ambiguities or missing information the Contracting Officer should resolve before release, or 'None'"
+          }
+        },
+        "required": [
+          "basisForAward",
+          "relativeImportance",
+          "factors",
+          "volumes",
+          "ratingMethod",
+          "openQuestions"
+        ]
+      }
+    }
+  ]
+}

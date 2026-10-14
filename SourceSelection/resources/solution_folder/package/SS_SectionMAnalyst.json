@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_SectionMAnalyst",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "1d846817-c7cf-4578-8071-a2e5f1e5af10",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SS_SectionMAnalyst"
+    },
+    "locks": [],
+    "key": "4ab4ad11-4aab-47f0-a22f-b46a17f66579",
+    "files": []
+  }
+}

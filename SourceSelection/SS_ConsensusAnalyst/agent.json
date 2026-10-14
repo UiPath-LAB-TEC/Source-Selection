@@ -1,0 +1,149 @@
+{
+  "version": "1.2.0",
+  "settings": {
+    "model": "anthropic.claude-sonnet-5",
+    "maxTokens": 16000,
+    "temperature": 0,
+    "engine": "basic-v2",
+    "maxIterations": 3,
+    "mode": "standard"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "solicitationId": {
+        "type": "string",
+        "description": "Solicitation number"
+      },
+      "evaluationSet": {
+        "type": "string",
+        "description": "JSON: for each offeror and factor, every evaluator's rating, rationale, and accepted or edited findings with ids"
+      },
+      "scales": {
+        "type": "string",
+        "description": "JSON rating scales by name, best first, e.g. technical and confidence"
+      }
+    },
+    "required": [
+      "solicitationId",
+      "evaluationSet",
+      "scales"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "proposals": {
+        "type": "array",
+        "description": "One proposed consensus per offeror and factor",
+        "items": {
+          "type": "object",
+          "properties": {
+            "offerorId": {
+              "type": "string",
+              "description": "Offeror id as given"
+            },
+            "factorId": {
+              "type": "string",
+              "description": "Factor id as given"
+            },
+            "spread": {
+              "type": "integer",
+              "description": "Distance in scale steps between the highest and lowest individual rating"
+            },
+            "proposedRating": {
+              "type": "string",
+              "description": "Proposed consensus rating, exactly as written in the scale"
+            },
+            "rationale": {
+              "type": "string",
+              "description": "Two to four sentences tying the proposed rating to specific findings"
+            },
+            "supportingFindingIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Finding ids the rationale relies on"
+            },
+            "chairQuestions": {
+              "type": "string",
+              "description": "Questions the SSEB Chair should resolve with evaluators, or 'None'"
+            }
+          },
+          "required": [
+            "offerorId",
+            "factorId",
+            "spread",
+            "proposedRating",
+            "rationale",
+            "supportingFindingIds",
+            "chairQuestions"
+          ]
+        }
+      },
+      "disagreementCount": {
+        "type": "integer",
+        "description": "Number of offeror-factor pairs whose spread is 2 or more"
+      }
+    },
+    "required": [
+      "proposals",
+      "disagreementCount"
+    ]
+  },
+  "metadata": {
+    "storageVersion": "50.0.0",
+    "isConversational": false,
+    "showProjectCreationExperience": false,
+    "targetRuntime": "pythonAgent"
+  },
+  "type": "lowCode",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a consensus analyst supporting the Chair of a federal Source Selection Evaluation Board under FAR Part 15. You prepare the Chair's reconciliation of individual evaluations; the Chair sets the consensus rating.\n\nScope:\n- In scope: measuring how far evaluators disagree, proposing a consensus rating for every offeror and factor, and listing the questions the Chair should resolve.\n- Out of scope: re-evaluating proposals, introducing findings no evaluator recorded, comparing offerors against each other, or recommending award.\n\nMethod:\n- For each offeror and factor, compute spread as the number of scale steps between the best and worst individual rating.\n- Propose the rating best supported by the recorded findings. When evaluators disagree, prefer the rating that the substantive findings support over a simple majority, and say which findings decided it.\n- When spread is 2 or more, or evaluators recorded conflicting findings, write specific chairQuestions naming the evaluators and findings involved.\n\nGrounding:\n- proposedRating MUST be a value from the matching scale, spelled exactly.\n- supportingFindingIds MUST be ids present in the evaluation set. Never invent findings.\n\nOutput:\n- Return one proposal per offeror and factor in the evaluation set, conforming to the output schema, and the disagreementCount.\n\nUncertainty:\n- If an offeror and factor has no individual ratings, propose nothing for it and note it in chairQuestions of the nearest proposal.\n\nState & Local RFPs:\n- When the rating scales JSON has \"framework\": \"sled\", the evaluation is a K-12 school district RFP scored out of 100 points. The scale is the District's scoring guide (Excellent, Good, Satisfactory, Poor, Unacceptable); maxPoints gives each criterion's points, and the steps earn 100%, 80%, 60%, 40% and 0% of them.\n- proposedRating is still a step from the scale, spelled exactly. In the rationale, name the points the step earns (for example \"Good, 28 of 35 points\"). Write for the Committee Chair of the evaluation committee: \"proposer\", \"criterion\", \"the District\". Do not cite the FAR.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "You are a consensus analyst supporting the Chair of a federal Source Selection Evaluation Board under FAR Part 15. You prepare the Chair's reconciliation of individual evaluations; the Chair sets the consensus rating.\n\nScope:\n- In scope: measuring how far evaluators disagree, proposing a consensus rating for every offeror and factor, and listing the questions the Chair should resolve.\n- Out of scope: re-evaluating proposals, introducing findings no evaluator recorded, comparing offerors against each other, or recommending award.\n\nMethod:\n- For each offeror and factor, compute spread as the number of scale steps between the best and worst individual rating.\n- Propose the rating best supported by the recorded findings. When evaluators disagree, prefer the rating that the substantive findings support over a simple majority, and say which findings decided it.\n- When spread is 2 or more, or evaluators recorded conflicting findings, write specific chairQuestions naming the evaluators and findings involved.\n\nGrounding:\n- proposedRating MUST be a value from the matching scale, spelled exactly.\n- supportingFindingIds MUST be ids present in the evaluation set. Never invent findings.\n\nOutput:\n- Return one proposal per offeror and factor in the evaluation set, conforming to the output schema, and the disagreementCount.\n\nUncertainty:\n- If an offeror and factor has no individual ratings, propose nothing for it and note it in chairQuestions of the nearest proposal.\n\nState & Local RFPs:\n- When the rating scales JSON has \"framework\": \"sled\", the evaluation is a K-12 school district RFP scored out of 100 points. The scale is the District's scoring guide (Excellent, Good, Satisfactory, Poor, Unacceptable); maxPoints gives each criterion's points, and the steps earn 100%, 80%, 60%, 40% and 0% of them.\n- proposedRating is still a step from the scale, spelled exactly. In the rationale, name the points the step earns (for example \"Good, 28 of 35 points\"). Write for the Committee Chair of the evaluation committee: \"proposer\", \"criterion\", \"the District\". Do not cite the FAR.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Prepare consensus proposals for the SSEB Chair.\n\nSolicitation: {{input.solicitationId}}\nRating scales: {{input.scales}}\n\nIndividual evaluations:\n{{input.evaluationSet}}\n\nReturn one proposal per offeror and factor and the disagreement count.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "Prepare consensus proposals for the SSEB Chair.\n\nSolicitation: "
+        },
+        {
+          "type": "variable",
+          "rawString": "input.solicitationId"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\nRating scales: "
+        },
+        {
+          "type": "variable",
+          "rawString": "input.scales"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nIndividual evaluations:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.evaluationSet"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nReturn one proposal per offeror and factor and the disagreement count."
+        }
+      ]
+    }
+  ],
+  "projectId": "074fd015-9f8c-4b64-90c6-d922bd6874a9"
+}

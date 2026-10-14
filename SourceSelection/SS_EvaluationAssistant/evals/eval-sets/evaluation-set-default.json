@@ -1,0 +1,117 @@
+{
+  "fileName": "evaluation-set-default.json",
+  "id": "c0f87a57-86f8-449d-b09c-bb5352c77984",
+  "name": "Default Evaluation Set",
+  "batchSize": 10,
+  "evaluatorRefs": [
+    "9504b970-4689-45a4-a1fa-7c5b758f13e6",
+    "696e1d6e-dd3f-4dab-81e7-16936ab2d779"
+  ],
+  "evaluations": [
+    {
+      "id": "246bc4c5-7b08-40f2-ab90-c769fa4db3b7",
+      "name": "northstar-technical-silent-ato",
+      "inputs": {
+        "solicitationId": "FA8771-27-R-0012",
+        "offerorName": "Northstar Digital Partners Inc",
+        "factor": "{\"id\": \"F1\", \"name\": \"Technical Approach\", \"criteria\": \"The Government will evaluate the soundness and feasibility of the offeror's approach to migrating 140 mission applications to the Air Force cloud environment, including methodology, automation, cybersecurity and continuous ATO monitoring, and rationalization of legacy applications.\", \"subfactors\": [\"Cloud migration methodology\", \"Cybersecurity and continuous ATO\", \"Legacy application rationalization\"]}",
+        "volume": "technical",
+        "proposalPages": "[{\"page\": 1, \"text\": \"Northstar Digital Partners Inc Proposal in response to Solicitation FA8771-27-R-0012 \\u2014 Enterprise IT Modernization Services Department of the Air Force Volume I \\u2014 Technical 1. Cloud Migration Methodology Northstar applies a six-phase migration lifecycle \\u2014 assess, plan, build, test, cut over and optimize \\u2014 tailored to each application's architecture. Assessment uses interviews with application owners and automated inventory scans. Applications are grouped into move groups by shared dependencies, and each move group follows a rehearsed cutover runbook. Northstar has migrated more than 200 workloads across federal civilian and defense customers, with an average move-group duration of six weeks.\"}, {\"page\": 2, \"text\": \"2. Cybersecurity and Authorization Northstar's security engineers prepare the application security package, map inherited controls from the platform authorization, and support the authorizing official through the assessment and authorization process for each application. Our team includes Certified Information Systems Security Professionals who have supported more than 40 Air Force authorization packages to an initial ATO decision.\"}, {\"page\": 3, \"text\": \"3. Legacy Application Rationalization Northstar will conduct a portfolio review in the first 90 days that recommends a disposition for each application: rehost, replatform, refactor, replace or retire.\"}]",
+        "pastPerformance": ""
+      },
+      "expectedOutput": {
+        "findings": [
+          {
+            "kind": "Weakness",
+            "subfactor": "Cybersecurity and continuous ATO",
+            "text": "The proposal addresses initial ATO support but does not describe continuous ATO monitoring after initial authorization.",
+            "page": 2,
+            "quote": "Our team includes Certified Information Systems Security Professionals who have supported more than 40 Air Force authorization packages to an initial ATO decision."
+          }
+        ],
+        "coverageNotes": "Continuous ATO monitoring is not addressed."
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "c0f87a57-86f8-449d-b09c-bb5352c77984",
+      "createdAt": "2026-10-12T16:25:24.445Z",
+      "updatedAt": "2026-10-12T16:25:24.445Z",
+      "source": "manual"
+    },
+    {
+      "id": "b3a0c614-6ff6-409d-840b-968db1746c46",
+      "name": "civicworks-pastperf-fapiis",
+      "inputs": {
+        "solicitationId": "FA8771-27-R-0012",
+        "offerorName": "CivicWorks Technologies Corp",
+        "factor": "{\"id\": \"F3\", \"name\": \"Past Performance\", \"criteria\": \"The Government will assess its confidence that the offeror will successfully perform, based on recent (within 5 years) and relevant performance on efforts of similar size, scope and complexity, using CPARS, FAPIIS and references.\", \"subfactors\": [\"Recency\", \"Relevancy\", \"Quality\"]}",
+        "volume": "pastPerformance",
+        "proposalPages": "[{\"page\": 1, \"text\": \"CivicWorks Technologies Corp Proposal in response to Solicitation FA8771-27-R-0012 \\u2014 Enterprise IT Modernization Services Department of the Air Force Volume III \\u2014 Past Performance Reference 1 \\u2014 State of Ohio Agency Hosting Modernization (OH-DAS-2021-117) Value $6.2M, period 2021\\u20132023. Contract terminated for default in 2023 following missed migration milestones (recorded in FAPIIS). CivicWorks disputes the termination and states that delays were caused by state-furnished equipment. Reference 2 \\u2014 Air Force Research Laboratory Help Desk (FA8650-22-C-1009) Value $3.1M, period 2022\\u2013present. Tier 1 and Tier 2 help desk support. CPARS 2025: Satisfactory.\"}]",
+        "pastPerformance": "2023-06-14 Termination for Default — State of Ohio Department of Administrative Services, contract OH-DAS-2021-117 (missed migration milestones). Contractor disputes. CPARS: FA8650-22-C-1009 Satisfactory (2025)."
+      },
+      "expectedOutput": {
+        "findings": [
+          {
+            "kind": "Significant Weakness",
+            "subfactor": "Quality",
+            "text": "A 2023 termination for default on a comparable state IT hosting modernization contract, recorded in FAPIIS, raises substantial doubt about successful performance.",
+            "page": 1,
+            "quote": "Contract terminated for default in 2023 following missed migration milestones (recorded in FAPIIS)."
+          }
+        ],
+        "coverageNotes": "Limited recent relevant federal cloud migration references."
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "c0f87a57-86f8-449d-b09c-bb5352c77984",
+      "createdAt": "2026-10-12T16:25:24.645Z",
+      "updatedAt": "2026-10-12T16:25:24.645Z",
+      "source": "manual"
+    },
+    {
+      "id": "dee70eca-55a8-43d4-97f0-36037cc8bafb",
+      "name": "lumina-keypersonnel-contingent",
+      "inputs": {
+        "solicitationId": "75N910-27-R-0044",
+        "offerorName": "Lumina Health Data Inc",
+        "factor": "{\"id\": \"T2\", \"name\": \"Key Personnel\", \"criteria\": \"The Government will evaluate the qualifications, relevant experience and committed availability of the proposed Program Manager and Chief Data Architect.\", \"subfactors\": [\"Program Manager\", \"Chief Data Architect\", \"Commitment and availability\"]}",
+        "volume": "management",
+        "proposalPages": "[{\"page\": 1, \"text\": \"Lumina Health Data Inc Proposal in response to Solicitation 75N910-27-R-0044 \\u2014 Research Data Platform and Analytics Support Department of Health and Human Services \\u2014 National Institutes of Health Volume II \\u2014 Management 1. Program Manager Program Manager Erin Vasquez (12 years) currently manages Lumina's federal health portfolio. 2. Chief Data Architect Lumina has identified Dr. Kamal Iyer as Chief Data Architect. Dr. Iyer is not currently a Lumina employee; Lumina expects to extend an offer of employment upon contract award. 3. Commitment and Availability A signed letter of commitment from the Program Manager is attached. A letter of intent from Dr. Iyer will be provided after award.\"}]",
+        "pastPerformance": ""
+      },
+      "expectedOutput": {
+        "findings": [
+          {
+            "kind": "Risk",
+            "subfactor": "Chief Data Architect",
+            "text": "The proposed Chief Data Architect is not a current employee and no letter of commitment is provided, creating a risk the key person will not be available.",
+            "page": 1,
+            "quote": "Dr. Iyer is not currently a Lumina employee; Lumina expects to extend an offer of employment upon contract award."
+          }
+        ],
+        "coverageNotes": "No signed commitment for the Chief Data Architect."
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "c0f87a57-86f8-449d-b09c-bb5352c77984",
+      "createdAt": "2026-10-12T16:25:24.848Z",
+      "updatedAt": "2026-10-12T16:25:24.848Z",
+      "source": "manual"
+    }
+  ],
+  "modelSettings": [],
+  "agentMemoryEnabled": false,
+  "agentMemorySettings": [],
+  "lineByLineEvaluation": false,
+  "createdAt": "2026-10-12T16:22:43.008Z",
+  "updatedAt": "2026-10-12T16:22:43.008Z"
+}

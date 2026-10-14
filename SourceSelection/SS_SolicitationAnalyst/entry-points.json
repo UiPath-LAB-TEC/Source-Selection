@@ -1,0 +1,65 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "fb792b75-5e8f-4315-a216-cdd1a46e0a17",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationText": {
+            "type": "string",
+            "description": "Text of the solicitation's cover page and opening sections (for example SF 33 or SF 1449 and Section B)"
+          }
+        },
+        "required": [
+          "solicitationText"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string",
+            "description": "Solicitation number exactly as written, e.g. 36C10B-27-R-0057, or '' if not stated"
+          },
+          "title": {
+            "type": "string",
+            "description": "Short title of the requirement as the solicitation names it, or ''"
+          },
+          "agency": {
+            "type": "string",
+            "description": "Issuing department or agency, e.g. Department of Veterans Affairs, or ''"
+          },
+          "office": {
+            "type": "string",
+            "description": "Issuing contracting office from the 'Issued by' block, without the street address, or ''"
+          },
+          "contractType": {
+            "type": "string",
+            "description": "Contract type and period of performance as stated, e.g. 'Firm-fixed-price task order, one base year and four option years', or ''"
+          },
+          "basisForAward": {
+            "type": "string",
+            "description": "'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)' for a federal solicitation, or 'Most advantageous proposal — highest total score out of 100 points' or 'Lowest responsive and responsible proposal' for a state or local RFP, when the text says which; otherwise ''"
+          },
+          "openQuestions": {
+            "type": "string",
+            "description": "Fields the text does not state or states inconsistently, for the Contracting Officer to fill in, or 'None'"
+          }
+        },
+        "required": [
+          "solicitationId",
+          "title",
+          "agency",
+          "office",
+          "contractType",
+          "basisForAward",
+          "openQuestions"
+        ]
+      }
+    }
+  ]
+}

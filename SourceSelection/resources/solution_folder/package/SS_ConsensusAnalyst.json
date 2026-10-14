@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_ConsensusAnalyst",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "bcd075ba-e009-4565-abb0-fccf30a91544",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SS_ConsensusAnalyst"
+    },
+    "locks": [],
+    "key": "e57b7b67-0c32-4b3b-92ca-e1942f363417",
+    "files": []
+  }
+}

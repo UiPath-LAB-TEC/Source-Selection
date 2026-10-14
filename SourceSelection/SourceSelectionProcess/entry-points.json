@@ -1,0 +1,49 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/SourceSelectionProcess.bpmn#Start_SourceSelection",
+      "uniqueId": "728329c4-4819-4ad3-b8c1-2d096c6446c5",
+      "type": "ProcessOrchestration",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string"
+          },
+          "evaluator1": {
+            "type": "string"
+          },
+          "evaluator2": {
+            "type": "string"
+          },
+          "evaluator3": {
+            "type": "string"
+          },
+          "ssebChair": {
+            "type": "string"
+          },
+          "contractingOfficer": {
+            "type": "string"
+          },
+          "sourceSelectionAuthority": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "awardeeName": {
+            "type": "string"
+          },
+          "awardRecordUri": {
+            "type": "string"
+          }
+        }
+      },
+      "displayName": "Start source selection"
+    }
+  ]
+}

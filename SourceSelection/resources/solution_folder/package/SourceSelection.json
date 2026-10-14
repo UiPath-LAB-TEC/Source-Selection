@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SourceSelection",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "6bcb6405-4e41-4739-a674-7da9b377acc2",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SourceSelection"
+    },
+    "locks": [],
+    "key": "cdc0a90f-8345-4aff-be00-c900fb3287ba",
+    "files": []
+  }
+}

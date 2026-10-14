@@ -1,0 +1,142 @@
+{
+ "solicitationId": "FA8771-27-R-0031",
+ "title": "Enterprise IT Modernization Services",
+ "agency": "Department of the Air Force",
+ "office": "Air Force Life Cycle Management Center — Enterprise IT",
+ "contractType": "Firm-fixed-price, 5-year IDIQ task order",
+ "basisForAward": "Best value tradeoff (FAR 15.101-1)",
+ "relativeImportance": "Technical Approach is more important than Management Approach, which is more important than Past Performance. All non-price factors combined are significantly more important than Price.",
+ "factors": [
+  {
+   "id": "F1",
+   "name": "Technical Approach",
+   "order": 1,
+   "scale": "technical",
+   "volume": "technical",
+   "subfactors": [
+    "Cloud migration methodology",
+    "Cybersecurity and continuous ATO",
+    "Legacy application rationalization"
+   ],
+   "criteria": "The Government will evaluate the soundness and feasibility of the offeror's approach to migrating 140 mission applications to the Air Force cloud environment, including methodology, automation, cybersecurity and continuous ATO monitoring, and rationalization of legacy applications.",
+   "weight": 40
+  },
+  {
+   "id": "F2",
+   "name": "Management Approach",
+   "order": 2,
+   "scale": "technical",
+   "volume": "management",
+   "subfactors": [
+    "Staffing and key personnel",
+    "Transition-in plan",
+    "Risk management"
+   ],
+   "criteria": "The Government will evaluate the offeror's staffing plan and key personnel qualifications, the realism of the 60-day transition-in plan, and the offeror's approach to identifying and mitigating program risk.",
+   "weight": 30
+  },
+  {
+   "id": "F3",
+   "name": "Past Performance",
+   "order": 3,
+   "scale": "confidence",
+   "volume": "pastPerformance",
+   "subfactors": [
+    "Recency",
+    "Relevancy",
+    "Quality"
+   ],
+   "criteria": "The Government will assess its confidence that the offeror will successfully perform, based on recent (within 5 years) and relevant performance on efforts of similar size, scope and complexity, using CPARS, FAPIIS and references.",
+   "weight": 20
+  },
+  {
+   "id": "PRICE",
+   "name": "Price",
+   "order": 4,
+   "evaluatedNotRated": true,
+   "volume": "price",
+   "criteria": "Price will be evaluated for reasonableness and balance. Total evaluated price is the sum of all CLINs for the base and option periods.",
+   "weight": 10
+  }
+ ],
+ "scales": {
+  "technical": [
+   "Outstanding",
+   "Good",
+   "Acceptable",
+   "Marginal",
+   "Unacceptable"
+  ],
+  "confidence": [
+   "Substantial Confidence",
+   "Satisfactory Confidence",
+   "Neutral Confidence",
+   "Limited Confidence",
+   "No Confidence"
+  ]
+ },
+ "findingKinds": [
+  "Strength",
+  "Significant Strength",
+  "Weakness",
+  "Significant Weakness",
+  "Deficiency",
+  "Risk"
+ ],
+ "panel": {
+  "evaluators": [
+   {
+    "slot": 1,
+    "title": "Technical Evaluator",
+    "factors": [
+     "F1",
+     "F2"
+    ]
+   },
+   {
+    "slot": 2,
+    "title": "Technical Evaluator",
+    "factors": [
+     "F1",
+     "F2"
+    ]
+   },
+   {
+    "slot": 3,
+    "title": "Past Performance Evaluator",
+    "factors": [
+     "F1",
+     "F3"
+    ]
+   }
+  ]
+ },
+ "igce": {
+  "total": 23800000,
+  "lines": {
+   "0001": 9200000,
+   "0002": 6100000,
+   "0003": 4300000,
+   "0004": 2600000,
+   "0005": 1600000
+  }
+ },
+ "submission": {
+  "volumes": [
+   "technical",
+   "management",
+   "pastPerformance",
+   "price"
+  ],
+  "pageLimits": {
+   "technical": 25,
+   "management": 15,
+   "pastPerformance": 10
+  }
+ },
+ "offerors": [
+  "APEX",
+  "NORTHSTAR",
+  "CIVICWORKS"
+ ]
+}

@@ -1,0 +1,71 @@
+{
+ "displayName": "SS Finding",
+ "description": "Strengths, weaknesses, deficiencies and risks with proposal citations",
+ "fields": [
+  {
+   "name": "FindingId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "OfferorId",
+   "type": "STRING"
+  },
+  {
+   "name": "FactorId",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "FindingText",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "CitationVolume",
+   "type": "STRING"
+  },
+  {
+   "name": "CitationPage",
+   "type": "DECIMAL",
+   "decimalPrecision": 0
+  },
+  {
+   "name": "CitationQuote",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "Author",
+   "type": "STRING"
+  },
+  {
+   "name": "Origin",
+   "type": "STRING"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "EvaluatorSlot",
+   "type": "DECIMAL",
+   "decimalPrecision": 0
+  },
+  {
+   "name": "Revision",
+   "type": "DECIMAL",
+   "decimalPrecision": 0
+  },
+  {
+   "name": "AgentText",
+   "type": "MULTILINE_TEXT"
+  }
+ ]
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "sddInput": "anagh.bhave@uipath.com",
+    "kind": "user",
+    "searchTerm": "anagh.bhave@uipath.com",
+    "allCandidates": [],
+    "selected": "0495433d-7446-45c4-b224-03c58e2cdf1b",
+    "rationale": "uuid-pass-through: `uip admin users list --search` returned no rows for this account (directory read not permitted); the UUID is the platform-recorded owner/deployer id of this user on the SS_TaskForms app registration and the SourceSelection solution. Every demo official (SSEB Chair, Contracting Officer) maps to this user."
+  }
+]

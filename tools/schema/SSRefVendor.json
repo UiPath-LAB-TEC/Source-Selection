@@ -1,0 +1,36 @@
+{
+ "displayName": "SS Ref Vendor",
+ "description": "Synthetic SAM, FAPIIS and CPARS reference data",
+ "fields": [
+  {
+   "name": "UEI",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "LegalName",
+   "type": "STRING"
+  },
+  {
+   "name": "SamStatus",
+   "type": "STRING"
+  },
+  {
+   "name": "RegistrationExpiry",
+   "type": "DATE"
+  },
+  {
+   "name": "Exclusion",
+   "type": "BOOLEAN"
+  },
+  {
+   "name": "FapiisRecords",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "CparsSummaryJson",
+   "type": "MULTILINE_TEXT"
+  }
+ ]
+}

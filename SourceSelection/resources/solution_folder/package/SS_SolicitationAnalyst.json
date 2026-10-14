@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_SolicitationAnalyst",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "646c3116-d43a-4624-83f0-3b3c1f71885e",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "SS_SolicitationAnalyst"
+    },
+    "locks": [],
+    "key": "0efa4279-9b52-4da6-857a-584bb9eb5b31",
+    "files": []
+  }
+}

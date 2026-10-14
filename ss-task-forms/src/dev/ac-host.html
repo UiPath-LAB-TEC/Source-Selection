@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Action Center host simulator</title>
+    <style>
+      body { margin: 0; font: 13px system-ui, sans-serif; background: #f4f5f7; color: #1f2328; }
+      header { display: flex; gap: 12px; align-items: center; padding: 8px 12px; background: #fff; border-bottom: 1px solid #dde1e6; }
+      #log { margin: 0; max-height: 132px; overflow: auto; padding: 6px 12px; background: #fff; border-bottom: 1px solid #dde1e6; font: 11px ui-monospace, monospace; color: #475467; white-space: pre-wrap; }
+      iframe { display: block; width: 100%; height: calc(100vh - 182px); border: 0; background: #eceef1; }
+    </style>
+  </head>
+  <body>
+    <header><strong>Action Center host simulator</strong><span id="cfg"></span></header>
+    <pre id="log"></pre>
+    <iframe id="app" title="Task form"></iframe>
+    <script type="module" src="./ac-host.ts"></script>
+  </body>
+</html>

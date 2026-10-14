@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SS_SectionMAnalyst",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "1d846817-c7cf-4578-8071-a2e5f1e5af10",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SS_SectionMAnalyst"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "SS_SectionMAnalyst",
+      "package": {
+        "key": "4ab4ad11-4aab-47f0-a22f-b46a17f66579"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"814eaf2c-211f-41dd-a6e7-375f1ef958e5\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\",\n            \"description\": \"Solicitation number\"\n          },\n          \"sectionMText\": {\n            \"type\": \"string\",\n            \"description\": \"Text of RFP Section M (Evaluation Factors for Award), including any Section L page-limit excerpt\"\n          }\n        },\n        \"required\": [\n          \"solicitationId\",\n          \"sectionMText\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"basisForAward\": {\n            \"type\": \"string\",\n            \"description\": \"Basis for award, e.g. 'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)'\"\n          },\n          \"relativeImportance\": {\n            \"type\": \"string\",\n            \"description\": \"The solicitation's relative-importance statement, quoted from Section M\"\n          },\n          \"factors\": {\n            \"type\": \"array\",\n            \"description\": \"Every evaluation factor in Section M, including Price\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"name\": {\n                  \"type\": \"string\",\n                  \"description\": \"Factor name as written in Section M\"\n                },\n                \"criteria\": {\n                  \"type\": \"string\",\n                  \"description\": \"What the Government will evaluate for this factor, in the solicitation's own words\"\n                },\n                \"subfactors\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"type\": \"string\"\n                  },\n                  \"description\": \"Subfactors or elements, empty if none\"\n                },\n                \"ratingType\": {\n                  \"type\": \"string\",\n                  \"description\": \"merit (combined technical/risk rating), confidence (past performance confidence assessment), or price (evaluated, not rated)\"\n                },\n                \"volume\": {\n                  \"type\": \"string\",\n                  \"description\": \"Proposal volume the factor is evaluated from: technical, management, pastPerformance, price, or other\"\n                },\n                \"importanceRank\": {\n                  \"type\": \"integer\",\n                  \"description\": \"1 = most important; factors of equal importance share a rank\"\n                },\n                \"sourceQuote\": {\n                  \"type\": \"string\",\n                  \"description\": \"Verbatim sentence from Section M that defines this factor\"\n                },\n                \"maxPoints\": {\n                  \"type\": \"integer\",\n                  \"description\": \"Maximum points the RFP assigns this criterion (state and local points-scored RFPs), or 0 when it assigns none\"\n                }\n              },\n              \"required\": [\n                \"name\",\n                \"criteria\",\n                \"subfactors\",\n                \"ratingType\",\n                \"volume\",\n                \"importanceRank\",\n                \"sourceQuote\",\n                \"maxPoints\"\n              ]\n            }\n          },\n          \"volumes\": {\n            \"type\": \"array\",\n            \"description\": \"Proposal volumes and page limits from the Section L excerpt\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"volume\": {\n                  \"type\": \"string\",\n                  \"description\": \"technical, management, pastPerformance, price, or other\"\n                },\n                \"pageLimit\": {\n                  \"type\": \"integer\",\n                  \"description\": \"Maximum pages, or 0 when no limit is stated\"\n                }\n              },\n              \"required\": [\n                \"volume\",\n                \"pageLimit\"\n              ]\n            }\n          },\n          \"ratingMethod\": {\n            \"type\": \"string\",\n            \"description\": \"How merit ratings are expressed in the rating definitions: color (e.g. Blue/Outstanding), adjectival, or numeric. Use adjectival when not stated.\"\n          },\n          \"openQuestions\": {\n            \"type\": \"string\",\n            \"description\": \"Ambiguities or missing information the Contracting Officer should resolve before release, or 'None'\"\n          }\n        },\n        \"required\": [\n          \"basisForAward\",\n          \"relativeImportance\",\n          \"factors\",\n          \"volumes\",\n          \"ratingMethod\",\n          \"openQuestions\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "814eaf2c-211f-41dd-a6e7-375f1ef958e5"
+    },
+    "locks": [],
+    "key": "407223e3-5748-4395-a3fc-97395cf6b2b4",
+    "files": []
+  }
+}

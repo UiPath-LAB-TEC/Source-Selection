@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:uipath="http://uipath.org/schema/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_SourceSelection" targetNamespace="http://bpmn.io/schema/bpmn" exporter="UiPath Maestro (https://uipath.com)" exporterVersion="1.203.0">
+  <bpmn:process id="SourceSelectionProcess" name="Source Selection">
+    <bpmn:documentation>FAR Part 15 best-value source selection: proposal intake, individual evaluation, SSEB consensus, price evaluation and the SSA award decision. Agents draft; named officials make every judgment.</bpmn:documentation>
+    <bpmn:extensionElements>
+      <uipath:variables version="v1">
+        <uipath:input id="in_solicitationId" name="solicitationId" type="string" elementId="Start_SourceSelection" />
+        <uipath:input id="in_evaluator1" name="evaluator1" type="string" elementId="Start_SourceSelection" />
+        <uipath:input id="in_evaluator2" name="evaluator2" type="string" elementId="Start_SourceSelection" />
+        <uipath:input id="in_evaluator3" name="evaluator3" type="string" elementId="Start_SourceSelection" />
+        <uipath:input id="in_ssebChair" name="ssebChair" type="string" elementId="Start_SourceSelection" />
+        <uipath:input id="in_contractingOfficer" name="contractingOfficer" type="string" elementId="Start_SourceSelection" />
+        <uipath:input id="in_sourceSelectionAuthority" name="sourceSelectionAuthority" type="string" elementId="Start_SourceSelection" />
+        <uipath:output id="out_awardeeName" name="awardeeName" type="string" elementId="End_Awarded" />
+        <uipath:output id="out_awardRecordUri" name="awardRecordUri" type="string" elementId="End_Awarded" />
+        <uipath:inputOutput id="solicitationId" name="solicitationId" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="evaluator1" name="evaluator1" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="evaluator2" name="evaluator2" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="evaluator3" name="evaluator3" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="ssebChair" name="ssebChair" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="contractingOfficer" name="contractingOfficer" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="sourceSelectionAuthority" name="sourceSelectionAuthority" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="complianceSummary" name="complianceSummary" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="releaseDecision" name="releaseDecision" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="releaseRationale" name="releaseRationale" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="evaluator1Ratings" name="evaluator1Ratings" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="evaluator2Ratings" name="evaluator2Ratings" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="evaluator3Ratings" name="evaluator3Ratings" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="evaluationSet" name="evaluationSet" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="ratingScales" name="ratingScales" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="consensusDecision" name="consensusDecision" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="consensusRatings" name="consensusRatings" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="clarificationNotes" name="clarificationNotes" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="priceAnalysis" name="priceAnalysis" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="priceDecision" name="priceDecision" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="priceDetermination" name="priceDetermination" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="planSummary" name="planSummary" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="consensusRecord" name="consensusRecord" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="ssddDraft" name="ssddDraft" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="recommendedAwardee" name="recommendedAwardee" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="awardeeName" name="awardeeName" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="signedSsdd" name="signedSsdd" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="awardRecordUri" name="awardRecordUri" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="cancellationRecordUri" name="cancellationRecordUri" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="individualEvaluationSla" name="individualEvaluationSla" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="consensusSla" name="consensusSla" type="string" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="offerorCount" name="offerorCount" type="integer" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="draftFindingCount" name="draftFindingCount" type="integer" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="disagreementCount" name="disagreementCount" type="integer" elementId="SourceSelectionProcess" />
+        <uipath:inputOutput id="consensusProposals" name="consensusProposals" type="jsonSchema" elementId="SourceSelectionProcess"><![CDATA[{"type":"array","items":{"type":"object"}}]]></uipath:inputOutput>
+      </uipath:variables>
+      <uipath:bindings version="v1">
+        <uipath:binding id="bRb7Kq2Lm" name="name" type="string" default="SS_Robots" resource="process" resourceKey="solution_folder.SS_Robots" propertyAttribute="name" />
+        <uipath:binding id="bRf3Np8Xc" name="folderPath" type="string" default="" resource="process" resourceKey="solution_folder.SS_Robots" propertyAttribute="folderPath" />
+        <uipath:binding id="bCa4Wm9Ts" name="name" type="string" default="SS_ConsensusAnalyst" resource="process" resourceSubType="Agent" resourceKey="solution_folder.SS_ConsensusAnalyst" propertyAttribute="name" />
+        <uipath:binding id="bCf8Hq2Vd" name="folderPath" type="string" default="" resource="process" resourceSubType="Agent" resourceKey="solution_folder.SS_ConsensusAnalyst" propertyAttribute="folderPath" />
+        <uipath:binding id="bDw6Rk3Pn" name="name" type="string" default="SS_DecisionWriter" resource="process" resourceSubType="Agent" resourceKey="solution_folder.SS_DecisionWriter" propertyAttribute="name" />
+        <uipath:binding id="bDf2Lx7Gc" name="folderPath" type="string" default="" resource="process" resourceSubType="Agent" resourceKey="solution_folder.SS_DecisionWriter" propertyAttribute="folderPath" />
+        <uipath:binding id="bTf5Nv8Qe" name="name" type="string" default="Source Selection Task Forms" resource="app" resourceKey="SourceSelection.Source Selection Task Forms" propertyAttribute="name" />
+        <uipath:binding id="bTp9Mc4Ra" name="folderPath" type="string" default="SourceSelection" resource="app" resourceKey="SourceSelection.Source Selection Task Forms" propertyAttribute="folderPath" />
+      </uipath:bindings>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Start_SourceSelection" name="Start source selection">
+      <bpmn:extensionElements>
+        <uipath:entryPointId value="728329c4-4819-4ad3-b8c1-2d096c6446c5" />
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="solicitationId" type="string" var="solicitationId" source="=vars.in_solicitationId" />
+          <uipath:output name="evaluator1" type="string" var="evaluator1" source="=vars.in_evaluator1" />
+          <uipath:output name="evaluator2" type="string" var="evaluator2" source="=vars.in_evaluator2" />
+          <uipath:output name="evaluator3" type="string" var="evaluator3" source="=vars.in_evaluator3" />
+          <uipath:output name="ssebChair" type="string" var="ssebChair" source="=vars.in_ssebChair" />
+          <uipath:output name="contractingOfficer" type="string" var="contractingOfficer" source="=vars.in_contractingOfficer" />
+          <uipath:output name="sourceSelectionAuthority" type="string" var="sourceSelectionAuthority" source="=vars.in_sourceSelectionAuthority" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>F_Start_Ingest</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_IngestProposals" name="Ingest Proposals">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bRb7Kq2Lm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bRf3Np8Xc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"includeOfferorIds":{"type":"string"},"agentProcess":{"type":"string"},"ssddText":{"type":"string"},"awardee":{"type":"string"},"signedBy":{"type":"string"},"rationale":{"type":"string"},"cancelledBy":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"IngestProposals","solicitationId":"=vars.solicitationId","includeOfferorIds":"","agentProcess":"","ssddText":"","awardee":"","signedBy":"","rationale":"","cancelledBy":""}]]></uipath:input>
+          <uipath:output name="count" type="integer" source="=count" var="offerorCount" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Start_Ingest</bpmn:incoming>
+      <bpmn:outgoing>F_Ingest_Screen</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_ScreenCompliance" name="Compliance and Responsibility Screen">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bRb7Kq2Lm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bRf3Np8Xc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"includeOfferorIds":{"type":"string"},"agentProcess":{"type":"string"},"ssddText":{"type":"string"},"awardee":{"type":"string"},"signedBy":{"type":"string"},"rationale":{"type":"string"},"cancelledBy":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"ScreenCompliance","solicitationId":"=vars.solicitationId","includeOfferorIds":"","agentProcess":"","ssddText":"","awardee":"","signedBy":"","rationale":"","cancelledBy":""}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="complianceSummary" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Ingest_Screen</bpmn:incoming>
+      <bpmn:outgoing>F_Screen_Release</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_ReleaseToEvaluation" name="Release to Evaluation">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bTf5Nv8Qe" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bTp9Mc4Ra" />
+            <uipath:input name="taskTitle" type="string" value="Release proposals to the SSEB" />
+            <uipath:input name="priority" type="string" value="High" />
+            <uipath:input name="labels" type="string" value="source-selection, contracting-officer" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.contractingOfficer"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"evaluatorSlot":{"type":"number"},"complianceSummary":{"type":"string"},"consensusDraft":{"type":"string"},"priceAnalysis":{"type":"string"},"ssddDraft":{"type":"string"},"recommendedAwardee":{"type":"string"},"chairQuestions":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"releaseToEvaluation","solicitationId":"=vars.solicitationId","evaluatorSlot":null,"complianceSummary":"=vars.complianceSummary","consensusDraft":"","priceAnalysis":"","ssddDraft":"","recommendedAwardee":"","chairQuestions":""}]]></uipath:input>
+          <uipath:output name="decision" type="string" source="=decision" var="releaseDecision" />
+          <uipath:output name="notes" type="string" source="=notes" var="releaseRationale" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Screen_Release</bpmn:incoming>
+      <bpmn:outgoing>F_Release_Gw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_ReleaseDecision" name="Release or cancel?" default="F_Release_Eval">
+      <bpmn:incoming>F_Release_Gw</bpmn:incoming>
+      <bpmn:outgoing>F_Release_Cancel</bpmn:outgoing>
+      <bpmn:outgoing>F_Release_Eval</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:subProcess id="Sub_IndividualEvaluation" name="Individual Evaluation">
+      <bpmn:incoming>F_Release_Eval</bpmn:incoming>
+      <bpmn:outgoing>F_IE_Consensus</bpmn:outgoing>
+    <bpmn:startEvent id="IndEval_Start" name="Proposals released">
+      <bpmn:outgoing>F_IE_Start_Draft</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_GenerateDraftFindings" name="Generate Draft Findings">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bRb7Kq2Lm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bRf3Np8Xc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"includeOfferorIds":{"type":"string"},"agentProcess":{"type":"string"},"ssddText":{"type":"string"},"awardee":{"type":"string"},"signedBy":{"type":"string"},"rationale":{"type":"string"},"cancelledBy":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"GenerateDraftFindings","solicitationId":"=vars.solicitationId","includeOfferorIds":"","agentProcess":"SS_EvaluationAssistant","ssddText":"","awardee":"","signedBy":"","rationale":"","cancelledBy":""}]]></uipath:input>
+          <uipath:output name="count" type="integer" source="=count" var="draftFindingCount" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_IE_Start_Draft</bpmn:incoming>
+      <bpmn:outgoing>F_IE_Draft_Fork</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:inclusiveGateway id="Gw_EvaluatorsFork">
+      <bpmn:documentation>Opens a review only for the evaluators on the solicitation's panel. A start input evaluatorN left empty means slot N is not on the panel; the inclusive join waits only for the reviews that were opened.</bpmn:documentation>
+      <bpmn:incoming>F_IE_Draft_Fork</bpmn:incoming>
+      <bpmn:outgoing>F_IE_Fork_E1</bpmn:outgoing>
+      <bpmn:outgoing>F_IE_Fork_E2</bpmn:outgoing>
+      <bpmn:outgoing>F_IE_Fork_E3</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:userTask id="Task_Evaluator1Review" name="Evaluator 1 Review">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bTf5Nv8Qe" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bTp9Mc4Ra" />
+            <uipath:input name="taskTitle" type="string" value="Individual evaluation - evaluator 1" />
+            <uipath:input name="priority" type="string" value="Medium" />
+            <uipath:input name="labels" type="string" value="source-selection, evaluator" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.evaluator1"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"evaluatorSlot":{"type":"number"},"complianceSummary":{"type":"string"},"consensusDraft":{"type":"string"},"priceAnalysis":{"type":"string"},"ssddDraft":{"type":"string"},"recommendedAwardee":{"type":"string"},"chairQuestions":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"individualEvaluation","solicitationId":"=vars.solicitationId","evaluatorSlot":1,"complianceSummary":"","consensusDraft":"","priceAnalysis":"","ssddDraft":"","recommendedAwardee":"","chairQuestions":""}]]></uipath:input>
+          <uipath:output name="payload" type="string" source="=payload" var="evaluator1Ratings" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_IE_Fork_E1</bpmn:incoming>
+      <bpmn:outgoing>F_IE_E1_Join</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_Evaluator2Review" name="Evaluator 2 Review">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bTf5Nv8Qe" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bTp9Mc4Ra" />
+            <uipath:input name="taskTitle" type="string" value="Individual evaluation - evaluator 2" />
+            <uipath:input name="priority" type="string" value="Medium" />
+            <uipath:input name="labels" type="string" value="source-selection, evaluator" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.evaluator2"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"evaluatorSlot":{"type":"number"},"complianceSummary":{"type":"string"},"consensusDraft":{"type":"string"},"priceAnalysis":{"type":"string"},"ssddDraft":{"type":"string"},"recommendedAwardee":{"type":"string"},"chairQuestions":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"individualEvaluation","solicitationId":"=vars.solicitationId","evaluatorSlot":2,"complianceSummary":"","consensusDraft":"","priceAnalysis":"","ssddDraft":"","recommendedAwardee":"","chairQuestions":""}]]></uipath:input>
+          <uipath:output name="payload" type="string" source="=payload" var="evaluator2Ratings" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_IE_Fork_E2</bpmn:incoming>
+      <bpmn:outgoing>F_IE_E2_Join</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_Evaluator3Review" name="Evaluator 3 Review">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bTf5Nv8Qe" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bTp9Mc4Ra" />
+            <uipath:input name="taskTitle" type="string" value="Individual evaluation - evaluator 3" />
+            <uipath:input name="priority" type="string" value="Medium" />
+            <uipath:input name="labels" type="string" value="source-selection, evaluator" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.evaluator3"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"evaluatorSlot":{"type":"number"},"complianceSummary":{"type":"string"},"consensusDraft":{"type":"string"},"priceAnalysis":{"type":"string"},"ssddDraft":{"type":"string"},"recommendedAwardee":{"type":"string"},"chairQuestions":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"individualEvaluation","solicitationId":"=vars.solicitationId","evaluatorSlot":3,"complianceSummary":"","consensusDraft":"","priceAnalysis":"","ssddDraft":"","recommendedAwardee":"","chairQuestions":""}]]></uipath:input>
+          <uipath:output name="payload" type="string" source="=payload" var="evaluator3Ratings" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_IE_Fork_E3</bpmn:incoming>
+      <bpmn:outgoing>F_IE_E3_Join</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:inclusiveGateway id="Gw_EvaluatorsJoin">
+      <bpmn:incoming>F_IE_E1_Join</bpmn:incoming>
+      <bpmn:incoming>F_IE_E2_Join</bpmn:incoming>
+      <bpmn:incoming>F_IE_E3_Join</bpmn:incoming>
+      <bpmn:outgoing>F_IE_Join_End</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:endEvent id="IndEval_End" name="Individual evaluations complete">
+      <bpmn:incoming>F_IE_Join_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F_IE_Start_Draft" sourceRef="IndEval_Start" targetRef="Task_GenerateDraftFindings" />
+    <bpmn:sequenceFlow id="F_IE_Draft_Fork" sourceRef="Task_GenerateDraftFindings" targetRef="Gw_EvaluatorsFork" />
+    <bpmn:sequenceFlow id="F_IE_Fork_E1" sourceRef="Gw_EvaluatorsFork" targetRef="Task_Evaluator1Review">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=vars.evaluator1 != null &amp;&amp; vars.evaluator1 != ""</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_IE_E1_Join" sourceRef="Task_Evaluator1Review" targetRef="Gw_EvaluatorsJoin" />
+    <bpmn:sequenceFlow id="F_IE_Fork_E2" sourceRef="Gw_EvaluatorsFork" targetRef="Task_Evaluator2Review">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=vars.evaluator2 != null &amp;&amp; vars.evaluator2 != ""</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_IE_E2_Join" sourceRef="Task_Evaluator2Review" targetRef="Gw_EvaluatorsJoin" />
+    <bpmn:sequenceFlow id="F_IE_Fork_E3" sourceRef="Gw_EvaluatorsFork" targetRef="Task_Evaluator3Review">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=vars.evaluator3 != null &amp;&amp; vars.evaluator3 != ""</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_IE_E3_Join" sourceRef="Task_Evaluator3Review" targetRef="Gw_EvaluatorsJoin" />
+    <bpmn:sequenceFlow id="F_IE_Join_End" sourceRef="Gw_EvaluatorsJoin" targetRef="IndEval_End" />
+    </bpmn:subProcess>
+    <bpmn:boundaryEvent id="Timer_IndEvalAtRisk" name="Individual Evaluation SLA at risk" attachedToRef="Sub_IndividualEvaluation" cancelActivity="false">
+      <bpmn:outgoing>F_IEAtRisk_Flag</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P7D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Task_IndEvalAtRisk" name="Flag Individual Evaluation SLA at risk">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="individualEvaluationSla" type="string" var="individualEvaluationSla" source="=js:'AtRisk'" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_IEAtRisk_Flag</bpmn:incoming>
+      <bpmn:outgoing>F_IEAtRisk_End</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="End_IndEvalAtRisk" name="SSEB Chair notified">
+      <bpmn:incoming>F_IEAtRisk_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Timer_IndEvalBreached" name="Individual Evaluation SLA breached" attachedToRef="Sub_IndividualEvaluation" cancelActivity="false">
+      <bpmn:outgoing>F_IEBreach_Flag</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P10D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Task_IndEvalBreached" name="Flag Individual Evaluation SLA breached">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="individualEvaluationSla" type="string" var="individualEvaluationSla" source="=js:'Breached'" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_IEBreach_Flag</bpmn:incoming>
+      <bpmn:outgoing>F_IEBreach_End</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="End_IndEvalBreached" name="Contracting Officer notified">
+      <bpmn:incoming>F_IEBreach_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="Sub_Consensus" name="Consensus">
+      <bpmn:incoming>F_IE_Consensus</bpmn:incoming>
+      <bpmn:outgoing>F_Consensus_Price</bpmn:outgoing>
+    <bpmn:startEvent id="Consensus_Start" name="Evaluations in">
+      <bpmn:outgoing>F_CN_Start_Loop</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gw_ConsensusRound">
+      <bpmn:incoming>F_CN_Start_Loop</bpmn:incoming>
+      <bpmn:incoming>F_CN_Clar_Loop</bpmn:incoming>
+      <bpmn:outgoing>F_CN_Loop_Compile</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_CompileEvaluations" name="Compile Individual Evaluations">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bRb7Kq2Lm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bRf3Np8Xc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"includeOfferorIds":{"type":"string"},"agentProcess":{"type":"string"},"ssddText":{"type":"string"},"awardee":{"type":"string"},"signedBy":{"type":"string"},"rationale":{"type":"string"},"cancelledBy":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"CompileEvaluations","solicitationId":"=vars.solicitationId","includeOfferorIds":"","agentProcess":"","ssddText":"","awardee":"","signedBy":"","rationale":"","cancelledBy":""}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="evaluationSet" />
+          <uipath:output name="detail" type="string" source="=detail" var="ratingScales" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_CN_Loop_Compile</bpmn:incoming>
+      <bpmn:outgoing>F_CN_Compile_Draft</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_DraftConsensus" name="Draft Consensus">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartAgentJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bCa4Wm9Ts" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bCf8Hq2Vd" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"solicitationId":{"type":"string"},"evaluationSet":{"type":"string"},"scales":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"solicitationId":"=vars.solicitationId","evaluationSet":"=vars.evaluationSet","scales":"=vars.ratingScales"}]]></uipath:input>
+          <uipath:output name="proposals" type="jsonSchema" source="=proposals" var="consensusProposals" />
+          <uipath:output name="disagreementCount" type="integer" source="=disagreementCount" var="disagreementCount" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_CN_Compile_Draft</bpmn:incoming>
+      <bpmn:outgoing>F_CN_Draft_Chair</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_SsebChairConsensus" name="SSEB Chair Consensus">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bTf5Nv8Qe" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bTp9Mc4Ra" />
+            <uipath:input name="taskTitle" type="string" value="Set SSEB consensus ratings" />
+            <uipath:input name="priority" type="string" value="High" />
+            <uipath:input name="labels" type="string" value="source-selection, sseb-chair" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.ssebChair"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"evaluatorSlot":{"type":"number"},"complianceSummary":{"type":"string"},"consensusDraft":{"type":"string"},"priceAnalysis":{"type":"string"},"ssddDraft":{"type":"string"},"recommendedAwardee":{"type":"string"},"chairQuestions":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"consensus","solicitationId":"=vars.solicitationId","evaluatorSlot":null,"complianceSummary":"","consensusDraft":"=js:JSON.stringify(vars.consensusProposals)","priceAnalysis":"","ssddDraft":"","recommendedAwardee":"","chairQuestions":""}]]></uipath:input>
+          <uipath:output name="decision" type="string" source="=decision" var="consensusDecision" />
+          <uipath:output name="payload" type="string" source="=payload" var="consensusRatings" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_CN_Draft_Chair</bpmn:incoming>
+      <bpmn:outgoing>F_CN_Chair_Gw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_ConsensusDecision" name="Sign or reconvene?" default="F_CN_Signed">
+      <bpmn:incoming>F_CN_Chair_Gw</bpmn:incoming>
+      <bpmn:outgoing>F_CN_Reconvene</bpmn:outgoing>
+      <bpmn:outgoing>F_CN_Signed</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Task_EvaluatorClarification" name="Evaluator Clarification">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bTf5Nv8Qe" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bTp9Mc4Ra" />
+            <uipath:input name="taskTitle" type="string" value="Answer SSEB Chair consensus questions" />
+            <uipath:input name="priority" type="string" value="High" />
+            <uipath:input name="labels" type="string" value="source-selection, evaluator" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.evaluator1"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"evaluatorSlot":{"type":"number"},"complianceSummary":{"type":"string"},"consensusDraft":{"type":"string"},"priceAnalysis":{"type":"string"},"ssddDraft":{"type":"string"},"recommendedAwardee":{"type":"string"},"chairQuestions":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"clarification","solicitationId":"=vars.solicitationId","evaluatorSlot":null,"complianceSummary":"","consensusDraft":"","priceAnalysis":"","ssddDraft":"","recommendedAwardee":"","chairQuestions":"=vars.consensusRatings"}]]></uipath:input>
+          <uipath:output name="notes" type="string" source="=notes" var="clarificationNotes" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_CN_Reconvene</bpmn:incoming>
+      <bpmn:outgoing>F_CN_Clar_Loop</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Consensus_End" name="Consensus signed">
+      <bpmn:incoming>F_CN_Signed</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F_CN_Start_Loop" sourceRef="Consensus_Start" targetRef="Gw_ConsensusRound" />
+    <bpmn:sequenceFlow id="F_CN_Loop_Compile" sourceRef="Gw_ConsensusRound" targetRef="Task_CompileEvaluations" />
+    <bpmn:sequenceFlow id="F_CN_Compile_Draft" sourceRef="Task_CompileEvaluations" targetRef="Task_DraftConsensus" />
+    <bpmn:sequenceFlow id="F_CN_Draft_Chair" sourceRef="Task_DraftConsensus" targetRef="Task_SsebChairConsensus" />
+    <bpmn:sequenceFlow id="F_CN_Chair_Gw" sourceRef="Task_SsebChairConsensus" targetRef="Gw_ConsensusDecision" />
+    <bpmn:sequenceFlow id="F_CN_Reconvene" name="Reconvene" sourceRef="Gw_ConsensusDecision" targetRef="Task_EvaluatorClarification">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=vars.consensusDecision == "Reconvene"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_CN_Signed" name="Sign SSEB report" sourceRef="Gw_ConsensusDecision" targetRef="Consensus_End" />
+    <bpmn:sequenceFlow id="F_CN_Clar_Loop" sourceRef="Task_EvaluatorClarification" targetRef="Gw_ConsensusRound" />
+    </bpmn:subProcess>
+    <bpmn:boundaryEvent id="Timer_ConsensusAtRisk" name="Consensus SLA at risk" attachedToRef="Sub_Consensus" cancelActivity="false">
+      <bpmn:outgoing>F_CNAtRisk_Flag</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT90H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Task_ConsensusAtRisk" name="Flag Consensus SLA at risk">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="consensusSla" type="string" var="consensusSla" source="=js:'AtRisk'" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_CNAtRisk_Flag</bpmn:incoming>
+      <bpmn:outgoing>F_CNAtRisk_End</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="End_ConsensusAtRisk" name="SSEB Chair reminded">
+      <bpmn:incoming>F_CNAtRisk_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Timer_ConsensusBreached" name="Consensus SLA breached" attachedToRef="Sub_Consensus" cancelActivity="false">
+      <bpmn:outgoing>F_CNBreach_Flag</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P5D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:task id="Task_ConsensusBreached" name="Flag Consensus SLA breached">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="consensusSla" type="string" var="consensusSla" source="=js:'Breached'" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_CNBreach_Flag</bpmn:incoming>
+      <bpmn:outgoing>F_CNBreach_End</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="End_ConsensusBreached" name="Contracting Officer told of slip">
+      <bpmn:incoming>F_CNBreach_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Task_AnalyzePrice" name="Analyze Price Proposals">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bRb7Kq2Lm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bRf3Np8Xc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"includeOfferorIds":{"type":"string"},"agentProcess":{"type":"string"},"ssddText":{"type":"string"},"awardee":{"type":"string"},"signedBy":{"type":"string"},"rationale":{"type":"string"},"cancelledBy":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"AnalyzePrice","solicitationId":"=vars.solicitationId","includeOfferorIds":"","agentProcess":"","ssddText":"","awardee":"","signedBy":"","rationale":"","cancelledBy":""}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="priceAnalysis" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Consensus_Price</bpmn:incoming>
+      <bpmn:outgoing>F_Price_Determination</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_PriceDetermination" name="Price Determination">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bTf5Nv8Qe" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bTp9Mc4Ra" />
+            <uipath:input name="taskTitle" type="string" value="Determine price reasonableness" />
+            <uipath:input name="priority" type="string" value="High" />
+            <uipath:input name="labels" type="string" value="source-selection, contracting-officer" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.contractingOfficer"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"evaluatorSlot":{"type":"number"},"complianceSummary":{"type":"string"},"consensusDraft":{"type":"string"},"priceAnalysis":{"type":"string"},"ssddDraft":{"type":"string"},"recommendedAwardee":{"type":"string"},"chairQuestions":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"priceDetermination","solicitationId":"=vars.solicitationId","evaluatorSlot":null,"complianceSummary":"","consensusDraft":"","priceAnalysis":"=vars.priceAnalysis","ssddDraft":"","recommendedAwardee":"","chairQuestions":""}]]></uipath:input>
+          <uipath:output name="decision" type="string" source="=decision" var="priceDecision" />
+          <uipath:output name="notes" type="string" source="=notes" var="priceDetermination" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Price_Determination</bpmn:incoming>
+      <bpmn:outgoing>F_Determination_Gw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gw_PriceDecision" name="Proceed or cancel?" default="F_Price_Proceed">
+      <bpmn:incoming>F_Determination_Gw</bpmn:incoming>
+      <bpmn:outgoing>F_Price_Cancel</bpmn:outgoing>
+      <bpmn:outgoing>F_Price_Proceed</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_PrepareDecisionPackage" name="Prepare Decision Package">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bRb7Kq2Lm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bRf3Np8Xc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"includeOfferorIds":{"type":"string"},"agentProcess":{"type":"string"},"ssddText":{"type":"string"},"awardee":{"type":"string"},"signedBy":{"type":"string"},"rationale":{"type":"string"},"cancelledBy":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"PrepareDecisionPackage","solicitationId":"=vars.solicitationId","includeOfferorIds":"","agentProcess":"","ssddText":"","awardee":"","signedBy":"","rationale":"","cancelledBy":""}]]></uipath:input>
+          <uipath:output name="detail" type="string" source="=detail" var="planSummary" />
+          <uipath:output name="content" type="string" source="=content" var="consensusRecord" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Price_Proceed</bpmn:incoming>
+      <bpmn:outgoing>F_Package_Draft</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_DraftSsdd" name="Draft Source Selection Decision">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartAgentJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bDw6Rk3Pn" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bDf2Lx7Gc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"solicitationId":{"type":"string"},"plan":{"type":"string"},"consensusRecord":{"type":"string"},"priceAnalysis":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"solicitationId":"=vars.solicitationId","plan":"=vars.planSummary","consensusRecord":"=vars.consensusRecord","priceAnalysis":"=vars.priceAnalysis"}]]></uipath:input>
+          <uipath:output name="ssddDraft" type="string" source="=ssddDraft" var="ssddDraft" />
+          <uipath:output name="recommendedAwardee" type="string" source="=recommendedAwardee" var="recommendedAwardee" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Package_Draft</bpmn:incoming>
+      <bpmn:outgoing>F_Draft_Ssa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_SsaAwardDecision" name="SSA Award Decision">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bTf5Nv8Qe" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bTp9Mc4Ra" />
+            <uipath:input name="taskTitle" type="string" value="Make and sign the source selection decision" />
+            <uipath:input name="priority" type="string" value="Critical" />
+            <uipath:input name="labels" type="string" value="source-selection, ssa" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.sourceSelectionAuthority"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"evaluatorSlot":{"type":"number"},"complianceSummary":{"type":"string"},"consensusDraft":{"type":"string"},"priceAnalysis":{"type":"string"},"ssddDraft":{"type":"string"},"recommendedAwardee":{"type":"string"},"chairQuestions":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"awardDecision","solicitationId":"=vars.solicitationId","evaluatorSlot":null,"complianceSummary":"","consensusDraft":"","priceAnalysis":"","ssddDraft":"=vars.ssddDraft","recommendedAwardee":"=vars.recommendedAwardee","chairQuestions":""}]]></uipath:input>
+          <uipath:output name="awardee" type="string" source="=awardee" var="awardeeName" />
+          <uipath:output name="payload" type="string" source="=payload" var="signedSsdd" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Draft_Ssa</bpmn:incoming>
+      <bpmn:outgoing>F_Ssa_Publish</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_PublishAwardRecord" name="Publish Award Record">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bRb7Kq2Lm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bRf3Np8Xc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"includeOfferorIds":{"type":"string"},"agentProcess":{"type":"string"},"ssddText":{"type":"string"},"awardee":{"type":"string"},"signedBy":{"type":"string"},"rationale":{"type":"string"},"cancelledBy":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"PublishAwardRecord","solicitationId":"=vars.solicitationId","includeOfferorIds":"","agentProcess":"","ssddText":"","awardee":"=vars.awardeeName","signedBy":"=vars.sourceSelectionAuthority","rationale":"","cancelledBy":""}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="awardRecordUri" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Ssa_Publish</bpmn:incoming>
+      <bpmn:outgoing>F_Publish_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_Awarded" name="Award published">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="awardeeName" type="string" var="out_awardeeName" source="=vars.awardeeName" />
+          <uipath:output name="awardRecordUri" type="string" var="out_awardRecordUri" source="=vars.awardRecordUri" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Publish_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gw_Cancelled">
+      <bpmn:incoming>F_Release_Cancel</bpmn:incoming>
+      <bpmn:incoming>F_Price_Cancel</bpmn:incoming>
+      <bpmn:outgoing>F_Cancel_Record</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_RecordCancellation" name="Record Cancellation">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bRb7Kq2Lm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bRf3Np8Xc" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"includeOfferorIds":{"type":"string"},"agentProcess":{"type":"string"},"ssddText":{"type":"string"},"awardee":{"type":"string"},"signedBy":{"type":"string"},"rationale":{"type":"string"},"cancelledBy":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"RecordCancellation","solicitationId":"=vars.solicitationId","includeOfferorIds":"","agentProcess":"","ssddText":"","awardee":"","signedBy":"","rationale":"=js:vars.priceDecision === 'Cancel' ? vars.priceDetermination : vars.releaseRationale","cancelledBy":"=vars.contractingOfficer"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="cancellationRecordUri" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Cancel_Record</bpmn:incoming>
+      <bpmn:outgoing>F_Record_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_Cancelled" name="Solicitation cancelled">
+      <bpmn:incoming>F_Record_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F_Start_Ingest" sourceRef="Start_SourceSelection" targetRef="Task_IngestProposals" />
+    <bpmn:sequenceFlow id="F_Ingest_Screen" sourceRef="Task_IngestProposals" targetRef="Task_ScreenCompliance" />
+    <bpmn:sequenceFlow id="F_Screen_Release" sourceRef="Task_ScreenCompliance" targetRef="Task_ReleaseToEvaluation" />
+    <bpmn:sequenceFlow id="F_Release_Gw" sourceRef="Task_ReleaseToEvaluation" targetRef="Gw_ReleaseDecision" />
+    <bpmn:sequenceFlow id="F_Release_Cancel" name="Cancel solicitation" sourceRef="Gw_ReleaseDecision" targetRef="Gw_Cancelled">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=vars.releaseDecision == "Cancel"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_Release_Eval" name="Release" sourceRef="Gw_ReleaseDecision" targetRef="Sub_IndividualEvaluation" />
+    <bpmn:sequenceFlow id="F_IEAtRisk_Flag" sourceRef="Timer_IndEvalAtRisk" targetRef="Task_IndEvalAtRisk" />
+    <bpmn:sequenceFlow id="F_IEAtRisk_End" sourceRef="Task_IndEvalAtRisk" targetRef="End_IndEvalAtRisk" />
+    <bpmn:sequenceFlow id="F_IEBreach_Flag" sourceRef="Timer_IndEvalBreached" targetRef="Task_IndEvalBreached" />
+    <bpmn:sequenceFlow id="F_IEBreach_End" sourceRef="Task_IndEvalBreached" targetRef="End_IndEvalBreached" />
+    <bpmn:sequenceFlow id="F_IE_Consensus" sourceRef="Sub_IndividualEvaluation" targetRef="Sub_Consensus" />
+    <bpmn:sequenceFlow id="F_CNAtRisk_Flag" sourceRef="Timer_ConsensusAtRisk" targetRef="Task_ConsensusAtRisk" />
+    <bpmn:sequenceFlow id="F_CNAtRisk_End" sourceRef="Task_ConsensusAtRisk" targetRef="End_ConsensusAtRisk" />
+    <bpmn:sequenceFlow id="F_CNBreach_Flag" sourceRef="Timer_ConsensusBreached" targetRef="Task_ConsensusBreached" />
+    <bpmn:sequenceFlow id="F_CNBreach_End" sourceRef="Task_ConsensusBreached" targetRef="End_ConsensusBreached" />
+    <bpmn:sequenceFlow id="F_Consensus_Price" sourceRef="Sub_Consensus" targetRef="Task_AnalyzePrice" />
+    <bpmn:sequenceFlow id="F_Price_Determination" sourceRef="Task_AnalyzePrice" targetRef="Task_PriceDetermination" />
+    <bpmn:sequenceFlow id="F_Determination_Gw" sourceRef="Task_PriceDetermination" targetRef="Gw_PriceDecision" />
+    <bpmn:sequenceFlow id="F_Price_Cancel" name="Cancel solicitation" sourceRef="Gw_PriceDecision" targetRef="Gw_Cancelled">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=vars.priceDecision == "Cancel"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_Price_Proceed" name="Proceed" sourceRef="Gw_PriceDecision" targetRef="Task_PrepareDecisionPackage" />
+    <bpmn:sequenceFlow id="F_Package_Draft" sourceRef="Task_PrepareDecisionPackage" targetRef="Task_DraftSsdd" />
+    <bpmn:sequenceFlow id="F_Draft_Ssa" sourceRef="Task_DraftSsdd" targetRef="Task_SsaAwardDecision" />
+    <bpmn:sequenceFlow id="F_Ssa_Publish" sourceRef="Task_SsaAwardDecision" targetRef="Task_PublishAwardRecord" />
+    <bpmn:sequenceFlow id="F_Publish_End" sourceRef="Task_PublishAwardRecord" targetRef="End_Awarded" />
+    <bpmn:sequenceFlow id="F_Cancel_Record" sourceRef="Gw_Cancelled" targetRef="Task_RecordCancellation" />
+    <bpmn:sequenceFlow id="F_Record_End" sourceRef="Task_RecordCancellation" targetRef="End_Cancelled" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="SourceSelectionProcess">
+      <bpmndi:BPMNShape id="S_Start_SourceSelection" bpmnElement="Start_SourceSelection"><dc:Bounds x="60" y="282" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="23" y="322" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_IngestProposals" bpmnElement="Task_IngestProposals"><dc:Bounds x="150" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_ScreenCompliance" bpmnElement="Task_ScreenCompliance"><dc:Bounds x="300" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_ReleaseToEvaluation" bpmnElement="Task_ReleaseToEvaluation"><dc:Bounds x="450" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gw_ReleaseDecision" bpmnElement="Gw_ReleaseDecision"><dc:Bounds x="600" y="275" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="575" y="236" width="100" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Sub_IndividualEvaluation" bpmnElement="Sub_IndividualEvaluation" isExpanded="true"><dc:Bounds x="700" y="140" width="680" height="320" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_IndEval_Start" bpmnElement="IndEval_Start"><dc:Bounds x="730" y="282" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="693" y="322" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_GenerateDraftFindings" bpmnElement="Task_GenerateDraftFindings"><dc:Bounds x="810" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gw_EvaluatorsFork" bpmnElement="Gw_EvaluatorsFork"><dc:Bounds x="960" y="275" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_Evaluator1Review" bpmnElement="Task_Evaluator1Review"><dc:Bounds x="1060" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_Evaluator2Review" bpmnElement="Task_Evaluator2Review"><dc:Bounds x="1060" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_Evaluator3Review" bpmnElement="Task_Evaluator3Review"><dc:Bounds x="1060" y="360" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gw_EvaluatorsJoin" bpmnElement="Gw_EvaluatorsJoin"><dc:Bounds x="1210" y="275" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_IndEval_End" bpmnElement="IndEval_End"><dc:Bounds x="1300" y="282" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1263" y="322" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Timer_IndEvalAtRisk" bpmnElement="Timer_IndEvalAtRisk"><dc:Bounds x="842" y="442" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="884" y="460" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_IndEvalAtRisk" bpmnElement="Task_IndEvalAtRisk"><dc:Bounds x="810" y="510" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_End_IndEvalAtRisk" bpmnElement="End_IndEvalAtRisk"><dc:Bounds x="950" y="532" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="913" y="572" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Timer_IndEvalBreached" bpmnElement="Timer_IndEvalBreached"><dc:Bounds x="1092" y="442" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1134" y="460" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_IndEvalBreached" bpmnElement="Task_IndEvalBreached"><dc:Bounds x="1060" y="510" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_End_IndEvalBreached" bpmnElement="End_IndEvalBreached"><dc:Bounds x="1200" y="532" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1163" y="572" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Sub_Consensus" bpmnElement="Sub_Consensus" isExpanded="true"><dc:Bounds x="1440" y="140" width="860" height="320" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Consensus_Start" bpmnElement="Consensus_Start"><dc:Bounds x="1470" y="282" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1433" y="322" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gw_ConsensusRound" bpmnElement="Gw_ConsensusRound"><dc:Bounds x="1550" y="275" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_CompileEvaluations" bpmnElement="Task_CompileEvaluations"><dc:Bounds x="1650" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_DraftConsensus" bpmnElement="Task_DraftConsensus"><dc:Bounds x="1800" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_SsebChairConsensus" bpmnElement="Task_SsebChairConsensus"><dc:Bounds x="1950" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gw_ConsensusDecision" bpmnElement="Gw_ConsensusDecision"><dc:Bounds x="2100" y="275" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="2075" y="236" width="100" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Consensus_End" bpmnElement="Consensus_End"><dc:Bounds x="2210" y="282" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2173" y="322" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_EvaluatorClarification" bpmnElement="Task_EvaluatorClarification"><dc:Bounds x="1800" y="360" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Timer_ConsensusAtRisk" bpmnElement="Timer_ConsensusAtRisk"><dc:Bounds x="1632" y="442" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1674" y="460" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_ConsensusAtRisk" bpmnElement="Task_ConsensusAtRisk"><dc:Bounds x="1600" y="510" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_End_ConsensusAtRisk" bpmnElement="End_ConsensusAtRisk"><dc:Bounds x="1740" y="532" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1703" y="572" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Timer_ConsensusBreached" bpmnElement="Timer_ConsensusBreached"><dc:Bounds x="2032" y="442" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2074" y="460" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_ConsensusBreached" bpmnElement="Task_ConsensusBreached"><dc:Bounds x="2000" y="510" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_End_ConsensusBreached" bpmnElement="End_ConsensusBreached"><dc:Bounds x="2140" y="532" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2103" y="572" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_AnalyzePrice" bpmnElement="Task_AnalyzePrice"><dc:Bounds x="2360" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_PriceDetermination" bpmnElement="Task_PriceDetermination"><dc:Bounds x="2510" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gw_PriceDecision" bpmnElement="Gw_PriceDecision"><dc:Bounds x="2660" y="275" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="2635" y="236" width="100" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_PrepareDecisionPackage" bpmnElement="Task_PrepareDecisionPackage"><dc:Bounds x="2760" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_DraftSsdd" bpmnElement="Task_DraftSsdd"><dc:Bounds x="2910" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_SsaAwardDecision" bpmnElement="Task_SsaAwardDecision"><dc:Bounds x="3060" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_PublishAwardRecord" bpmnElement="Task_PublishAwardRecord"><dc:Bounds x="3210" y="260" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_End_Awarded" bpmnElement="End_Awarded"><dc:Bounds x="3360" y="282" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="3323" y="322" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gw_Cancelled" bpmnElement="Gw_Cancelled"><dc:Bounds x="2660" y="655" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_RecordCancellation" bpmnElement="Task_RecordCancellation"><dc:Bounds x="2760" y="640" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_End_Cancelled" bpmnElement="End_Cancelled"><dc:Bounds x="2910" y="662" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2873" y="702" width="110" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="E_F_IE_Start_Draft" bpmnElement="F_IE_Start_Draft"><di:waypoint x="766" y="300" /><di:waypoint x="810" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_Draft_Fork" bpmnElement="F_IE_Draft_Fork"><di:waypoint x="910" y="300" /><di:waypoint x="960" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_Fork_E1" bpmnElement="F_IE_Fork_E1"><di:waypoint x="985" y="275" /><di:waypoint x="985" y="200" /><di:waypoint x="1060" y="200" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_E1_Join" bpmnElement="F_IE_E1_Join"><di:waypoint x="1160" y="200" /><di:waypoint x="1235" y="200" /><di:waypoint x="1235" y="275" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_Fork_E2" bpmnElement="F_IE_Fork_E2"><di:waypoint x="1010" y="300" /><di:waypoint x="1060" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_E2_Join" bpmnElement="F_IE_E2_Join"><di:waypoint x="1160" y="300" /><di:waypoint x="1210" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_Fork_E3" bpmnElement="F_IE_Fork_E3"><di:waypoint x="985" y="325" /><di:waypoint x="985" y="400" /><di:waypoint x="1060" y="400" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_E3_Join" bpmnElement="F_IE_E3_Join"><di:waypoint x="1160" y="400" /><di:waypoint x="1235" y="400" /><di:waypoint x="1235" y="325" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_Join_End" bpmnElement="F_IE_Join_End"><di:waypoint x="1260" y="300" /><di:waypoint x="1300" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CN_Start_Loop" bpmnElement="F_CN_Start_Loop"><di:waypoint x="1506" y="300" /><di:waypoint x="1550" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CN_Loop_Compile" bpmnElement="F_CN_Loop_Compile"><di:waypoint x="1600" y="300" /><di:waypoint x="1650" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CN_Compile_Draft" bpmnElement="F_CN_Compile_Draft"><di:waypoint x="1750" y="300" /><di:waypoint x="1800" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CN_Draft_Chair" bpmnElement="F_CN_Draft_Chair"><di:waypoint x="1900" y="300" /><di:waypoint x="1950" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CN_Chair_Gw" bpmnElement="F_CN_Chair_Gw"><di:waypoint x="2050" y="300" /><di:waypoint x="2100" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CN_Reconvene" bpmnElement="F_CN_Reconvene"><di:waypoint x="2125" y="325" /><di:waypoint x="2125" y="400" /><di:waypoint x="1900" y="400" /><bpmndi:BPMNLabel><dc:Bounds x="1990" y="405" width="70" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CN_Signed" bpmnElement="F_CN_Signed"><di:waypoint x="2150" y="300" /><di:waypoint x="2210" y="300" /><bpmndi:BPMNLabel><dc:Bounds x="2148" y="258" width="60" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CN_Clar_Loop" bpmnElement="F_CN_Clar_Loop"><di:waypoint x="1800" y="400" /><di:waypoint x="1575" y="400" /><di:waypoint x="1575" y="325" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Start_Ingest" bpmnElement="F_Start_Ingest"><di:waypoint x="96" y="300" /><di:waypoint x="150" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Ingest_Screen" bpmnElement="F_Ingest_Screen"><di:waypoint x="250" y="300" /><di:waypoint x="300" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Screen_Release" bpmnElement="F_Screen_Release"><di:waypoint x="400" y="300" /><di:waypoint x="450" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Release_Gw" bpmnElement="F_Release_Gw"><di:waypoint x="550" y="300" /><di:waypoint x="600" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Release_Cancel" bpmnElement="F_Release_Cancel"><di:waypoint x="625" y="325" /><di:waypoint x="625" y="680" /><di:waypoint x="2660" y="680" /><bpmndi:BPMNLabel><dc:Bounds x="632" y="600" width="70" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Release_Eval" bpmnElement="F_Release_Eval"><di:waypoint x="650" y="300" /><di:waypoint x="700" y="300" /><bpmndi:BPMNLabel><dc:Bounds x="652" y="284" width="44" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IEAtRisk_Flag" bpmnElement="F_IEAtRisk_Flag"><di:waypoint x="860" y="478" /><di:waypoint x="860" y="510" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IEAtRisk_End" bpmnElement="F_IEAtRisk_End"><di:waypoint x="910" y="550" /><di:waypoint x="950" y="550" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IEBreach_Flag" bpmnElement="F_IEBreach_Flag"><di:waypoint x="1110" y="478" /><di:waypoint x="1110" y="510" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IEBreach_End" bpmnElement="F_IEBreach_End"><di:waypoint x="1160" y="550" /><di:waypoint x="1200" y="550" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_IE_Consensus" bpmnElement="F_IE_Consensus"><di:waypoint x="1380" y="300" /><di:waypoint x="1440" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CNAtRisk_Flag" bpmnElement="F_CNAtRisk_Flag"><di:waypoint x="1650" y="478" /><di:waypoint x="1650" y="510" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CNAtRisk_End" bpmnElement="F_CNAtRisk_End"><di:waypoint x="1700" y="550" /><di:waypoint x="1740" y="550" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CNBreach_Flag" bpmnElement="F_CNBreach_Flag"><di:waypoint x="2050" y="478" /><di:waypoint x="2050" y="510" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_CNBreach_End" bpmnElement="F_CNBreach_End"><di:waypoint x="2100" y="550" /><di:waypoint x="2140" y="550" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Consensus_Price" bpmnElement="F_Consensus_Price"><di:waypoint x="2300" y="300" /><di:waypoint x="2360" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Price_Determination" bpmnElement="F_Price_Determination"><di:waypoint x="2460" y="300" /><di:waypoint x="2510" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Determination_Gw" bpmnElement="F_Determination_Gw"><di:waypoint x="2610" y="300" /><di:waypoint x="2660" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Price_Cancel" bpmnElement="F_Price_Cancel"><di:waypoint x="2685" y="325" /><di:waypoint x="2685" y="655" /><bpmndi:BPMNLabel><dc:Bounds x="2692" y="470" width="70" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Price_Proceed" bpmnElement="F_Price_Proceed"><di:waypoint x="2710" y="300" /><di:waypoint x="2760" y="300" /><bpmndi:BPMNLabel><dc:Bounds x="2712" y="284" width="44" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Package_Draft" bpmnElement="F_Package_Draft"><di:waypoint x="2860" y="300" /><di:waypoint x="2910" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Draft_Ssa" bpmnElement="F_Draft_Ssa"><di:waypoint x="3010" y="300" /><di:waypoint x="3060" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Ssa_Publish" bpmnElement="F_Ssa_Publish"><di:waypoint x="3160" y="300" /><di:waypoint x="3210" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Publish_End" bpmnElement="F_Publish_End"><di:waypoint x="3310" y="300" /><di:waypoint x="3360" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Cancel_Record" bpmnElement="F_Cancel_Record"><di:waypoint x="2710" y="680" /><di:waypoint x="2760" y="680" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Record_End" bpmnElement="F_Record_End"><di:waypoint x="2860" y="680" /><di:waypoint x="2910" y="680" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

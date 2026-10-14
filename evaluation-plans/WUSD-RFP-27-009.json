@@ -1,0 +1,82 @@
+{
+  "solicitationId": "WUSD-RFP-27-009",
+  "title": "Learning Management System",
+  "agency": "Willowmere Unified School District",
+  "framework": "sled",
+  "office": "Willowmere USD Purchasing Department",
+  "contractType": "Firm fixed price, 3-year initial term with two optional 1-year renewals",
+  "basisForAward": "Most advantageous proposal — highest total score out of 100 points",
+  "ratingMethod": "points",
+  "relativeImportance": "Proposals are scored out of 100 points: Functional Fit and Accessibility 40, Implementation and Support 20, Experience and References 10, and Cost 30. Cost points are awarded by formula: the lowest total cost receives 30 points and each other proposal receives (lowest cost ÷ its cost) × 30.",
+  "factors": [
+    {
+      "id": "T1",
+      "name": "Functional Fit and Accessibility",
+      "order": 1,
+      "scale": "technical",
+      "volume": "technical",
+      "weight": 40,
+      "subfactors": [
+        "Course delivery and assessment",
+        "Accessibility and mobile access",
+        "Interoperability and rostering"
+      ],
+      "criteria": "The District will evaluate how well the proposed platform supports course delivery and assessment for K-12 teachers and students, its documented conformance with WCAG 2.1 AA and support for students without reliable home internet, and its interoperability with District systems, including LTI 1.3 tool integration, OneRoster rostering from the SIS, SSO/SAML sign-in and FERPA and COPPA compliance."
+    },
+    {
+      "id": "T2",
+      "name": "Implementation and Support",
+      "order": 2,
+      "scale": "technical",
+      "volume": "management",
+      "weight": 20,
+      "subfactors": [
+        "Implementation and course migration",
+        "Training and professional development",
+        "Support, service levels and uptime"
+      ],
+      "criteria": "The District will evaluate the realism of the implementation schedule and readiness before the school year, the approach to migrating existing course content, the training and professional development plan for teachers, and the proposed support hours (including homework hours), response times and uptime commitment."
+    },
+    {
+      "id": "T3",
+      "name": "Experience and References",
+      "order": 3,
+      "scale": "technical",
+      "volume": "pastPerformance",
+      "weight": 10,
+      "subfactors": [
+        "Recency",
+        "Relevance to K-12 districts of similar size",
+        "Reference ratings"
+      ],
+      "criteria": "The District will evaluate the proposer's experience delivering learning management systems to K-12 districts of similar size within the last five years, based on the references provided and the ratings those districts give."
+    },
+    {
+      "id": "PRICE",
+      "name": "Cost",
+      "order": 4,
+      "evaluatedNotRated": true,
+      "volume": "price",
+      "weight": 30,
+      "criteria": "The District will award cost points by formula on the total five-year cost, which is the sum of all four price items. The lowest total cost receives 30 points and each other proposal receives (lowest cost ÷ its cost) × 30. The District will also review individual price items for balance against its cost estimate."
+    }
+  ],
+  "scales": {
+    "technical": ["Excellent", "Good", "Satisfactory", "Poor", "Unacceptable"],
+    "confidence": ["Excellent", "Good", "Satisfactory", "Poor", "Unacceptable"]
+  },
+  "findingKinds": ["Strength", "Significant Strength", "Weakness", "Significant Weakness", "Deficiency", "Risk"],
+  "panel": {
+    "evaluators": [
+      {"slot": 1, "title": "Evaluation Committee Member", "factors": ["T1", "T2"]},
+      {"slot": 2, "title": "Evaluation Committee Member", "factors": ["T1", "T2"]},
+      {"slot": 3, "title": "Evaluation Committee Member", "factors": ["T1", "T3"]}
+    ]
+  },
+  "igce": {"total": 1100000, "lines": {"0001": 620000, "0002": 160000, "0003": 120000, "0004": 200000}},
+  "submission": {
+    "volumes": ["technical", "management", "pastPerformance", "price"],
+    "pageLimits": {"technical": 30, "management": 15, "pastPerformance": 8}
+  },
+  "offerors": ["BRIGHTFIELD", "QUILLMARK", "TALLPINE"]
+}

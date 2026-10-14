@@ -1,0 +1,96 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "70f303c8-6846-4726-84f7-f145e7d37757",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string",
+            "description": "Solicitation number"
+          },
+          "offerorName": {
+            "type": "string",
+            "description": "Offeror legal name"
+          },
+          "factor": {
+            "type": "string",
+            "description": "Evaluation factor as JSON: id, name, criteria, subfactors"
+          },
+          "volume": {
+            "type": "string",
+            "description": "Proposal volume the factor is evaluated from, e.g. technical"
+          },
+          "proposalPages": {
+            "type": "string",
+            "description": "JSON array of {page, text} for every page of that volume, as extracted from the offeror's proposal"
+          },
+          "pastPerformance": {
+            "type": "string",
+            "description": "Optional JSON of CPARS ratings and FAPIIS records for the offeror (Past Performance factors only)"
+          }
+        },
+        "required": [
+          "solicitationId",
+          "offerorName",
+          "factor",
+          "volume",
+          "proposalPages"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "description": "Draft findings for this offeror and factor",
+            "items": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "description": "One of: Significant Strength, Strength, Weakness, Significant Weakness, Deficiency, Risk"
+                },
+                "subfactor": {
+                  "type": "string",
+                  "description": "Subfactor the finding addresses, or the factor name"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "One or two sentences stating the finding and why it matters to the Government"
+                },
+                "page": {
+                  "type": "integer",
+                  "description": "Page number in the volume that supports the finding"
+                },
+                "quote": {
+                  "type": "string",
+                  "description": "Verbatim sentence copied from that page that supports the finding"
+                }
+              },
+              "required": [
+                "kind",
+                "subfactor",
+                "text",
+                "page",
+                "quote"
+              ]
+            }
+          },
+          "coverageNotes": {
+            "type": "string",
+            "description": "Criteria or subfactors the proposal does not address, or 'None'"
+          }
+        },
+        "required": [
+          "findings",
+          "coverageNotes"
+        ]
+      }
+    }
+  ]
+}

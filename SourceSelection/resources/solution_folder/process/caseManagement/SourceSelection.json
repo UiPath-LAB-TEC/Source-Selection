@@ -1,0 +1,107 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "SourceSelection",
+    "kind": "process",
+    "type": "caseManagement",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "6bcb6405-4e41-4739-a674-7da9b377acc2",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "SourceSelection"
+      }
+    ],
+    "runtimeDependencies": [
+      {
+        "bindingType": "app",
+        "bindingKey": "SourceSelection.Source Selection Task Forms",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "Source Selection Task Forms",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "SourceSelection",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "App",
+        "resourceKey": "06bf155e-59ba-4ba6-88b8-a5b1362510e3",
+        "resourceName": "Source Selection Task Forms",
+        "folderKey": "08605f4c-2b90-4971-81b7-2f4310a2b81a"
+      },
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.SS_ConsensusAnalyst",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "SS_ConsensusAnalyst",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "bindingMetadata": {},
+        "resourceKind": "Process"
+      },
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.SS_DecisionWriter",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "SS_DecisionWriter",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "bindingMetadata": {},
+        "resourceKind": "Process"
+      },
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.SS_Robots",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "SS_Robots",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "Process"
+      }
+    ],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "CaseManagement",
+      "name": "SourceSelection",
+      "package": {
+        "key": "cdc0a90f-8345-4aff-be00-c900fb3287ba"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n    \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n    \"$id\": \"entry-points.json\",\n    \"entryPoints\": [\n        {\n            \"filePath\": \"/content/caseplan.json.bpmn#trigger_Hk4pW2\",\n            \"uniqueId\": \"12170618-b3d0-4729-aa68-712dafb012ac\",\n            \"type\": \"CaseManagement\",\n            \"input\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"solicitationId\": { \"type\": \"string\", \"title\": \"solicitationId\", \"default\": \"FA8771-27-R-0012\" },\n                    \"evaluator1\": { \"type\": \"string\", \"title\": \"evaluator1\", \"default\": \"anagh.bhave@uipath.com\" },\n                    \"evaluator2\": { \"type\": \"string\", \"title\": \"evaluator2\", \"default\": \"anagh.bhave@uipath.com\" },\n                    \"evaluator3\": { \"type\": \"string\", \"title\": \"evaluator3\", \"default\": \"anagh.bhave@uipath.com\" },\n                    \"ssebChair\": { \"type\": \"string\", \"title\": \"ssebChair\", \"default\": \"anagh.bhave@uipath.com\" },\n                    \"contractingOfficer\": { \"type\": \"string\", \"title\": \"contractingOfficer\", \"default\": \"anagh.bhave@uipath.com\" },\n                    \"sourceSelectionAuthority\": { \"type\": \"string\", \"title\": \"sourceSelectionAuthority\", \"default\": \"anagh.bhave@uipath.com\" }\n                },\n                \"required\": []\n            },\n            \"output\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"awardeeName\": { \"type\": \"string\", \"title\": \"awardeeName\" },\n                    \"awardRecordUri\": { \"type\": \"string\", \"title\": \"awardRecordUri\" }\n                },\n                \"required\": []\n            },\n            \"displayName\": \"Start Source Selection\"\n        }\n    ]\n}\n",
+      "entryPointName": "/content/caseplan.json.bpmn#trigger_Hk4pW2",
+      "entryPointUniqueId": "12170618-b3d0-4729-aa68-712dafb012ac"
+    },
+    "locks": [],
+    "key": "0d480e0c-2bc3-46b0-8b15-45c73e38df9c",
+    "files": []
+  }
+}

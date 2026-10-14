@@ -1,0 +1,150 @@
+{
+ "75N910-27-R-0044": {
+  "basisForAward": "Best value tradeoff (FAR 15.101-1)",
+  "relativeImportance": "Technical Capability and Key Personnel are of equal importance and each is more important than Past Performance. Non-price factors combined are approximately equal to Price.",
+  "factors": [
+   {
+    "name": "Technical Capability",
+    "criteria": "The Government will evaluate the offeror's architecture for a secure, scalable research data platform, its protection of controlled-access human-subjects data, and its approach to self-service analytics for intramural researchers.",
+    "subfactors": [
+     "Data platform architecture",
+     "Privacy and controlled-access data protection",
+     "Researcher self-service analytics"
+    ],
+    "ratingType": "merit",
+    "volume": "technical",
+    "importanceRank": 1,
+    "sourceQuote": "The Government will evaluate the offeror's architecture for a secure, scalable research data platform, its protection of controlled-access human-subjects data, and its approach to self-service analytics for intramural researchers."
+   },
+   {
+    "name": "Key Personnel",
+    "criteria": "The Government will evaluate the qualifications, relevant experience and committed availability of the proposed Program Manager and Chief Data Architect.",
+    "subfactors": [
+     "Program Manager",
+     "Chief Data Architect",
+     "Commitment and availability"
+    ],
+    "ratingType": "merit",
+    "volume": "management",
+    "importanceRank": 1,
+    "sourceQuote": "The Government will evaluate the qualifications, relevant experience and committed availability of the proposed Program Manager and Chief Data Architect."
+   },
+   {
+    "name": "Past Performance",
+    "criteria": "The Government will assess confidence based on recent and relevant performance on research data, health IT or scientific computing efforts.",
+    "subfactors": [
+     "Recency",
+     "Relevancy",
+     "Quality"
+    ],
+    "ratingType": "confidence",
+    "volume": "pastPerformance",
+    "importanceRank": 2,
+    "sourceQuote": "The Government will assess confidence based on recent and relevant performance on research data, health IT or scientific computing efforts."
+   },
+   {
+    "name": "Price",
+    "criteria": "Price will be evaluated for reasonableness. Total evaluated price is the sum of fixed-price CLINs and T&M ceilings for all periods.",
+    "subfactors": [],
+    "ratingType": "price",
+    "volume": "price",
+    "importanceRank": 4,
+    "sourceQuote": "Price will be evaluated for reasonableness. Total evaluated price is the sum of fixed-price CLINs and T&M ceilings for all periods."
+   }
+  ],
+  "volumes": [
+   {
+    "volume": "technical",
+    "pageLimit": 20
+   },
+   {
+    "volume": "management",
+    "pageLimit": 10
+   },
+   {
+    "volume": "pastPerformance",
+    "pageLimit": 10
+   },
+   {
+    "volume": "price",
+    "pageLimit": 0
+   }
+  ],
+  "ratingMethod": "adjectival",
+  "openQuestions": "Section M states non-price factors combined are approximately equal to Price; confirm Price's position in the importance order."
+ },
+ "FA8771-27-R-0012": {
+  "basisForAward": "Best value tradeoff (FAR 15.101-1)",
+  "relativeImportance": "Technical Approach is more important than Management Approach, which is more important than Past Performance. All non-price factors combined are significantly more important than Price.",
+  "factors": [
+   {
+    "name": "Technical Approach",
+    "criteria": "The Government will evaluate the soundness and feasibility of the offeror's approach to migrating 140 mission applications to the Air Force cloud environment, including methodology, automation, cybersecurity and continuous ATO monitoring, and rationalization of legacy applications.",
+    "subfactors": [
+     "Cloud migration methodology",
+     "Cybersecurity and continuous ATO",
+     "Legacy application rationalization"
+    ],
+    "ratingType": "merit",
+    "volume": "technical",
+    "importanceRank": 1,
+    "sourceQuote": "The Government will evaluate the soundness and feasibility of the offeror's approach to migrating 140 mission applications to the Air Force cloud environment, including methodology, automation, cybersecurity and continuous ATO monitoring, and rationalization of legacy applications."
+   },
+   {
+    "name": "Management Approach",
+    "criteria": "The Government will evaluate the offeror's staffing plan and key personnel qualifications, the realism of the 60-day transition-in plan, and the offeror's approach to identifying and mitigating program risk.",
+    "subfactors": [
+     "Staffing and key personnel",
+     "Transition-in plan",
+     "Risk management"
+    ],
+    "ratingType": "merit",
+    "volume": "management",
+    "importanceRank": 2,
+    "sourceQuote": "The Government will evaluate the offeror's staffing plan and key personnel qualifications, the realism of the 60-day transition-in plan, and the offeror's approach to identifying and mitigating program risk."
+   },
+   {
+    "name": "Past Performance",
+    "criteria": "The Government will assess its confidence that the offeror will successfully perform, based on recent (within 5 years) and relevant performance on efforts of similar size, scope and complexity, using CPARS, FAPIIS and references.",
+    "subfactors": [
+     "Recency",
+     "Relevancy",
+     "Quality"
+    ],
+    "ratingType": "confidence",
+    "volume": "pastPerformance",
+    "importanceRank": 3,
+    "sourceQuote": "The Government will assess its confidence that the offeror will successfully perform, based on recent (within 5 years) and relevant performance on efforts of similar size, scope and complexity, using CPARS, FAPIIS and references."
+   },
+   {
+    "name": "Price",
+    "criteria": "Price will be evaluated for reasonableness and balance. Total evaluated price is the sum of all CLINs for the base and option periods.",
+    "subfactors": [],
+    "ratingType": "price",
+    "volume": "price",
+    "importanceRank": 4,
+    "sourceQuote": "Price will be evaluated for reasonableness and balance. Total evaluated price is the sum of all CLINs for the base and option periods."
+   }
+  ],
+  "volumes": [
+   {
+    "volume": "technical",
+    "pageLimit": 25
+   },
+   {
+    "volume": "management",
+    "pageLimit": 15
+   },
+   {
+    "volume": "pastPerformance",
+    "pageLimit": 10
+   },
+   {
+    "volume": "price",
+    "pageLimit": 0
+   }
+  ],
+  "ratingMethod": "color",
+  "openQuestions": "None"
+ }
+}

@@ -1,0 +1,40 @@
+{
+ "displayName": "SS Decision",
+ "description": "Release, consensus, price, award and cancel decisions",
+ "fields": [
+  {
+   "name": "DecisionId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "Outcome",
+   "type": "STRING"
+  },
+  {
+   "name": "Rationale",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "DecidedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "DecidedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "DocumentText",
+   "type": "MULTILINE_TEXT"
+  }
+ ]
+}
