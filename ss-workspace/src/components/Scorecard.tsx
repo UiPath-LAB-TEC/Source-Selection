@@ -1,11 +1,11 @@
-import { ArrowRight, ChevronDown, Users } from 'lucide-react'
+import { ArrowRight, ChevronDown, ChevronRight, Trophy, Users } from 'lucide-react'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@uipath/apollo-wind/components/ui/toggle-group'
 import { KindBadge } from './Bits'
 import { PersonaAvatar } from './Flair'
 import { KIND_ORDER, rank } from '../lib/eval'
 import type { Cell } from '../lib/eval'
-import { Rating } from '@forms/components/Bits'
+import { Info, Rating } from '@forms/components/Bits'
 import { level, look, lookOf, methodsFor } from '../lib/ratings'
 import { titled, useTerms, useVolumeLabel } from '@forms/lib/terms'
 import type { Framework } from '@forms/lib/terms'
@@ -40,86 +40,116 @@ function OfficialTerm({ plan, factor, rating, method }: { plan: Plan; factor: Fa
   return parts.length ? <span className="text-sm text-muted-foreground">{parts.join(' · ')}</span> : null
 }
 
-function median(plan: Plan, factor: Factor, c: Cell) {
-  if (!c.individual.length) return undefined
-  return [...c.individual].sort((a, b) => rank(plan, factor, a.Rating) - rank(plan, factor, b.Rating))[Math.floor(c.individual.length / 2)].Rating
+/** The evaluators' ratings grouped by step, best first: what a split actually is, with no averaged stand-in. */
+function spreadOf(plan: Plan, factor: Factor, ratings: Cell['individual']) {
+  const counts = new Map<string, number>()
+  for (const r of ratings) counts.set(r.Rating, (counts.get(r.Rating) ?? 0) + 1)
+  return [...counts].sort(([a], [b]) => rank(plan, factor, a) - rank(plan, factor, b)).map(([rating, n]) => ({ rating, n }))
 }
 
-/**
- * The findings behind a cell as strengths · weaknesses · deficiencies, deduplicated by text (evaluators often accept the
- * same draft). Evaluators' accepted findings once there are any (only your own during independent evaluation), else
- * the agent's drafts.
- */
-export function findingCounts(findings: Finding[], hideOthers: boolean, mySlot?: number) {
-  const evaluated = findings.filter((f) => f.Origin === 'Evaluator' && f.Status !== 'Rejected' && (!hideOthers || f.EvaluatorSlot === mySlot))
-  const pool = evaluated.length ? evaluated : findings.filter((f) => f.Origin === 'Agent' && f.Status !== 'Rejected')
-  const unique = [...new Map(pool.map((f) => [f.FindingText, f])).values()]
-  const n = (re: RegExp) => unique.filter((f) => re.test(f.Kind)).length
-  return { s: n(/Strength/), w: n(/Weakness/), d: n(/Deficiency/), risks: n(/Risk/), significant: n(/Significant/), total: unique.length, drafted: !evaluated.length }
+/** "2 Outstanding · 1 Good", in the step's word (or confidence term) whatever the display method. */
+function spreadText(plan: Plan, factor: Factor, ratings: Cell['individual'], method: RatingMethod) {
+  return spreadOf(plan, factor, ratings).map(({ rating, n }) => {
+    const i = level(plan, factor, rating)
+    return `${n} ${i == null ? rating : look(method, i, rating, lookOf(plan, factor)).word}`
+  }).join(' · ')
 }
 
-function FindingCounts({ n }: { n: ReturnType<typeof findingCounts> }) {
-  const tip = [`${n.s} strength${n.s === 1 ? '' : 's'}`, `${n.w} weakness${n.w === 1 ? '' : 'es'}`, `${n.d} deficienc${n.d === 1 ? 'y' : 'ies'}`,
-    n.significant ? `${n.significant} significant` : '', n.risks ? `${n.risks} risk${n.risks === 1 ? '' : 's'}` : ''].filter(Boolean).join(', ')
+/** An unreconciled split: each distinct rating the evaluators gave, with how many gave it. */
+function RatingSpread({ plan, factor, ratings, method, size = 'md' }: { plan: Plan; factor: Factor; ratings: Cell['individual']; method: RatingMethod; size?: 'md' | 'lg' }) {
   return (
-    <span title={`${tip}${n.drafted ? ' (agent drafts, not yet reviewed)' : ''}`} className="text-xs font-medium tabular-nums text-foreground/80">
-      {n.s} S · {n.w} W · {n.d} D{n.drafted && <span className="font-normal text-muted-foreground"> drafted</span>}
+    <span className="flex flex-wrap items-center gap-1.5">
+      {spreadOf(plan, factor, ratings).map(({ rating, n }) => (
+        <span key={rating} className="inline-flex items-center gap-1">
+          <Rating plan={plan} factor={factor} rating={rating} method={method} size={size === 'lg' ? 'md' : 'sm'} />
+          {n > 1 && <span className="text-xs font-semibold tabular-nums text-foreground/80">×{n}</span>}
+        </span>
+      ))}
     </span>
   )
 }
 
-/** A split, said plainly: how far apart the evaluators were and which rating the chip is showing. */
-function SplitNote({ spread, consensus }: { spread: number; consensus: boolean }) {
-  const wide = spread >= 2
-  const color = wide ? 'var(--ss-critical)' : 'var(--ss-warn)'
+/**
+ * A split said plainly. Before consensus there is no rating of record: the evaluators' own ratings show above and the
+ * note says consensus is pending. After consensus the chip is the SSEB's rating and the note records how the
+ * evaluators had rated, without calling the cell split.
+ */
+function SplitNote({ plan, factor, c, method }: { plan: Plan; factor: Factor; c: Cell; method: RatingMethod }) {
+  if (c.consensus) {
+    return (
+      <span className="flex w-full items-start gap-1.5 rounded-md border-l-[3px] border-border bg-muted/50 px-1.5 py-1 text-xs text-muted-foreground">
+        <Users aria-hidden className="mt-px h-3.5 w-3.5 shrink-0" />
+        <span><span className="font-medium text-foreground">Reconciled at consensus</span> · evaluators: {spreadText(plan, factor, c.individual, method)}</span>
+      </span>
+    )
+  }
+  const color = c.spread >= 2 ? 'var(--ss-critical)' : 'var(--ss-warn)'
   return (
     <span className="flex w-full items-start gap-1.5 rounded-md border-l-[3px] px-1.5 py-1 text-xs font-medium text-foreground"
       style={{ borderColor: color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
       <Users aria-hidden className="mt-px h-3.5 w-3.5 shrink-0" style={{ color }} />
-      <span>{wide ? `Wide split (${spread} steps)` : 'Split'} · {consensus ? 'consensus rating shown' : 'median shown, consensus pending'}</span>
+      <span>{c.spread >= 2 ? `Wide split (${c.spread} steps)` : 'Split'} · consensus pending</span>
     </span>
   )
 }
 
-/** One offeror × factor cell: the rating, the findings behind it, and a plain note when evaluators split. Detail on click. */
-export function ScoreCell({ plan, factor, c, findings, leader, hideOthers, mySlot, method, onOpen }: {
-  plan: Plan; factor: Factor; c: Cell; findings: Finding[]; leader: boolean; hideOthers: boolean; mySlot?: number; method: RatingMethod; onOpen: () => void
+/**
+ * One offeror × factor cell. With consensus: the SSEB's rating (and "Highest rated" when it tops the factor). Before
+ * consensus: the evaluators' shared rating, or on a split each of their ratings; never a median that looks official.
+ */
+export function ScoreCell({ plan, factor, c, leader, hideOthers, mySlot, method, onOpen }: {
+  plan: Plan; factor: Factor; c: Cell; leader: boolean; hideOthers: boolean; mySlot?: number; method: RatingMethod; onOpen: () => void
 }) {
-  const mine = c.individual.find((r) => r.EvaluatorSlot === mySlot)
-  const shown = c.consensus?.Rating ?? (hideOthers ? mine?.Rating : median(plan, factor, c))
   const t = useTerms()
-  const n = findingCounts(findings, hideOthers, mySlot)
+  const mine = c.individual.find((r) => r.EvaluatorSlot === mySlot)
   const split = !hideOthers && c.spread >= 1
-  const status = c.consensus ? null : hideOthers ? `Your ${t.rating}` : c.individual.length && !split ? 'Pending consensus' : null
+  const unreconciled = split && !c.consensus
+  const shown = c.consensus?.Rating ?? (hideOthers ? mine?.Rating : c.individual[0]?.Rating)
+  const status = c.consensus ? null : hideOthers ? `Your ${t.rating}` : c.individual.length && !split ? 'Agreed · consensus pending' : null
+  const label = unreconciled ? `split, ${spreadText(plan, factor, c.individual, method)}, consensus pending` : shown ?? 'not rated'
   return (
-    <button onClick={onOpen} aria-label={`${factor.name}: ${shown ?? 'not rated'}. Open detail`}
-      className="flex h-full w-full flex-col items-start gap-1.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+    // Each cell is its own target (the row is not): an outline on hover or focus, and a chevron that's always there.
+    <button onClick={onOpen} aria-label={`${factor.name}: ${label}. Open details`} title="Open details"
+      className="group flex h-full w-full flex-col items-start gap-1.5 rounded-lg border border-transparent px-2 py-2 text-left transition-colors hover:border-border hover:bg-muted/60 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40">
       <span className="flex w-full items-center justify-between gap-2">
-        <Rating plan={plan} factor={factor} rating={shown} method={method} pending={!c.consensus && !hideOthers} />
-        {leader && <span className="shrink-0 text-xs text-muted-foreground">Highest rated</span>}
+        {unreconciled ? <RatingSpread plan={plan} factor={factor} ratings={c.individual} method={method} />
+          : <Rating plan={plan} factor={factor} rating={shown} method={method} pending={!c.consensus && !hideOthers} />}
+        <span className="flex shrink-0 items-center gap-1">
+          {leader && c.consensus && <span title={`Highest rated: top consensus ${t.rating} on this ${t.factor}`} className="inline-flex"><Trophy role="img" aria-label="Highest rated" className="h-4 w-4 text-muted-foreground" /></span>}
+          <ChevronRight aria-hidden className="h-4 w-4 text-muted-foreground/50 transition group-hover:translate-x-0.5 group-hover:text-foreground group-focus-visible:text-foreground" />
+        </span>
       </span>
-      {n.total > 0 && <FindingCounts n={n} />}
-      {split && <SplitNote spread={c.spread} consensus={!!c.consensus} />}
+      {split && <SplitNote plan={plan} factor={factor} c={c} method={method} />}
       {status && <span className="text-xs text-muted-foreground">{status}</span>}
     </button>
   )
 }
 
-/** What the matrix's markers mean, under the rating legend. */
+/** The matrix's markers, each with its meaning behind an ⓘ rather than a sentence on the page. */
 export function MatrixKey({ hideOthers }: { hideOthers: boolean }) {
   const t = useTerms()
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
-      <span><span className="font-medium tabular-nums text-foreground">3 S · 1 W · 0 D</span> strengths · weaknesses · deficiencies behind the {t.rating}</span>
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
       {!hideOthers && (
-        <span className="inline-flex items-center gap-1.5">
-          <span className="inline-flex items-center gap-1 rounded-md border-l-[3px] px-1.5 py-0.5 font-medium text-foreground" style={{ borderColor: 'var(--ss-warn)', background: 'color-mix(in srgb, var(--ss-warn) 14%, transparent)' }}>
-            <Users aria-hidden className="h-3 w-3" style={{ color: 'var(--ss-warn)' }} />Split
+        <>
+          <span className="inline-flex items-center gap-0.5">
+            <span className="inline-flex items-center gap-1 rounded-md border-l-[3px] px-1.5 py-0.5 font-medium text-foreground" style={{ borderColor: 'var(--ss-warn)', background: 'color-mix(in srgb, var(--ss-warn) 14%, transparent)' }}>
+              <Users aria-hidden className="h-3 w-3" style={{ color: 'var(--ss-warn)' }} />Split · consensus pending
+            </span>
+            <Info label="What a pending split means">Evaluators differ and {t.theBoard} hasn't reconciled yet, so there is no {t.rating} of record: each evaluator's {t.rating} shows, not an average.</Info>
           </span>
-          evaluators differ; the median shows until {t.theBoard} reaches consensus
-        </span>
+          <span className="inline-flex items-center gap-0.5">
+            <span className="inline-flex items-center gap-1 rounded-md border-l-[3px] border-border bg-muted/50 px-1.5 py-0.5 font-medium text-foreground">
+              <Users aria-hidden className="h-3 w-3" />Reconciled
+            </span>
+            <Info label="What reconciled means">The {t.rating} shown is {t.theBoard}'s consensus. The evaluators had differed; the note lists how each rated.</Info>
+          </span>
+        </>
       )}
-      <span><span className="text-foreground">Highest rated</span> top consensus {t.rating} on the {t.factor}</span>
+      <span className="inline-flex items-center gap-0.5">
+        <span className="inline-flex items-center gap-1 font-medium text-foreground"><Trophy aria-hidden className="h-3.5 w-3.5 text-muted-foreground" />Highest rated</span>
+        <Info label="What the trophy means">The top consensus {t.rating} on the {t.factor}. Ties all get one.</Info>
+      </span>
     </div>
   )
 }
@@ -136,17 +166,19 @@ export function RatingDetail({ plan, factor, c, findings, hideOthers, mySlot, me
   const people = hideOthers ? c.individual.filter((r) => r.EvaluatorSlot === mySlot) : c.individual
   const support = findings.filter((f) => f.Origin === 'Evaluator' && f.Status !== 'Rejected' && (!hideOthers || f.EvaluatorSlot === mySlot))
   const unique = [...new Map(support.map((f) => [f.FindingText, f])).values()].sort((a, b) => KIND_ORDER.indexOf(a.Kind) - KIND_ORDER.indexOf(b.Kind))
-  const individual = <IndividualRatings plan={plan} factor={factor} people={people} spread={c.spread} hideOthers={hideOthers} method={method} />
+  const individual = <IndividualRatings plan={plan} factor={factor} people={people} spread={c.spread} reconciled={!!c.consensus} hideOthers={hideOthers} method={method} />
   const t = useTerms()
   const volumeLabel = useVolumeLabel()
   return (
     <div className="space-y-6">
       <section className="space-y-2">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.consensus ? `${t.board} consensus` : hideOthers ? `Your ${t.rating}` : 'Awaiting consensus'}</p>
-        <div className="flex items-center gap-3">
-          <Rating plan={plan} factor={factor} rating={c.consensus?.Rating ?? people[0]?.Rating} method={method} size="lg" pending={!c.consensus} />
-          <OfficialTerm plan={plan} factor={factor} rating={c.consensus?.Rating ?? people[0]?.Rating} method={method} />
-        </div>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.consensus ? `${t.board} consensus` : hideOthers ? `Your ${t.rating}` : c.spread >= 1 ? 'Split · consensus pending' : 'Agreed · consensus pending'}</p>
+        {!c.consensus && !hideOthers && c.spread >= 1 ? <RatingSpread plan={plan} factor={factor} ratings={people} method={method} size="lg" /> : (
+          <div className="flex items-center gap-3">
+            <Rating plan={plan} factor={factor} rating={c.consensus?.Rating ?? people[0]?.Rating} method={method} size="lg" pending={!c.consensus} />
+            <OfficialTerm plan={plan} factor={factor} rating={c.consensus?.Rating ?? people[0]?.Rating} method={method} />
+          </div>
+        )}
         {c.consensus?.Rationale && <p className="text-sm">{withEvaluatorNames(c.consensus.Rationale)}</p>}
       </section>
 
@@ -189,8 +221,8 @@ export function RatingDetail({ plan, factor, c, findings, hideOthers, mySlot, me
   )
 }
 
-function IndividualRatings({ plan, factor, people, spread, hideOthers, method }: {
-  plan: Plan; factor: Factor; people: Cell['individual']; spread: number; hideOthers: boolean; method: RatingMethod
+function IndividualRatings({ plan, factor, people, spread, reconciled, hideOthers, method }: {
+  plan: Plan; factor: Factor; people: Cell['individual']; spread: number; reconciled: boolean; hideOthers: boolean; method: RatingMethod
 }) {
   const t = useTerms()
   return (
@@ -217,7 +249,7 @@ function IndividualRatings({ plan, factor, people, spread, hideOthers, method }:
         })}
       </ul>
       {!hideOthers && spread >= 1 && (
-        <p className="text-xs text-[var(--ss-warn)]">Evaluators were {spread} step{spread > 1 ? 's' : ''} apart — the {t.chair} reconciled this at consensus.</p>
+        <p className="text-xs text-muted-foreground">Evaluators were {spread} step{spread > 1 ? 's' : ''} apart. {reconciled ? `The ${t.chair} reconciled this at consensus.` : `The ${t.chair} reconciles it at consensus; until then there is no ${t.rating} of record.`}</p>
       )}
     </>
   )

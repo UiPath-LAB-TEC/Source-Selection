@@ -958,6 +958,8 @@ function Wizard({ framework }: { framework: Framework }) {
         <div className="min-w-0 flex-1"><Problems errors={tried >= step ? errors : []} warnings={warnings} /></div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
           {!dirty && saved && <span className="text-xs text-muted-foreground">Draft saved {when(saved.savedAt)}</span>}
+          {/* Back to wherever the officer came from; unsaved changes get the usual save-or-leave prompt. */}
+          <Button variant="ghost" onClick={() => nav(back.to, { state: back.state })}>Cancel</Button>
           <Button variant="ghost" onClick={saveDraft} disabled={!dirty}><Save className="mr-1.5 h-4 w-4" />Save draft</Button>
           {step > 0 && <Button variant="outline" onClick={() => goTo(step - 1)}><ArrowLeft className="mr-1 h-4 w-4" />Back</Button>}
           {last ? (

@@ -8,7 +8,7 @@ import { methodOf, wordsOf } from '../lib/ratings'
 import { ordinal, scoreFor, scores } from '../lib/score'
 import { costPoints, pts, titled, useTerms } from '../lib/terms'
 import type { Terms } from '../lib/terms'
-import { evaluatorBySlot, importanceOf, persona } from '../lib/types'
+import { evaluatorBySlot, factorImportance, persona } from '../lib/types'
 import type { Offeror, Plan, Rating as RatingRow } from '../lib/types'
 import { AgentMark, Field, FormShell, Panel, auditRow, nowIso, textareaCls, useForm, withEvaluatorNames } from './common'
 
@@ -372,8 +372,8 @@ export function AwardDecision() {
             <table className="w-full min-w-[640px] text-sm">
               <thead><tr className="text-left align-bottom text-xs text-muted-foreground">
                 <th className="pb-2 font-medium">{t.Offeror}</th>
-                {factors.map((f) => <th key={f.id} className="pb-2 pr-3 font-medium">{f.name}<span className="block font-normal">{importanceOf(f, plan, t.id)}</span></th>)}
-                <th className="pb-2 text-right font-medium">{t.Price}{priceFactor && <span className="block font-normal">{importanceOf(priceFactor, plan, t.id)}</span>}</th>
+                {factors.map((f) => <th key={f.id} className="pb-2 pr-3 font-medium">{f.name}<span className="block font-normal">{factorImportance(f, plan.factors, t.id)}</span></th>)}
+                <th className="pb-2 text-right font-medium">{t.Price}{priceFactor?.weight != null && <span className="block font-normal">{factorImportance(priceFactor, plan.factors, t.id)}</span>}</th>
                 {t.sled && <th className="pb-2 pl-3 text-right font-medium">Total<span className="block font-normal">of 100 points</span></th>}
                 <th />
               </tr></thead>

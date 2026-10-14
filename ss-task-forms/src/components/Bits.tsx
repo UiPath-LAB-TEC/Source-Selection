@@ -1,5 +1,7 @@
 import { AlertTriangle, CircleCheck, OctagonAlert, Shield, ShieldAlert, ShieldCheck, ShieldMinus, ShieldX, Sparkles, UserPen } from 'lucide-react'
 import type { ReactNode, Ref } from 'react'
+import { InfoTooltip } from '@uipath/apollo-wind/components/ui/info-tooltip'
+import { TooltipProvider } from '@uipath/apollo-wind/components/ui/tooltip'
 import { kindTone } from '../lib/eval'
 import { CONFIDENCE_TERMS, NEUTRAL_CONFIDENCE, legend, level, look, lookOf, methodOf } from '../lib/ratings'
 import type { Look, LookOptions } from '../lib/ratings'
@@ -32,6 +34,15 @@ export function OriginBadge({ origin, slot }: { origin: string; slot?: number })
   return origin === 'Agent'
     ? <Pill icon={<Sparkles className="h-3.5 w-3.5" />} color="var(--ss-rate-2)">Agent draft</Pill>
     : <Pill icon={<UserPen className="h-3.5 w-3.5" />} color="var(--ss-rate-2)">{evaluatorBySlot(slot)?.name ?? `Evaluator ${slot}`}</Pill>
+}
+
+/** An ⓘ button whose tooltip holds an explanation that would otherwise be a line of text on the page. */
+export function Info({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <TooltipProvider delayDuration={80}>
+      <InfoTooltip aria-label={label} content={<span className="block max-w-[280px] text-xs leading-snug">{children}</span>} />
+    </TooltipProvider>
+  )
 }
 
 const CONFIDENCE_ICONS = [ShieldCheck, Shield, ShieldMinus, ShieldAlert, ShieldX]
@@ -120,12 +131,18 @@ export function RatingLegend({ factors, method, words, confidenceWords = CONFIDE
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="mr-1 text-muted-foreground">Past performance</span>
           {confidenceWords.slice(0, 5).map((term, i) => (
-            <span key={term} className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 font-semibold ${i === NEUTRAL_CONFIDENCE ? 'border-dashed' : ''}`}
-              style={{ background: 'var(--ss-confidence)', color: 'var(--ss-confidence-fg)', borderColor: 'var(--ss-confidence-border)' }}>
-              <ConfidenceIcon step={i} className="h-3 w-3" />{term}
+            <span key={term} className="inline-flex items-center gap-0.5">
+              <span className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 font-semibold ${i === NEUTRAL_CONFIDENCE ? 'border-dashed' : ''}`}
+                style={{ background: 'var(--ss-confidence)', color: 'var(--ss-confidence-fg)', borderColor: 'var(--ss-confidence-border)' }}>
+                <ConfidenceIcon step={i} className="h-3 w-3" />{term}
+              </span>
+              {i === NEUTRAL_CONFIDENCE && (
+                <Info label={`What ${term} means`}>
+                  No recent, relevant performance record, so the rating is neither favorable nor unfavorable (FAR 15.305(a)(2)(iv)). It is not a midpoint between the other ratings.
+                </Info>
+              )}
             </span>
           ))}
-          <span className="basis-full text-muted-foreground">Neutral Confidence means no recent, relevant record: neither favorable nor unfavorable, not a midpoint.</span>
         </div>
       )}
     </div>
