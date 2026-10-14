@@ -1,12 +1,14 @@
 import { BadgeDollarSign, Check, ClipboardCheck, Gavel, Inbox, Users } from 'lucide-react'
-import robot from '../assets/uipath-robot.png'
 import { stageName, useTerms } from '@forms/lib/terms'
 import { STAGES } from '../lib/types'
 
 const ICONS = [Inbox, ClipboardCheck, Users, BadgeDollarSign, Gavel]
 
-/** The five stages as connected steps: done / current / upcoming. Named for the framework in use. */
-export function StageTracker({ index, onDark, perch }: { index: number; onDark?: boolean; perch?: boolean }) {
+/**
+ * The five stages as connected steps: done / current / upcoming. Named for the framework in use. The current stage's
+ * circle pulses (it marks where the evaluation waits, often on a person, so no robot sits on it).
+ */
+export function StageTracker({ index, onDark }: { index: number; onDark?: boolean }) {
   const t = useTerms()
   return (
     <ol className="flex w-full min-w-0 items-start" aria-label={`${t.Process} stages`}>
@@ -22,8 +24,8 @@ export function StageTracker({ index, onDark, perch }: { index: number; onDark?:
           <li key={s} className="relative flex min-w-0 flex-1 flex-col items-center text-center">
             {/* The connector spans only the gap between circles (with a little air), so it never shows through one. */}
             {i > 0 && <span aria-hidden className={`absolute right-[calc(50%+1.375rem)] top-[15px] h-0.5 w-[calc(100%-2.75rem)] rounded-full ${line}`} />}
-            {perch && current && <img src={robot} alt="" className="ss-perch" />}
             <span className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full ${ring}`}>
+              {current && <span aria-hidden className="ss-pulse" />}
               <Icon className="h-4 w-4" />
             </span>
             <span className={`mt-1.5 w-full text-balance px-1 text-[11px] leading-tight ${current ? 'font-semibold' : ''} ${onDark ? 'text-white/90' : current ? 'text-foreground' : 'text-muted-foreground'}`}>{stageName(s, t.id)}</span>

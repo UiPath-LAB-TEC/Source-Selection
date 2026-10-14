@@ -72,7 +72,7 @@ export function EvaluationCard({ s, n = 0, starting, onStart, footer }: {
               : <Button asChild><Link to={`/s/${encodeURIComponent(s.SolicitationId)}`} state={backState}>Open<ArrowRight className="ml-1.5 h-4 w-4" /></Link></Button>}
           </div>
         </div>
-        <div className="pt-5"><StageTracker index={notStarted ? -1 : idx} perch /></div>
+        <div className="pt-5"><StageTracker index={notStarted ? -1 : idx} /></div>
         {ended ? (
           <div className="mt-auto flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
             {cancelled ? <CircleX className="h-4 w-4 shrink-0" /> : <CircleCheck className="h-4 w-4 shrink-0 text-[var(--ss-good)]" />}

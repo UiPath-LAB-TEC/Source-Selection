@@ -170,3 +170,23 @@
   --ss-lvl-3: #713f12; --ss-lvl-3-fg: #fde68a;
   --ss-lvl-4: #dc2626; --ss-lvl-4-fg: #ffffff;
 }
+
+/* Rating steps, best (0) to worst (4), in the DoD Source Selection Procedures colors: Blue Outstanding, Purple Good,
+   Green Acceptable, Yellow Marginal, Red Unacceptable. Green is light and red dark, so the two still differ in lightness
+   for red-green color deficiency; chips always carry the word too. Past performance confidence terms are uncolored. */
+:root {
+  --ss-rating-0: #1d4ed8; --ss-rating-0-fg: #ffffff;
+  --ss-rating-1: #7e22ce; --ss-rating-1-fg: #ffffff;
+  --ss-rating-2: #4ade80; --ss-rating-2-fg: #052e16;
+  --ss-rating-3: #facc15; --ss-rating-3-fg: #422006;
+  --ss-rating-4: #b91c1c; --ss-rating-4-fg: #ffffff;
+  --ss-confidence: #f8fafc; --ss-confidence-fg: #1f2937; --ss-confidence-border: #cbd5e1;
+}
+.dark {
+  --ss-rating-0: #2563eb; --ss-rating-0-fg: #ffffff;
+  --ss-rating-1: #9333ea; --ss-rating-1-fg: #ffffff;
+  --ss-rating-2: #22c55e; --ss-rating-2-fg: #052e16;
+  --ss-rating-3: #eab308; --ss-rating-3-fg: #1c1400;
+  --ss-rating-4: #dc2626; --ss-rating-4-fg: #ffffff;
+  --ss-confidence: #1e293b; --ss-confidence-fg: #f1f5f9; --ss-confidence-border: #475569;
+}

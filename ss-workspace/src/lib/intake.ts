@@ -347,7 +347,7 @@ export function applySectionM(d: Draft, r: SectionMResult, fileName: string): Dr
   const points = r.factors.map((f) => Math.round(Number(f.maxPoints) || 0))
   const scored = points.every((p) => p > 0) && points.reduce((a, b) => a + b, 0) === 100
   const weighed = scored ? rerank(factors.map((f, i) => ({ ...f, weight: points[i] }))) : weighFromRanks(factors)
-  const method = (fwOf(d) === 'sled' ? 'points' : ['adjectival', 'color', 'numeric'].includes(r.ratingMethod) ? r.ratingMethod : d.ratingMethod) as RatingMethod
+  const method = (fwOf(d) === 'sled' ? 'points' : ['adjectival', 'color'].includes(r.ratingMethod) ? r.ratingMethod : d.ratingMethod) as RatingMethod
   return {
     ...d, factors: weighed, equalWeights: weighed.length > 1 && weighed.every((f) => f.weight === weighed[0].weight),
     ratingMethod: method, relativeImportance: r.relativeImportance || d.relativeImportance,

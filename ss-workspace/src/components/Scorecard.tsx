@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronDown, Trophy, Users } from 'lucide-react'
+import { ArrowRight, ChevronDown, Users } from 'lucide-react'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { ToggleGroup, ToggleGroupItem } from '@uipath/apollo-wind/components/ui/toggle-group'
 import { KindBadge } from './Bits'
@@ -30,11 +30,12 @@ export function MethodToggle({ value, onChange, framework = 'federal' }: { value
   )
 }
 
-/** Under the chip: the adjective (for color/numeric) and the official confidence term when it differs. */
+/** Under the chip: the adjective under a DoD color, and the stored scale term when it differs. */
 function OfficialTerm({ plan, factor, rating, method }: { plan: Plan; factor: Factor; rating?: string; method: RatingMethod }) {
   const i = level(plan, factor, rating)
   if (!rating || i == null) return null
   const l = look(method, i, rating, lookOf(plan, factor))
+  if (l.confidence != null) return null
   const parts = [method !== 'adjectival' ? l.word : '', l.official !== l.word ? `Official rating: ${l.official}` : ''].filter(Boolean)
   return parts.length ? <span className="text-sm text-muted-foreground">{parts.join(' · ')}</span> : null
 }
@@ -44,32 +45,82 @@ function median(plan: Plan, factor: Factor, c: Cell) {
   return [...c.individual].sort((a, b) => rank(plan, factor, a.Rating) - rank(plan, factor, b.Rating))[Math.floor(c.individual.length / 2)].Rating
 }
 
-/** One offeror × factor cell: the rating, plus a quiet marker when evaluators split. Detail opens on click. */
-export function ScoreCell({ plan, factor, c, leader, hideOthers, mySlot, method, onOpen }: {
-  plan: Plan; factor: Factor; c: Cell; leader: boolean; hideOthers: boolean; mySlot?: number; method: RatingMethod; onOpen: () => void
+/**
+ * The findings behind a cell as strengths · weaknesses · deficiencies, deduplicated by text (evaluators often accept the
+ * same draft). Evaluators' accepted findings once there are any (only your own during independent evaluation), else
+ * the agent's drafts.
+ */
+export function findingCounts(findings: Finding[], hideOthers: boolean, mySlot?: number) {
+  const evaluated = findings.filter((f) => f.Origin === 'Evaluator' && f.Status !== 'Rejected' && (!hideOthers || f.EvaluatorSlot === mySlot))
+  const pool = evaluated.length ? evaluated : findings.filter((f) => f.Origin === 'Agent' && f.Status !== 'Rejected')
+  const unique = [...new Map(pool.map((f) => [f.FindingText, f])).values()]
+  const n = (re: RegExp) => unique.filter((f) => re.test(f.Kind)).length
+  return { s: n(/Strength/), w: n(/Weakness/), d: n(/Deficiency/), risks: n(/Risk/), significant: n(/Significant/), total: unique.length, drafted: !evaluated.length }
+}
+
+function FindingCounts({ n }: { n: ReturnType<typeof findingCounts> }) {
+  const tip = [`${n.s} strength${n.s === 1 ? '' : 's'}`, `${n.w} weakness${n.w === 1 ? '' : 'es'}`, `${n.d} deficienc${n.d === 1 ? 'y' : 'ies'}`,
+    n.significant ? `${n.significant} significant` : '', n.risks ? `${n.risks} risk${n.risks === 1 ? '' : 's'}` : ''].filter(Boolean).join(', ')
+  return (
+    <span title={`${tip}${n.drafted ? ' (agent drafts, not yet reviewed)' : ''}`} className="text-xs font-medium tabular-nums text-foreground/80">
+      {n.s} S · {n.w} W · {n.d} D{n.drafted && <span className="font-normal text-muted-foreground"> drafted</span>}
+    </span>
+  )
+}
+
+/** A split, said plainly: how far apart the evaluators were and which rating the chip is showing. */
+function SplitNote({ spread, consensus }: { spread: number; consensus: boolean }) {
+  const wide = spread >= 2
+  const color = wide ? 'var(--ss-critical)' : 'var(--ss-warn)'
+  return (
+    <span className="flex w-full items-start gap-1.5 rounded-md border-l-[3px] px-1.5 py-1 text-xs font-medium text-foreground"
+      style={{ borderColor: color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
+      <Users aria-hidden className="mt-px h-3.5 w-3.5 shrink-0" style={{ color }} />
+      <span>{wide ? `Wide split (${spread} steps)` : 'Split'} · {consensus ? 'consensus rating shown' : 'median shown, consensus pending'}</span>
+    </span>
+  )
+}
+
+/** One offeror × factor cell: the rating, the findings behind it, and a plain note when evaluators split. Detail on click. */
+export function ScoreCell({ plan, factor, c, findings, leader, hideOthers, mySlot, method, onOpen }: {
+  plan: Plan; factor: Factor; c: Cell; findings: Finding[]; leader: boolean; hideOthers: boolean; mySlot?: number; method: RatingMethod; onOpen: () => void
 }) {
   const mine = c.individual.find((r) => r.EvaluatorSlot === mySlot)
   const shown = c.consensus?.Rating ?? (hideOthers ? mine?.Rating : median(plan, factor, c))
   const t = useTerms()
-  const status = c.consensus ? null : hideOthers ? `Your ${t.rating}` : c.individual.length ? 'Pending consensus' : null
+  const n = findingCounts(findings, hideOthers, mySlot)
+  const split = !hideOthers && c.spread >= 1
+  const status = c.consensus ? null : hideOthers ? `Your ${t.rating}` : c.individual.length && !split ? 'Pending consensus' : null
   return (
     <button onClick={onOpen} aria-label={`${factor.name}: ${shown ?? 'not rated'}. Open detail`}
-      className="ss-lift group flex h-full min-h-[64px] w-full items-center justify-between gap-2 rounded-xl border border-border bg-background/60 px-3 py-2.5 text-left hover:border-primary">
-      <span className="flex min-w-0 flex-col gap-1">
+      className="flex h-full w-full flex-col items-start gap-1.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <span className="flex w-full items-center justify-between gap-2">
         <Rating plan={plan} factor={factor} rating={shown} method={method} pending={!c.consensus && !hideOthers} />
-        {status && <span className="text-[11px] text-muted-foreground">{status}</span>}
+        {leader && <span className="shrink-0 text-xs text-muted-foreground">Highest rated</span>}
       </span>
-      <span className="flex shrink-0 items-center gap-1.5">
-        {!hideOthers && c.spread >= 1 && (
-          <span title={`${c.spread >= 2 ? 'Disagreement' : 'Split'}: evaluators were ${c.spread} step${c.spread > 1 ? 's' : ''} apart`}
-            className={`inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[11px] font-medium ${c.spread >= 2 ? 'bg-[var(--ss-critical)]/15 text-[var(--ss-critical)]' : 'bg-[var(--ss-warn)]/15 text-[var(--ss-warn)]'}`}>
-            <Users className="h-3 w-3" />Split
-          </span>
-        )}
-        {leader && <Trophy className="h-4 w-4 text-primary" aria-label={`Leads this ${t.factor}`} />}
-        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-      </span>
+      {n.total > 0 && <FindingCounts n={n} />}
+      {split && <SplitNote spread={c.spread} consensus={!!c.consensus} />}
+      {status && <span className="text-xs text-muted-foreground">{status}</span>}
     </button>
+  )
+}
+
+/** What the matrix's markers mean, under the rating legend. */
+export function MatrixKey({ hideOthers }: { hideOthers: boolean }) {
+  const t = useTerms()
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
+      <span><span className="font-medium tabular-nums text-foreground">3 S · 1 W · 0 D</span> strengths · weaknesses · deficiencies behind the {t.rating}</span>
+      {!hideOthers && (
+        <span className="inline-flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-1 rounded-md border-l-[3px] px-1.5 py-0.5 font-medium text-foreground" style={{ borderColor: 'var(--ss-warn)', background: 'color-mix(in srgb, var(--ss-warn) 14%, transparent)' }}>
+            <Users aria-hidden className="h-3 w-3" style={{ color: 'var(--ss-warn)' }} />Split
+          </span>
+          evaluators differ; the median shows until {t.theBoard} reaches consensus
+        </span>
+      )}
+      <span><span className="text-foreground">Highest rated</span> top consensus {t.rating} on the {t.factor}</span>
+    </div>
   )
 }
 

@@ -1,8 +1,8 @@
-import { AlertTriangle, CircleCheck, OctagonAlert, ShieldAlert, Sparkles, UserPen } from 'lucide-react'
+import { AlertTriangle, CircleCheck, OctagonAlert, Shield, ShieldAlert, ShieldCheck, ShieldMinus, ShieldX, Sparkles, UserPen } from 'lucide-react'
 import type { ReactNode, Ref } from 'react'
 import { kindTone } from '../lib/eval'
-import { legend, level, look, lookOf, methodOf } from '../lib/ratings'
-import type { LookOptions } from '../lib/ratings'
+import { CONFIDENCE_TERMS, NEUTRAL_CONFIDENCE, legend, level, look, lookOf, methodOf } from '../lib/ratings'
+import type { Look, LookOptions } from '../lib/ratings'
 import type { Factor, Plan, RatingMethod } from '../lib/types'
 import { evaluatorBySlot } from '../lib/types'
 
@@ -34,8 +34,17 @@ export function OriginBadge({ origin, slot }: { origin: string; slot?: number })
     : <Pill icon={<UserPen className="h-3.5 w-3.5" />} color="var(--ss-rate-2)">{evaluatorBySlot(slot)?.name ?? `Evaluator ${slot}`}</Pill>
 }
 
-/** A rating shown as the merit adjective, a DoD color, a 5-point number or (State & Local) points (plan.ratingMethod).
- *  The stored scale label (e.g. "Substantial Confidence") only appears in the tooltip. Mirrors ss-workspace's Scorecard. */
+const CONFIDENCE_ICONS = [ShieldCheck, Shield, ShieldMinus, ShieldAlert, ShieldX]
+const CONFIDENCE_TONES = ['var(--ss-good)', 'var(--ss-good)', 'currentColor', 'var(--ss-warn)', 'var(--ss-critical)']
+
+/** The shield beside a confidence term: its shape and tone tell the steps apart without relying on color alone. */
+export function ConfidenceIcon({ step, className = 'h-3.5 w-3.5' }: { step: number; className?: string }) {
+  const Icon = CONFIDENCE_ICONS[step] ?? Shield
+  return <Icon aria-hidden className={`shrink-0 ${className}`} style={{ color: CONFIDENCE_TONES[step] }} />
+}
+
+/** A rating chip: the merit adjective or DoD color name in the DoD colors, the confidence term itself for past
+ *  performance, or (State & Local) points. Mirrors ss-workspace's Scorecard. */
 export function Rating({ plan, factor, rating, method, size = 'md', pending }: {
   plan: Plan; factor: Factor; rating?: string; method?: RatingMethod; size?: 'sm' | 'md' | 'lg'; pending?: boolean
 }) {
@@ -46,16 +55,20 @@ export function Rating({ plan, factor, rating, method, size = 'md', pending }: {
   const tip = ratingTip(m, l, factor.weight)
   const pad = size === 'lg' ? 'px-3.5 py-2 text-base' : size === 'md' ? 'px-3 py-1.5 text-sm' : 'px-2 py-0.5 text-xs'
   const dashed = pending ? 'opacity-75 outline-dashed outline-1 outline-offset-2 outline-current' : ''
+  if (l.confidence != null) {
+    return (
+      <span title={tip} className={`inline-flex max-w-full items-center gap-1.5 rounded-lg border font-semibold ${l.confidence === NEUTRAL_CONFIDENCE ? 'border-dashed' : ''} ${pad} ${dashed}`}
+        style={{ background: l.bg, color: l.fg, borderColor: 'var(--ss-confidence-border)' }}>
+        <ConfidenceIcon step={l.confidence} /><span className="truncate">{l.text}</span>
+      </span>
+    )
+  }
   if (m === 'points') {
     return (
       <span title={tip} className={`inline-flex shrink-0 items-baseline gap-1 rounded-lg font-semibold tabular-nums ${pad} ${dashed}`} style={{ background: l.bg, color: l.fg }}>
         {l.text}{factor.weight != null && <span className="text-[0.8em] font-normal opacity-85">/ {factor.weight}</span>}
       </span>
     )
-  }
-  if (m === 'numeric') {
-    const box = size === 'lg' ? 'h-11 w-11 text-xl' : size === 'md' ? 'h-9 w-9 text-lg' : 'h-6 w-6 text-xs'
-    return <span title={tip} className={`inline-flex shrink-0 items-center justify-center rounded-lg font-bold tabular-nums ${box} ${dashed}`} style={{ background: l.bg, color: l.fg }}>{l.text}</span>
   }
   return (
     <span title={tip} className={`inline-flex max-w-full items-center gap-1.5 rounded-lg font-semibold ${pad} ${dashed}`} style={{ background: l.bg, color: l.fg }}>
@@ -64,41 +77,57 @@ export function Rating({ plan, factor, rating, method, size = 'md', pending }: {
   )
 }
 
-/** Tooltip text: what the display means, plus the official scale term when it differs from the adjective. */
-export function ratingTip(m: RatingMethod, l: ReturnType<typeof look>, max?: number) {
-  const shown = m === 'color' ? `${l.text} · ${l.word}` : m === 'numeric' ? `${l.text} of 5 · ${l.word}`
-    : m === 'points' ? `${l.text}${max != null ? ` of ${max} points` : ''} · ${l.word}` : l.word
+/** Tooltip text: what the display means, plus the stored scale term when it differs from what's shown. */
+export function ratingTip(m: RatingMethod, l: Look, max?: number) {
+  if (l.confidence != null) return l.confidence === NEUTRAL_CONFIDENCE ? `${l.official}: no recent, relevant performance record; neither favorable nor unfavorable` : l.official
+  const shown = m === 'color' ? `${l.text} · ${l.word}` : m === 'points' ? `${l.text}${max != null ? ` of ${max} points` : ''} · ${l.word}` : l.word
   return [shown, l.official !== l.word ? l.official : ''].filter(Boolean).join(' — ')
 }
 
-/** Detail views only: the adjective (for color/numeric) and the official confidence term when it differs.
+/** Detail views only: the adjective under a DoD color, and the stored scale term when it differs.
  *  `officialOnly` where the adjective is already on screen, e.g. under a RatingPicker. */
 export function OfficialTerm({ plan, factor, rating, method, officialOnly }: { plan: Plan; factor: Factor; rating?: string; method?: RatingMethod; officialOnly?: boolean }) {
   const m = method ?? methodOf(plan)
   const i = level(plan, factor, rating)
   if (!rating || i == null) return null
   const l = look(m, i, rating, lookOf(plan, factor))
+  if (l.confidence != null) return null
   const parts = [m !== 'adjectival' && !officialOnly ? l.word : '', l.official !== l.word ? `Official rating: ${l.official}` : ''].filter(Boolean)
   return parts.length ? <span className="text-xs text-muted-foreground">{parts.join(' · ')}</span> : null
 }
 
-/** Single legend, best to worst. Past performance confidence ratings sit on the same five steps.
- *  `words` are the plan's step words (wordsOf); under points each step shows its share of the criterion's points. */
-export function RatingLegend({ factors, method, words }: { factors: Factor[]; method: RatingMethod; words?: LookOptions['words'] }) {
+/** The legend, best to worst: the merit steps in their colors, then (when a factor uses it) the past performance
+ *  confidence terms. `words` are the plan's step words (wordsOf); under points each step shows its share of the points. */
+export function RatingLegend({ factors, method, words, confidenceWords = CONFIDENCE_TERMS }: {
+  factors: Factor[]; method: RatingMethod; words?: LookOptions['words']; confidenceWords?: readonly string[]
+}) {
   const confidence = factors.some((f) => f.scale === 'confidence') && method !== 'points'
   return (
-    <div className="flex flex-wrap items-center gap-1.5 text-xs">
-      <span className="mr-1 text-muted-foreground">Best</span>
-      {legend(words).map(({ i, word }) => {
-        const l = look(method, i, word, { words })
-        return (
-          <span key={i} className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 font-semibold" style={{ background: l.bg, color: l.fg }}>
-            {method === 'adjectival' ? word : <>{l.text}<span className="font-normal opacity-90">{word}</span></>}
-          </span>
-        )
-      })}
-      <span className="ml-1 text-muted-foreground">Worst</span>
-      {confidence && <span className="basis-full pt-0.5 text-[11px] text-muted-foreground">Past Performance confidence ratings use the same five steps — hover a rating for the official term.</span>}
+    <div className="space-y-1.5 text-xs">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="mr-1 text-muted-foreground">Best</span>
+        {legend(words).map(({ i, word }) => {
+          const l = look(method, i, word, { words })
+          return (
+            <span key={i} className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 font-semibold" style={{ background: l.bg, color: l.fg }}>
+              {method === 'adjectival' ? word : <>{l.text}<span className="font-normal opacity-90">{word}</span></>}
+            </span>
+          )
+        })}
+        <span className="ml-1 text-muted-foreground">Worst</span>
+      </div>
+      {confidence && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="mr-1 text-muted-foreground">Past performance</span>
+          {confidenceWords.slice(0, 5).map((term, i) => (
+            <span key={term} className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 font-semibold ${i === NEUTRAL_CONFIDENCE ? 'border-dashed' : ''}`}
+              style={{ background: 'var(--ss-confidence)', color: 'var(--ss-confidence-fg)', borderColor: 'var(--ss-confidence-border)' }}>
+              <ConfidenceIcon step={i} className="h-3 w-3" />{term}
+            </span>
+          ))}
+          <span className="basis-full text-muted-foreground">Neutral Confidence means no recent, relevant record: neither favorable nor unfavorable, not a midpoint.</span>
+        </div>
+      )}
     </div>
   )
 }

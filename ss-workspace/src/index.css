@@ -159,10 +159,13 @@
 @keyframes ss-ping { from { opacity: .9; transform: scale(.85); } to { opacity: 0; transform: scale(1.35); } }
 .ss-fade { animation: ss-fade .45s ease both; }
 @keyframes ss-fade { from { opacity: 0; transform: translateY(6px); } }
-.ss-perch { position: absolute; top: -26px; left: 50%; width: 30px; height: 30px; margin-left: -15px; object-fit: contain; z-index: 20; animation: ss-idle 2.4s ease-in-out infinite; filter: drop-shadow(0 4px 4px rgba(0,0,0,.25)); }
+/* The current stage's circle pulses: the evaluation is waiting at this step, whoever holds it. */
+.ss-pulse { position: absolute; inset: 0; border-radius: 9999px; border: 2px solid currentColor; pointer-events: none; animation: ss-pulse 1.8s ease-out infinite; }
+@keyframes ss-pulse { from { opacity: .75; transform: scale(1); } to { opacity: 0; transform: scale(1.75); } }
 @media (prefers-reduced-motion: reduce) {
   .ss-runner, .ss-track-fill { transition: none; }
-  .ss-runner img, .ss-runner-shadow, .ss-station.on::after, .ss-fade, .ss-perch { animation: none !important; }
+  .ss-runner img, .ss-runner-shadow, .ss-station.on::after, .ss-fade { animation: none !important; }
+  .ss-pulse { display: none; }
 }
 
 /* ---------------------------------------------- vertical process journey */
@@ -249,3 +252,23 @@
 }
 :root { --ss-div-0: #1c5cab; --ss-div-1: #9ec5f4; --ss-div-2: #e1e0d9; --ss-div-2-fg: #2c2c2a; --ss-div-3: #f5c4b3; --ss-div-4: #d03b3b; }
 .dark { --ss-div-0: #3987e5; --ss-div-1: #9ec5f4; --ss-div-2: #5f5e5a; --ss-div-2-fg: #f1efe8; --ss-div-3: #f5c4b3; --ss-div-4: #e24b4a; }
+
+/* Rating steps, best (0) to worst (4), in the DoD Source Selection Procedures colors: Blue Outstanding, Purple Good,
+   Green Acceptable, Yellow Marginal, Red Unacceptable. Green is light and red dark, so the two still differ in lightness
+   for red-green color deficiency; chips always carry the word too. Past performance confidence terms are uncolored. */
+:root {
+  --ss-rating-0: #1d4ed8; --ss-rating-0-fg: #ffffff;
+  --ss-rating-1: #7e22ce; --ss-rating-1-fg: #ffffff;
+  --ss-rating-2: #4ade80; --ss-rating-2-fg: #052e16;
+  --ss-rating-3: #facc15; --ss-rating-3-fg: #422006;
+  --ss-rating-4: #b91c1c; --ss-rating-4-fg: #ffffff;
+  --ss-confidence: #f8fafc; --ss-confidence-fg: #1f2937; --ss-confidence-border: #cbd5e1;
+}
+.dark {
+  --ss-rating-0: #2563eb; --ss-rating-0-fg: #ffffff;
+  --ss-rating-1: #9333ea; --ss-rating-1-fg: #ffffff;
+  --ss-rating-2: #22c55e; --ss-rating-2-fg: #052e16;
+  --ss-rating-3: #eab308; --ss-rating-3-fg: #1c1400;
+  --ss-rating-4: #dc2626; --ss-rating-4-fg: #ffffff;
+  --ss-confidence: #1e293b; --ss-confidence-fg: #f1f5f9; --ss-confidence-border: #475569;
+}

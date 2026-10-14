@@ -1,7 +1,11 @@
 /**
  * One five-step scale, shown several ways. Index 0 is always best. Shared with ss-workspace.
- * Federal plans show it as merit adjectives, DoD colors or a 5-point number; State & Local plans show the points a step
- * earns on the criterion (Excellent earns every point, Good 80%…) or the District's scoring-guide words.
+ * Federal plans show it as merit adjectives or DoD color names, both in the DoD Source Selection Procedures colors
+ * (Blue Outstanding, Purple Good, Green Acceptable, Yellow Marginal, Red Unacceptable). Past performance shows its own
+ * confidence terms, uncolored: the DoD procedures give confidence assessments no colors, and Neutral Confidence is not a
+ * midpoint. There is deliberately no numeric display: GAO warns against mechanical scoring of adjectival ratings.
+ * State & Local plans show the points a step earns on the criterion (Excellent earns every point, Good 80%…) or the
+ * District's scoring-guide words.
  */
 import { rank, scaleOf } from './eval'
 import { POINT_SHARES, frameworkOf, pointsAt, pts } from './terms'
@@ -11,7 +15,6 @@ import type { Factor, Plan, RatingMethod } from './types'
 export const RATING_METHODS: { id: RatingMethod; label: string; hint: string }[] = [
   { id: 'adjectival', label: 'Adjectival', hint: 'Outstanding, Good, Acceptable…' },
   { id: 'color', label: 'Color', hint: 'Blue, Purple, Green, Yellow, Red (DoD)' },
-  { id: 'numeric', label: 'Numeric', hint: '5 (best) to 1' },
 ]
 
 /** State & Local display choices: points (the default) or the scoring guide's words. */
@@ -22,27 +25,25 @@ export const SLED_RATING_METHODS: { id: RatingMethod; label: string; hint: strin
 
 export const methodsFor = (fw: Framework) => (fw === 'sled' ? SLED_RATING_METHODS : RATING_METHODS)
 
-/** Level colors for adjectival and numeric display: solid green, tinted green, neutral, tinted amber, solid red. */
-const ADJECTIVAL = [0, 1, 2, 3, 4].map((i) => ({ bg: `var(--ss-lvl-${i})`, fg: `var(--ss-lvl-${i}-fg)` }))
+/** Step colors, best first: the DoD color ratings (blue, purple, green, yellow, red), themed in index.css. */
+const LEVELS = [0, 1, 2, 3, 4].map((i) => ({ bg: `var(--ss-rating-${i})`, fg: `var(--ss-rating-${i}-fg)` }))
 
 /** The merit adjectives every federal factor is displayed with, best first. */
 export const ADJECTIVES = ['Outstanding', 'Good', 'Acceptable', 'Marginal', 'Unacceptable']
 
+/** Past performance confidence assessments, best first (FAR 15.305(a)(2), DoD Source Selection Procedures). */
+export const CONFIDENCE_TERMS = ['Substantial Confidence', 'Satisfactory Confidence', 'Neutral Confidence', 'Limited Confidence', 'No Confidence']
+
 /** The District's scoring guide, best first, when a State & Local plan doesn't name its own. */
 export const SCORING_GUIDE = ['Excellent', 'Good', 'Satisfactory', 'Poor', 'Unacceptable']
 
-/** DoD Source Selection Procedures color ratings. */
-const COLORS = [
-  { name: 'Blue', bg: '#1d5fd6', fg: '#ffffff' },
-  { name: 'Purple', bg: '#7c3aed', fg: '#ffffff' },
-  { name: 'Green', bg: '#15803d', fg: '#ffffff' },
-  { name: 'Yellow', bg: '#facc15', fg: '#3d3000' },
-  { name: 'Red', bg: '#dc2626', fg: '#ffffff' },
-]
+/** DoD Source Selection Procedures color names, best first. */
+const COLOR_NAMES = ['Blue', 'Purple', 'Green', 'Yellow', 'Red']
 
+/** Plans saved with the retired numeric display show adjectives. */
 export function methodOf(plan: Plan): RatingMethod {
   if (frameworkOf(plan) === 'sled') return plan.ratingMethod === 'adjectival' ? 'adjectival' : 'points'
-  return plan.ratingMethod && plan.ratingMethod !== 'points' ? plan.ratingMethod : 'adjectival'
+  return plan.ratingMethod === 'color' ? 'color' : 'adjectival'
 }
 
 /** The words the steps are displayed with: the federal merit adjectives, or the District's scoring guide. */
@@ -58,25 +59,45 @@ export interface LookOptions {
   words?: readonly string[]
   /** The criterion's maximum points, for the points display. */
   max?: number
+  /** A federal past performance factor: shown by its confidence term, without a rating color. */
+  confidence?: boolean
 }
 
 /** Look options for a factor on a plan. */
-export const lookOf = (plan: Plan, factor?: Factor): LookOptions => ({ words: wordsOf(plan), max: factor?.weight })
+export const lookOf = (plan: Plan, factor?: Factor): LookOptions => ({
+  words: wordsOf(plan), max: factor?.weight, confidence: factor?.scale === 'confidence' && frameworkOf(plan) !== 'sled',
+})
+
+/** The confidence step that means "no relevant record": neither favorable nor unfavorable, so off the merit ramp. */
+export const NEUTRAL_CONFIDENCE = 2
+
+export interface Look {
+  /** What the chip says: the adjective, color name, points or confidence term. */
+  text: string
+  /** The step's word (adjective or scoring-guide word; the term itself for confidence). */
+  word: string
+  /** The stored scale label. */
+  official: string
+  bg: string
+  fg: string
+  /** Set for a confidence factor: the confidence step, best (0) to worst (4). */
+  confidence?: number
+}
 
 /**
- * Text and colors for a rating level under a display method. Every factor shows the step word (past performance
- * included); `official` is the stored scale label, e.g. "Substantial Confidence".
+ * Text and colors for a rating level under a display method; `official` is the stored scale label, e.g.
+ * "Substantial Confidence". Confidence factors show that term under every federal method, on a neutral surface.
  */
-export function look(method: RatingMethod, i: number, official: string, o: LookOptions = {}) {
+export function look(method: RatingMethod, i: number, official: string, o: LookOptions = {}): Look {
   const k = Math.max(0, Math.min(4, i))
+  if (o.confidence && method !== 'points') return { text: official, word: official, official, bg: 'var(--ss-confidence)', fg: 'var(--ss-confidence-fg)', confidence: k }
   const word = o.words?.[k] ?? ADJECTIVES[k]
-  if (method === 'color') return { text: COLORS[k].name, word, official, ...COLORS[k] }
-  if (method === 'numeric') return { text: String(5 - k), word, official, ...ADJECTIVAL[k] }
+  if (method === 'color') return { text: COLOR_NAMES[k], word, official, ...LEVELS[k] }
   if (method === 'points') {
     const text = o.max != null ? pts(pointsAt(o.max, k)) : `${Math.round(POINT_SHARES[k] * 100)}%`
-    return { text, word, official, ...ADJECTIVAL[k] }
+    return { text, word, official, ...LEVELS[k] }
   }
-  return { text: word, word, official, ...ADJECTIVAL[k] }
+  return { text: word, word, official, ...LEVELS[k] }
 }
 
 /** Legend steps, best first. */

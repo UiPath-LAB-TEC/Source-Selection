@@ -4,7 +4,7 @@ import { Check, Lock, ShieldCheck } from 'lucide-react'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import robot from '../assets/uipath-robot.png'
 import { PersonaAvatar } from '../components/Flair'
-import { ratingTip } from '../components/Bits'
+import { ConfidenceIcon, ratingTip } from '../components/Bits'
 import type { Backend, LoadedTask, TaskData } from '../lib/backend'
 import { look, lookOf, methodOf, scaleOf } from '../lib/ratings'
 import { TermsProvider, frameworkOf, titled, useTerms } from '../lib/terms'
@@ -211,10 +211,12 @@ export function RatingPicker({ plan, factor, value, onChange, disabled, note }: 
             className={`flex flex-col items-center gap-1 rounded-xl border px-3 py-1.5 text-xs transition ${choiceCls(on, chosen)}`}
             style={on ? { background: l.bg, color: l.fg } : undefined}>
             <span className="flex items-center gap-1.5">
-              {on ? <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden /> : <span className="h-2.5 w-2.5 rounded-full" style={{ background: l.bg, boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.12)' }} aria-hidden />}
+              {on ? <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
+                : l.confidence != null ? <ConfidenceIcon step={l.confidence} />
+                : <span className="h-2.5 w-2.5 rounded-full" style={{ background: l.bg, boxShadow: 'inset 0 0 0 1px rgba(0,0,0,.12)' }} aria-hidden />}
               {m === 'points' ? <>{l.word}<span className="font-normal tabular-nums opacity-90">{l.text} pts</span></> : <>
                 {l.text}
-                {m !== 'adjectival' && <span className="font-normal opacity-90">{l.word}</span>}
+                {m !== 'adjectival' && l.confidence == null && <span className="font-normal opacity-90">{l.word}</span>}
               </>}
             </span>
             {note?.(official)}

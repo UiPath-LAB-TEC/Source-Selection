@@ -14,12 +14,12 @@ import { TeamStrip } from '../components/TeamStrip'
 import { LiveCasePanel } from '../components/LiveCase'
 import { DeleteEvaluationDialog } from '../components/DeleteEvaluationDialog'
 import { NextActions, useNextActions } from '../components/NextActions'
-import { MethodToggle, RatingDetail, RatingLegend, ScoreCell } from '../components/Scorecard'
+import { MatrixKey, MethodToggle, RatingDetail, RatingLegend, ScoreCell } from '../components/Scorecard'
 import { methodOf, methodsFor, wordsOf } from '../lib/ratings'
 import { ordinal, scoreFor, scores } from '@forms/lib/score'
 import { pts, useTerms } from '@forms/lib/terms'
 import { frameworkOfSolicitation, useFrameworkMode } from '../hooks/useFramework'
-import { actorName, factorImportance, withEvaluatorNames } from '../lib/types'
+import { actorName, importanceOf, weightsStated, withEvaluatorNames } from '../lib/types'
 import { StageTracker } from '../components/StageTracker'
 import { usePersona } from '../hooks/usePersona'
 import { useAuth } from '../hooks/useAuth'
@@ -136,9 +136,10 @@ export function Solicitation() {
             </div>
           )}
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="min-w-0 flex-1"><RatingLegend factors={factors} method={shownAs} words={wordsOf(plan)} /></div>
+            <div className="min-w-0 flex-1"><RatingLegend factors={factors} method={shownAs} words={wordsOf(plan)} confidenceWords={plan.scales.confidence} /></div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">Show {t.ratings} as<MethodToggle value={shownAs} onChange={setMethod} framework={t.id} /></div>
           </div>
+          <MatrixKey hideOthers={hideOthers} />
           <div className="ss-in overflow-x-auto rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
@@ -147,17 +148,17 @@ export function Solicitation() {
                   {factors.map((f) => (
                     <TableHead key={f.id} className="min-w-[220px] py-3">
                       <span className="block font-semibold text-foreground">{f.name}</span>
-                      <span className="block text-[11px] font-normal text-muted-foreground">{factorImportance(f, plan.factors, t.id)}</span>
+                      <span className="mt-0.5 block text-xs font-normal text-foreground/70">{importanceOf(f, plan, t.id)}</span>
                     </TableHead>
                   ))}
-                  <TableHead className="min-w-[130px] py-3 text-right">
+                  <TableHead className="min-w-[180px] py-3 text-right">
                     <span className="block font-semibold text-foreground">{t.Price}</span>
-                    {priceFactor?.weight != null && <span className="block text-[11px] font-normal text-muted-foreground">{factorImportance(priceFactor, plan.factors, t.id)}</span>}
+                    {priceFactor && <span className="mt-0.5 block text-xs font-normal text-foreground/70">{importanceOf(priceFactor, plan, t.id)}</span>}
                   </TableHead>
                   {t.sled && (
                     <TableHead className="min-w-[110px] py-3 text-right">
                       <span className="block font-semibold text-foreground">Total</span>
-                      <span className="block text-[11px] font-normal text-muted-foreground">of 100 points</span>
+                      <span className="mt-0.5 block text-xs font-normal text-foreground/70">of 100 points</span>
                     </TableHead>
                   )}
                 </TableRow>
@@ -168,21 +169,24 @@ export function Solicitation() {
                     <TableCell className="align-top">
                       <div className="flex items-start gap-2.5">
                         <OfferorAvatar name={o.Name} index={d.offerors.indexOf(o)} size={32} />
-                        <div className="min-w-0"><div className="font-medium">{o.Name}</div><div className="mt-1"><ComplianceBadge status={o.ComplianceStatus} /></div></div>
+                        <div className="min-w-0"><div className="font-medium">{o.Name}</div>
+                          {/* Only an exception is news: a row of "Compliant" badges carries no information. */}
+                          {o.ComplianceStatus && o.ComplianceStatus !== 'Compliant' && <div className="mt-1"><ComplianceBadge status={o.ComplianceStatus} /></div>}</div>
                       </div>
                     </TableCell>
                     {factors.map((f) => (
                       <TableCell key={f.id} className="p-2 align-top">
                         <ScoreCell plan={plan} factor={f} c={cell(plan, f, d.ratings, o.OfferorId)} leader={!hideOthers && leader(f.id).has(o.OfferorId)}
+                          findings={d.findings.filter((x) => x.OfferorId === o.OfferorId && x.FactorId === f.id)}
                           hideOthers={hideOthers} mySlot={persona.slot} method={shownAs}
                           onOpen={() => setOpen({ offerorId: o.OfferorId, factorId: f.id })} />
                       </TableCell>
                     ))}
                     <TableCell className="text-right align-top tabular-nums">
                       <div className="font-medium">{money(o.TotalEvaluatedPrice)}</div>
-                      {lowest?.OfferorId === o.OfferorId && <div className="text-[11px] font-semibold uppercase tracking-wide text-primary">Lowest {t.price}</div>}
+                      {lowest?.OfferorId === o.OfferorId && <div className="mt-0.5 inline-flex rounded-md border border-border px-1.5 py-0.5 text-xs font-medium text-foreground">Lowest {t.price}</div>}
                       {o.IgceVariancePct != null && (
-                        <div className="text-xs text-muted-foreground">{o.IgceVariancePct > 0 ? '+' : ''}{o.IgceVariancePct.toFixed(1)}% vs {t.sled ? 'estimate' : 'IGCE'}</div>
+                        <div className="mt-0.5 text-sm text-foreground/75">{o.IgceVariancePct > 0 ? '+' : ''}{o.IgceVariancePct.toFixed(1)}% vs {t.sled ? 'estimate' : 'IGCE'}</div>
                       )}
                       {t.sled && scoreFor(points, o.OfferorId)?.cost != null && (
                         <div className="text-xs font-medium">{pts(scoreFor(points, o.OfferorId)?.cost)} / {priceFactor?.weight} cost pts</div>
@@ -194,8 +198,8 @@ export function Solicitation() {
                       return (
                         <TableCell className="text-right align-top tabular-nums">
                           <div className="text-lg font-semibold">{any ? pts(s.total) : '—'}</div>
-                          {any && !s.complete && <div className="text-[11px] text-muted-foreground">of {s.of} scored so far</div>}
-                          {any && s.complete && <div className={`mt-0.5 inline-flex rounded-full px-1.5 py-0.5 text-[11px] font-semibold ${s.rank === 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>Ranked {ordinal(s.rank)}</div>}
+                          {any && !s.complete && <div className="text-xs text-foreground/70">of {s.of} scored so far</div>}
+                          {any && s.complete && <div className={`mt-0.5 inline-flex rounded-full px-1.5 py-0.5 text-xs font-semibold ${s.rank === 1 ? 'bg-foreground text-background' : 'bg-muted text-foreground/80'}`}>Ranked {ordinal(s.rank)}</div>}
                         </TableCell>
                       )
                     })()}
@@ -207,14 +211,14 @@ export function Solicitation() {
               </TableBody>
             </Table>
           </div>
-          <p className="text-xs text-muted-foreground">Click a {t.rating} for who {t.sled ? 'scored' : 'rated'} it, why, and the findings behind it. {plan.relativeImportance}</p>
+          <p className="text-sm text-muted-foreground">Click a {t.rating} for who {t.sled ? 'scored' : 'rated'} it, why, and the findings behind it. {plan.relativeImportance}</p>
           <Sheet open={!!open} onOpenChange={(v) => !v && setOpen(undefined)}>
             <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-lg">
               {openOfferor && openFactor && (
                 <>
                   <SheetHeader className="mb-4">
                     <SheetTitle>{openOfferor.Name}</SheetTitle>
-                    <SheetDescription>{openFactor.name} · {factorImportance(openFactor, plan.factors, t.id).toLowerCase()}</SheetDescription>
+                    <SheetDescription>{openFactor.name} · {importanceOf(openFactor, plan, t.id).toLowerCase()}</SheetDescription>
                   </SheetHeader>
                   <RatingDetail plan={plan} factor={openFactor} c={cell(plan, openFactor, d.ratings, openOfferor.OfferorId)}
                     findings={d.findings.filter((x) => x.OfferorId === openOfferor.OfferorId && x.FactorId === openFactor.id)}
@@ -308,7 +312,7 @@ export function Solicitation() {
                     <span className="ml-auto text-xs text-muted-foreground">{t.sled
                       ? (f.evaluatedNotRated ? 'Cost points by formula' : 'Scored by the committee')
                       : f.evaluatedNotRated ? 'Evaluated, not rated' : `${(f.scale ?? 'technical') === 'confidence' ? 'Confidence assessment' : 'Merit rating'} · ${methodsFor(t.id).find((m) => m.id === methodOf(plan))?.label}`}</span>
-                    {f.weight != null && <span className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold tabular-nums text-primary" title={t.sled ? 'Maximum points' : 'Weight'}>{f.weight}{t.sled ? ' pts' : '%'}</span>}</div>
+                    {f.weight != null && weightsStated(plan) && <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tabular-nums text-foreground" title={t.sled ? 'Maximum points' : 'Weight'}>{f.weight}{t.sled ? ' pts' : '%'}</span>}</div>
                   <p className="text-muted-foreground">{f.criteria}</p>
                   {f.subfactors && <ul className="list-disc pl-5">{f.subfactors.map((s) => <li key={s}>{s}</li>)}</ul>}
                 </CardContent>

@@ -223,17 +223,49 @@ export function actorName(actor: string) {
 
 /**
  * How a factor stands in the plan: its weight ("40% weight · most important") when the plan has weights, else its
- * order of importance (plans made before weights), or (State & Local) its maximum points. `all` is every plan factor, Price included.
+ * order of importance, or (State & Local) its maximum points. `all` is every plan factor, Price included.
+ * `useWeights: false` shows the order even when weights are recorded (see weightsStated).
  */
-export function factorImportance(f: Factor, all: Factor[], fw: Framework = 'federal'): string {
+export function factorImportance(f: Factor, all: Factor[], fw: Framework = 'federal', useWeights = true): string {
   // State & Local plans score out of 100: a criterion's weight is its maximum points.
   if (fw === 'sled' && f.weight != null) return `${f.weight} points`
-  const top = Math.min(...all.map((x) => x.order))
-  if (f.weight == null) {
-    const tie = all.filter((x) => x.order === f.order).length > 1 ? ' · equal' : ''
-    return `${f.order === top ? 'Most important' : `Importance rank ${f.order}`}${tie}`
+  if (f.weight == null || !useWeights) {
+    // Recorded weights still give the order (equal weights are equal importance); plans without them use `order`.
+    const rated = all.filter((x) => !x.evaluatedNotRated)
+    const key = (x: Factor) => (x.weight != null ? x.weight : -x.order)
+    const place = rated.filter((x) => key(x) > key(f)).length + 1
+    const tie = rated.filter((x) => x !== f && key(x) === key(f)).map((x) => x.name)
+    const where = place === 1 ? 'Most important' : `${nth(place)} in importance`
+    return tie.length ? `${where} · equal to ${tie.join(', ')}` : where
   }
   const weights = all.map((x) => x.weight ?? 0)
   if (weights.every((w) => w === weights[0])) return `${f.weight}% weight · all equal`
   return f.weight === Math.max(...weights) ? `${f.weight}% weight · most important` : `${f.weight}% weight`
+}
+
+const nth = (n: number) => `${n}${n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] ?? 'th'}`
+
+/**
+ * Whether the solicitation itself states numeric weights. FAR 15.304(d) only requires relative importance; when Section
+ * M is written that way ("more important than…"), showing the plan's internal percentages would invent precision the
+ * solicitation doesn't have. State & Local RFPs always publish their points.
+ */
+export function weightsStated(plan: Pick<Plan, 'framework' | 'relativeImportance'>) {
+  return plan.framework === 'sled' || /\d\s*(%|percent|points?\b)|\bweighted\b/i.test(plan.relativeImportance ?? '')
+}
+
+/** How Price stands against the non-price factors combined, as the plan's relative-importance wording puts it. */
+function priceImportance(text: string) {
+  if (/significantly more important than (the )?(total evaluated )?price/i.test(text)) return 'Significantly less important than the non-price factors combined'
+  if (/(approximately |about )?equal (in importance )?to (the )?(total evaluated )?price/i.test(text)) return 'About equal to the non-price factors combined'
+  if (/less important than (the )?(total evaluated )?price/i.test(text)) return 'More important than the non-price factors combined'
+  if (/more important than (the )?(total evaluated )?price/i.test(text)) return 'Less important than the non-price factors combined'
+  return undefined
+}
+
+/** A factor's importance as the solicitation states it: weights when it publishes them, else its relative order. */
+export function importanceOf(f: Factor, plan: Plan, fw: Framework = 'federal') {
+  const stated = weightsStated({ framework: fw === 'sled' ? 'sled' : plan.framework, relativeImportance: plan.relativeImportance })
+  if (!stated && f.evaluatedNotRated) return priceImportance(plan.relativeImportance) ?? factorImportance(f, plan.factors, fw, false)
+  return factorImportance(f, plan.factors, fw, stated)
 }
