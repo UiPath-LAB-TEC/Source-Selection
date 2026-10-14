@@ -215,6 +215,8 @@ export function actorName(actor: string) {
   // Officials are recorded by title, federal ("Contracting Officer") or State & Local ("Procurement Officer").
   const byLabel = PERSONAS.find((p) => p.label === actor || titled(p, 'sled').label === actor || (actor === 'Contracting Officer' && p.id === 'co') || (actor === 'Source Selection Authority' && p.id === 'ssa'))
   if (byLabel) return byLabel.name
+  // Robots are robots; every other internal actor is an agent (e.g. SS_EvaluationAssistant → Evaluation Assistant (agent)).
+  if (actor === 'SS_Robots') return 'UiPath Robot'
   if (actor.startsWith('SS_')) return actor.replace(/^SS_/, '').replace(/([a-z])([A-Z])/g, '$1 $2') + ' (agent)'
   return actor
 }

@@ -42,14 +42,16 @@ export function ActivityFeed() {
   const current = Math.min(page, pages - 1)
   const events = all.slice(current * PAGE, current * PAGE + PAGE)
   return (
-    <section className="ss-in rounded-2xl border border-border bg-card p-5" style={{ animationDelay: '160ms' }} aria-label="Live activity">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h2 className="text-base font-semibold">Live activity</h2>
-          <p className="text-xs text-muted-foreground">Every action is recorded for the protest file</p>
-        </div>
-        <span className="relative flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--ss-brand-3)] opacity-60" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--ss-brand-3)]" /></span>
+    // The heading sits above the card, like the home page's other sections (My evaluations, My tasks).
+    <section className="space-y-3" aria-label="Live activity">
+      <div>
+        <h2 className="flex items-center gap-2 text-xl font-semibold">
+          Live activity
+          <span className="relative flex h-2.5 w-2.5" aria-hidden><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--ss-brand-3)] opacity-60" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--ss-brand-3)]" /></span>
+        </h2>
+        <p className="text-sm text-muted-foreground">Every action is recorded for the protest file</p>
       </div>
+      <div className="ss-in rounded-2xl border border-border bg-card p-5" style={{ animationDelay: '160ms' }}>
       <ol className="space-y-3">
         {events.map((e) => {
           const Icon = ICON[e.Action] ?? (e.Actor.startsWith('SS_') ? Bot : UserPen)
@@ -84,6 +86,7 @@ export function ActivityFeed() {
           </span>
         </div>
       )}
+      </div>
     </section>
   )
 }
