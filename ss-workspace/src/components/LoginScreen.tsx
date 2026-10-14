@@ -109,7 +109,7 @@ export function LoginScreen({ onLogin, error, busy = false, still = false, statu
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/30"><Landmark className="h-5 w-5" /></div>
           <div className="leading-tight">
             <div className="font-semibold">{t.sled ? 'RFP Evaluation' : 'Source Selection'}</div>
-            <div className="text-xs text-white/75">Agentic Acquisition on UiPath</div>
+            <div className="text-xs text-white/75">{t.sled ? 'Agentic Procurement' : 'Agentic Acquisition'} on UiPath</div>
           </div>
         </div>
 

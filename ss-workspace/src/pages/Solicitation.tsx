@@ -14,7 +14,7 @@ import { TeamStrip } from '../components/TeamStrip'
 import { LiveCasePanel } from '../components/LiveCase'
 import { DeleteEvaluationDialog } from '../components/DeleteEvaluationDialog'
 import { NextActions, useNextActions } from '../components/NextActions'
-import { MatrixKey, MethodToggle, RatingDetail, RatingLegend, ScoreCell } from '../components/Scorecard'
+import { MethodToggle, RatingDetail, RatingLegend, ScoreCell } from '../components/Scorecard'
 import { methodOf, methodsFor, wordsOf } from '../lib/ratings'
 import { ordinal, scoreFor, scores } from '@forms/lib/score'
 import { pts, useTerms } from '@forms/lib/terms'
@@ -142,14 +142,13 @@ export function Solicitation() {
             <div className="min-w-0 flex-1"><RatingLegend factors={factors} method={shownAs} words={wordsOf(plan)} confidenceWords={plan.scales.confidence} /></div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">Show {t.ratings} as<MethodToggle value={shownAs} onChange={setMethod} framework={t.id} /></div>
           </div>
-          <MatrixKey hideOthers={hideOthers} />
           <div className="ss-in overflow-x-auto rounded-2xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-background">
-                  <TableHead className="min-w-[180px]">{t.Offeror}</TableHead>
+                  <TableHead className="min-w-[240px]">{t.Offeror}</TableHead>
                   {factors.map((f) => (
-                    <TableHead key={f.id} className="min-w-[220px] py-3">
+                    <TableHead key={f.id} className="min-w-[190px] py-3">
                       <span className="block font-semibold text-foreground">{f.name}</span>
                       <span className="mt-0.5 block text-xs font-normal text-foreground/70">{factorImportance(f, plan.factors, t.id)}</span>
                     </TableHead>

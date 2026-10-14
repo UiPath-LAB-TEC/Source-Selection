@@ -263,6 +263,7 @@
   --ss-rating-3: #facc15; --ss-rating-3-fg: #422006;
   --ss-rating-4: #b91c1c; --ss-rating-4-fg: #ffffff;
   --ss-confidence: #f8fafc; --ss-confidence-fg: #1f2937; --ss-confidence-border: #cbd5e1;
+  --ss-gold: #ca8a04;
 }
 .dark {
   --ss-rating-0: #2563eb; --ss-rating-0-fg: #ffffff;
@@ -271,4 +272,5 @@
   --ss-rating-3: #eab308; --ss-rating-3-fg: #1c1400;
   --ss-rating-4: #dc2626; --ss-rating-4-fg: #ffffff;
   --ss-confidence: #1e293b; --ss-confidence-fg: #f1f5f9; --ss-confidence-border: #475569;
+  --ss-gold: #facc15;
 }

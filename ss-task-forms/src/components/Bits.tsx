@@ -129,18 +129,15 @@ export function RatingLegend({ factors, method, words, confidenceWords = CONFIDE
       </div>
       {confidence && (
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="mr-1 text-muted-foreground">Past performance</span>
+          <span className="mr-1 inline-flex items-center gap-0.5 text-muted-foreground">Past performance
+            <Info label="About past performance confidence ratings">
+              Confidence assessments carry no colors. {confidenceWords[NEUTRAL_CONFIDENCE]} means no recent, relevant performance record, so it is neither favorable nor unfavorable (FAR 15.305(a)(2)(iv)): not a midpoint between the other ratings.
+            </Info>
+          </span>
           {confidenceWords.slice(0, 5).map((term, i) => (
-            <span key={term} className="inline-flex items-center gap-0.5">
-              <span className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 font-semibold ${i === NEUTRAL_CONFIDENCE ? 'border-dashed' : ''}`}
-                style={{ background: 'var(--ss-confidence)', color: 'var(--ss-confidence-fg)', borderColor: 'var(--ss-confidence-border)' }}>
-                <ConfidenceIcon step={i} className="h-3 w-3" />{term}
-              </span>
-              {i === NEUTRAL_CONFIDENCE && (
-                <Info label={`What ${term} means`}>
-                  No recent, relevant performance record, so the rating is neither favorable nor unfavorable (FAR 15.305(a)(2)(iv)). It is not a midpoint between the other ratings.
-                </Info>
-              )}
+            <span key={term} className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 font-semibold ${i === NEUTRAL_CONFIDENCE ? 'border-dashed' : ''}`}
+              style={{ background: 'var(--ss-confidence)', color: 'var(--ss-confidence-fg)', borderColor: 'var(--ss-confidence-border)' }}>
+              <ConfidenceIcon step={i} className="h-3 w-3" />{term}
             </span>
           ))}
         </div>

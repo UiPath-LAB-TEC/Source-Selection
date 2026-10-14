@@ -81,7 +81,7 @@ export function Sidebar({ onSignOut, onNavigate }: { onSignOut: () => void; onNa
         <div className="ss-hero flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"><Landmark className="relative z-10 h-5 w-5" /></div>
         <div className="min-w-0 leading-tight">
           <div className="truncate font-semibold">{t.sled ? 'RFP Evaluation' : 'Source Selection'}</div>
-          <div className="truncate text-[11px] text-muted-foreground">Agentic Acquisition</div>
+          <div className="truncate text-[11px] text-muted-foreground">{t.sled ? 'Agentic Procurement' : 'Agentic Acquisition'}</div>
         </div>
       </div>
 

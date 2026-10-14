@@ -5,7 +5,7 @@ import { KindBadge } from './Bits'
 import { PersonaAvatar } from './Flair'
 import { KIND_ORDER, rank } from '../lib/eval'
 import type { Cell } from '../lib/eval'
-import { Info, Rating } from '@forms/components/Bits'
+import { Rating } from '@forms/components/Bits'
 import { level, look, lookOf, methodsFor } from '../lib/ratings'
 import { titled, useTerms, useVolumeLabel } from '@forms/lib/terms'
 import type { Framework } from '@forms/lib/terms'
@@ -69,33 +69,22 @@ function RatingSpread({ plan, factor, ratings, method, size = 'md' }: { plan: Pl
   )
 }
 
-/**
- * A split said plainly. Before consensus there is no rating of record: the evaluators' own ratings show above and the
- * note says consensus is pending. After consensus the chip is the SSEB's rating and the note records how the
- * evaluators had rated, without calling the cell split.
- */
-function SplitNote({ plan, factor, c, method }: { plan: Plan; factor: Factor; c: Cell; method: RatingMethod }) {
-  if (c.consensus) {
-    return (
-      <span className="flex w-full items-start gap-1.5 rounded-md border-l-[3px] border-border bg-muted/50 px-1.5 py-1 text-xs text-muted-foreground">
-        <Users aria-hidden className="mt-px h-3.5 w-3.5 shrink-0" />
-        <span><span className="font-medium text-foreground">Reconciled at consensus</span> · evaluators: {spreadText(plan, factor, c.individual, method)}</span>
-      </span>
-    )
-  }
-  const color = c.spread >= 2 ? 'var(--ss-critical)' : 'var(--ss-warn)'
+/** A split with no consensus yet: there is no rating of record, so the cell says so under the evaluators' own ratings. */
+function PendingSplit({ spread }: { spread: number }) {
+  const color = spread >= 2 ? 'var(--ss-critical)' : 'var(--ss-warn)'
   return (
     <span className="flex w-full items-start gap-1.5 rounded-md border-l-[3px] px-1.5 py-1 text-xs font-medium text-foreground"
       style={{ borderColor: color, background: `color-mix(in srgb, ${color} 14%, transparent)` }}>
       <Users aria-hidden className="mt-px h-3.5 w-3.5 shrink-0" style={{ color }} />
-      <span>{c.spread >= 2 ? `Wide split (${c.spread} steps)` : 'Split'} · consensus pending</span>
+      <span>{spread >= 2 ? `Wide split (${spread} steps)` : 'Split'} · consensus pending</span>
     </span>
   )
 }
 
 /**
- * One offeror × factor cell. With consensus: the SSEB's rating (and "Highest rated" when it tops the factor). Before
- * consensus: the evaluators' shared rating, or on a split each of their ratings; never a median that looks official.
+ * One offeror × factor cell: the rating and, on the top consensus rating, a gold trophy. Before consensus: the
+ * evaluators' shared rating, or on a split each of their ratings; never a median that looks official. How a reconciled
+ * split was decided is in the detail panel, not the grid.
  */
 export function ScoreCell({ plan, factor, c, leader, hideOthers, mySlot, method, onOpen }: {
   plan: Plan; factor: Factor; c: Cell; leader: boolean; hideOthers: boolean; mySlot?: number; method: RatingMethod; onOpen: () => void
@@ -115,42 +104,13 @@ export function ScoreCell({ plan, factor, c, leader, hideOthers, mySlot, method,
         {unreconciled ? <RatingSpread plan={plan} factor={factor} ratings={c.individual} method={method} />
           : <Rating plan={plan} factor={factor} rating={shown} method={method} pending={!c.consensus && !hideOthers} />}
         <span className="flex shrink-0 items-center gap-1">
-          {leader && c.consensus && <span title={`Highest rated: top consensus ${t.rating} on this ${t.factor}`} className="inline-flex"><Trophy role="img" aria-label="Highest rated" className="h-4 w-4 text-muted-foreground" /></span>}
+          {leader && c.consensus && <span title={`Highest rated: top consensus ${t.rating} on this ${t.factor}`} className="inline-flex"><Trophy role="img" aria-label="Highest rated" className="h-4 w-4" style={{ color: 'var(--ss-gold)', fill: 'color-mix(in srgb, var(--ss-gold) 30%, transparent)' }} /></span>}
           <ChevronRight aria-hidden className="h-4 w-4 text-muted-foreground/50 transition group-hover:translate-x-0.5 group-hover:text-foreground group-focus-visible:text-foreground" />
         </span>
       </span>
-      {split && <SplitNote plan={plan} factor={factor} c={c} method={method} />}
+      {unreconciled && <PendingSplit spread={c.spread} />}
       {status && <span className="text-xs text-muted-foreground">{status}</span>}
     </button>
-  )
-}
-
-/** The matrix's markers, each with its meaning behind an ⓘ rather than a sentence on the page. */
-export function MatrixKey({ hideOthers }: { hideOthers: boolean }) {
-  const t = useTerms()
-  return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
-      {!hideOthers && (
-        <>
-          <span className="inline-flex items-center gap-0.5">
-            <span className="inline-flex items-center gap-1 rounded-md border-l-[3px] px-1.5 py-0.5 font-medium text-foreground" style={{ borderColor: 'var(--ss-warn)', background: 'color-mix(in srgb, var(--ss-warn) 14%, transparent)' }}>
-              <Users aria-hidden className="h-3 w-3" style={{ color: 'var(--ss-warn)' }} />Split · consensus pending
-            </span>
-            <Info label="What a pending split means">Evaluators differ and {t.theBoard} hasn't reconciled yet, so there is no {t.rating} of record: each evaluator's {t.rating} shows, not an average.</Info>
-          </span>
-          <span className="inline-flex items-center gap-0.5">
-            <span className="inline-flex items-center gap-1 rounded-md border-l-[3px] border-border bg-muted/50 px-1.5 py-0.5 font-medium text-foreground">
-              <Users aria-hidden className="h-3 w-3" />Reconciled
-            </span>
-            <Info label="What reconciled means">The {t.rating} shown is {t.theBoard}'s consensus. The evaluators had differed; the note lists how each rated.</Info>
-          </span>
-        </>
-      )}
-      <span className="inline-flex items-center gap-0.5">
-        <span className="inline-flex items-center gap-1 font-medium text-foreground"><Trophy aria-hidden className="h-3.5 w-3.5 text-muted-foreground" />Highest rated</span>
-        <Info label="What the trophy means">The top consensus {t.rating} on the {t.factor}. Ties all get one.</Info>
-      </span>
-    </div>
   )
 }
 
@@ -174,9 +134,17 @@ export function RatingDetail({ plan, factor, c, findings, hideOthers, mySlot, me
       <section className="space-y-2">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{c.consensus ? `${t.board} consensus` : hideOthers ? `Your ${t.rating}` : c.spread >= 1 ? 'Split · consensus pending' : 'Agreed · consensus pending'}</p>
         {!c.consensus && !hideOthers && c.spread >= 1 ? <RatingSpread plan={plan} factor={factor} ratings={people} method={method} size="lg" /> : (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Rating plan={plan} factor={factor} rating={c.consensus?.Rating ?? people[0]?.Rating} method={method} size="lg" pending={!c.consensus} />
             <OfficialTerm plan={plan} factor={factor} rating={c.consensus?.Rating ?? people[0]?.Rating} method={method} />
+            {/* A split the Chair decided matters to the SSA and to a protest record, so it's called out in the split's amber. */}
+            {c.consensus && !hideOthers && c.spread >= 1 && (
+              <span className="flex w-full items-start gap-2 rounded-md border-l-4 px-2.5 py-1.5 text-sm text-foreground"
+                style={{ borderColor: 'var(--ss-warn)', background: 'color-mix(in srgb, var(--ss-warn) 14%, transparent)' }}>
+                <Users aria-hidden className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--ss-warn)' }} />
+                <span className="font-semibold" title={`Evaluators split: ${spreadText(plan, factor, c.individual, method)}`}>Reconciled at consensus</span>
+              </span>
+            )}
           </div>
         )}
         {c.consensus?.Rationale && <p className="text-sm">{withEvaluatorNames(c.consensus.Rationale)}</p>}
