@@ -465,6 +465,10 @@ def publish_award_record(input: AwardInput) -> RecordOutput:
         signer = input.signedBy or award.get("DecidedBy") or ("Award Authority" if sled else "Source Selection Authority")
         doc, doc_file = ("Recommendation of Award", "Recommendation-of-Award.pdf") if sled else ("Source Selection Decision Document", "SSDD.pdf")
         repo.upload(repo.RECORDS_BUCKET, prefix + doc_file, records.render(doc, header, [("", ssdd), ("Signature", f"Signed by {signer} on {repo.now()[:10]}")], sled))
+        # The CO's signed memorandum for the record from the federal price form; empty for evaluations priced before it existed.
+        price_memo = "" if sled else (decisions.get("Price") or {}).get("DocumentText") or ""
+        if price_memo:
+            repo.upload(repo.RECORDS_BUCKET, prefix + "Price-Reasonableness-Determination.pdf", records.render("Price Reasonableness Determination", header, [("", price_memo)]))
 
         names = {o["OfferorId"]: o["Name"] for o in repo.rows("SSOfferor", sol)}
         by_id = {f["id"]: f for f in plan["factors"]}
@@ -485,7 +489,7 @@ def publish_award_record(input: AwardInput) -> RecordOutput:
         repo.upload(repo.RECORDS_BUCKET, prefix + "Audit-Trail.pdf", records.render("RFP Evaluation Audit Trail" if sled else "Source Selection Audit Trail", header, [_audit_section(sol)], sled))
 
         repo.set_solicitation(sol, Status="Awarded", Stage="Awarded", AwardeeName=awardee, AwardedAt=repo.now())
-        filed = "Recommendation of award, evaluation committee report" if sled else "SSDD, SSEB report"
+        filed = "Recommendation of award, evaluation committee report" if sled else "SSDD, SSEB report" + (", price reasonableness determination" if price_memo else "")
         repo.audit(sol, "case", "AwardRecordPublished", f"{filed} and audit trail filed for award to {awardee}")
         out.recordUri = f"{repo.RECORDS_BUCKET}/{prefix}"
     except Exception as exc:

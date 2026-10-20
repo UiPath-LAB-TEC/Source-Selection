@@ -1,9 +1,12 @@
-"""Entry points with the platform faked: drafting eligibility (BR-02), the fault policy, and the SSDD size fixes."""
+"""Entry points with the platform faked: drafting eligibility (BR-02), the fault policy, the SSDD size fixes and the
+price reasonableness memo in the award record."""
+import io
 import json
 import sys
 from pathlib import Path
 
 import pytest
+from pypdf import PdfReader
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -11,6 +14,7 @@ SOLUTION = HERE.parents[1]
 sys.path.insert(0, str(HERE.parent))
 
 import main  # noqa: E402
+import records  # noqa: E402
 import repo  # noqa: E402
 
 PLAN = json.loads((ROOT / "evaluation-plans" / "FA8771-27-R-0012.json").read_text())
@@ -120,6 +124,49 @@ def test_publish_award_record_reads_the_signed_ssdd_from_the_decision_record(pla
     title, sections = platform["renders"][0]
     assert title == "Source Selection Decision Document" and sections[0] == ("", ssdd)
     assert f"{SOL}/SSDD.pdf" in platform["uploads"]
+
+
+# ── Price reasonableness memorandum ─────────────────────────────────────────
+
+MEMO = "MEMORANDUM FOR RECORD\n\nSUBJECT: Price Reasonableness Determination\n   Apex Federal: $4,812,000 · −4.2% vs IGCE · fair and reasonable"
+SLED_PLAN = json.loads((ROOT / "evaluation-plans" / "WUSD-RFP-27-014.json").read_text())
+
+
+def publish(platform, monkeypatch, plan, memo):
+    """Publish the award record with the CO's price decision on file, and return the audit detail."""
+    sol, audits = plan["solicitationId"], []
+    monkeypatch.setattr(repo, "plan", lambda s: plan)
+    monkeypatch.setattr(repo, "audit", lambda sol, actor, action, detail: audits.append(detail))
+    platform["db"]["SSDecision"] = [
+        {"DecisionId": f"{sol}-award", "SolicitationId": sol, "Kind": "Award", "DocumentText": "DECISION", "DecidedBy": "ssa@example.gov",
+         "Rationale": "Recommend award to Apex Federal, 87 of 100 points." if plan is SLED_PLAN else "Award to Apex Federal as the best value."},
+        {"DecisionId": f"{sol}-price", "SolicitationId": sol, "Kind": "Price", "Outcome": "Proceed", "DocumentText": memo, "DecidedBy": "co@example.gov"}]
+    platform["db"]["SSRating"] = []
+    platform["db"]["SSAuditEvent"] = []
+    out = main.run(main.RobotInput(step="PublishAwardRecord", solicitationId=sol))
+    assert out.error_type == "" and out.content == f"{repo.RECORDS_BUCKET}/{sol}/"
+    return audits[0]
+
+
+def test_publish_award_record_files_the_price_reasonableness_memo(platform, monkeypatch):
+    detail = publish(platform, monkeypatch, PLAN, MEMO)
+    assert ("Price Reasonableness Determination", [("", MEMO)]) in platform["renders"]
+    assert {f"{SOL}/{f}" for f in ("SSDD.pdf", "Price-Reasonableness-Determination.pdf", "SSEB-Consensus-Report.pdf", "Audit-Trail.pdf")} == set(platform["uploads"])
+    assert "price reasonableness determination" in detail
+
+
+@pytest.mark.parametrize("plan, memo", [(PLAN, ""), (SLED_PLAN, MEMO)], ids=["older-federal-evaluation", "state-and-local"])
+def test_publish_award_record_skips_the_price_memo_when_there_is_none(platform, monkeypatch, plan, memo):
+    detail = publish(platform, monkeypatch, plan, memo)
+    assert all(title != "Price Reasonableness Determination" for title, _ in platform["renders"])
+    assert not any(p.endswith("Price-Reasonableness-Determination.pdf") for p in platform["uploads"])
+    assert "price reasonableness" not in detail
+
+
+def test_price_memo_pdf_keeps_its_minus_signs():
+    pdf = records.render("Price Reasonableness Determination", "Agency | Sol | Title", [("", MEMO)])
+    text = PdfReader(io.BytesIO(pdf)).pages[0].extract_text()
+    assert "-4.2% vs IGCE" in text and "?" not in text
 
 
 def test_case_does_not_pass_the_ssdd_as_a_job_input():

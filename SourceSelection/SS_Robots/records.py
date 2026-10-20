@@ -1,9 +1,10 @@
-"""Official-record PDFs for the contract file (SSDD or Recommendation of Award, consensus report, audit trail, cancellation memo)."""
+"""Official-record PDFs for the contract file (SSDD or Recommendation of Award, price reasonableness determination, consensus report,
+audit trail, cancellation memo)."""
 from __future__ import annotations
 
 from fpdf import FPDF
 
-_SUBS = {"—": "-", "–": "-", "’": "'", "‘": "'", "“": '"', "”": '"', "…": "...", "•": "-", "·": "-", "→": "->", "≥": ">=", "≤": "<="}
+_SUBS = {"—": "-", "–": "-", "−": "-", "’": "'", "‘": "'", "“": '"', "”": '"', "…": "...", "•": "-", "·": "-", "→": "->", "≥": ">=", "≤": "<="}
 
 
 def _latin(s: str) -> str:
