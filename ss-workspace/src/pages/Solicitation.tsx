@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@uipath/apollo-wind/co
 import { ComplianceBadge, Pill, Section } from '../components/Bits'
 import { AgencyMark, HeroTile, OfferorAvatar } from '../components/Flair'
 import { FindingsBoard } from '../components/FindingsBoard'
+import { ExtractionPanel } from '../components/Extraction'
 import { TeamStrip } from '../components/TeamStrip'
 import { LiveCasePanel } from '../components/LiveCase'
 import { DeleteEvaluationDialog } from '../components/DeleteEvaluationDialog'
@@ -247,6 +248,7 @@ export function Solicitation() {
                       {!t.sled && <><dt className="text-muted-foreground">CAGE</dt><dd className="font-mono">{o.CAGE}</dd></>}
                     </dl>
                     {o.ComplianceNotes && <p className="text-muted-foreground">{o.ComplianceNotes}</p>}
+                    <ExtractionPanel o={o} />
                     {lines.length > 0 && (
                       <table className="w-full text-xs">
                         <tbody>

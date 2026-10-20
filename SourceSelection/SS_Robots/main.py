@@ -10,12 +10,14 @@ import json
 import re
 import tempfile
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from pydantic import BaseModel
 from pypdf import PdfReader
 from uipath.tracing import traced
 
+import extraction
 import records
 import repo
 import rules
@@ -58,35 +60,53 @@ class IngestOutput(Result):
     pageCount: int = 0
 
 
+def _proposal_files(sol: str) -> dict[str, dict[str, str]]:
+    """{offeror code: {volume: bucket path}} for SS-Proposals/<sol>/<code>/<volume>.pdf."""
+    files: dict[str, dict[str, str]] = defaultdict(dict)
+    for path in repo.list_files(repo.PROPOSALS_BUCKET, sol):
+        parts = path.split("/")
+        if len(parts) == 3 and parts[2].lower().endswith(".pdf"):
+            files[parts[1]][parts[2][:-4]] = path
+    return files
+
+
 @traced(name="IngestProposals", run_type="uipath")
 def ingest_proposals(input: SolicitationInput) -> IngestOutput:
     out = IngestOutput()
     try:
         sol = input.solicitationId
         repo.plan(sol)  # fail fast if the solicitation is not seeded
-        files = defaultdict(dict)
-        for path in repo.list_files(repo.PROPOSALS_BUCKET, sol):
-            parts = path.split("/")
-            if len(parts) == 3 and parts[2].lower().endswith(".pdf"):
-                files[parts[1]][parts[2][:-4]] = path
+        files = _proposal_files(sol)
         offerors, pages = [], []
         with tempfile.TemporaryDirectory() as tmp:
+            text: dict[str, dict[str, list[str]]] = defaultdict(dict)
+            local: dict[str, dict[str, str]] = defaultdict(dict)
             for code, volumes in sorted(files.items()):
-                text: dict[str, list[str]] = {}
                 for vol, path in volumes.items():
-                    local = Path(tmp) / f"{code}-{vol}.pdf"
-                    repo.download(repo.PROPOSALS_BUCKET, path, str(local))
-                    text[vol] = [rules.clean_page(p.extract_text() or "", sol) for p in PdfReader(str(local)).pages]
+                    local[code][vol] = str(Path(tmp) / f"{code}-{vol}.pdf")
+                    repo.download(repo.PROPOSALS_BUCKET, path, local[code][vol])
+                    text[code][vol] = [rules.clean_page(p.extract_text() or "", sol) for p in PdfReader(local[code][vol]).pages]
+            # IXP reads every offeror's cover letter, price schedule and past performance volume at once.
+            with ThreadPoolExecutor(max_workers=6) as pool:
+                jobs = {code: {
+                    "cover": pool.submit(extraction.cover, local[code].get("cover", ""), " ".join(text[code].get("cover", []))),
+                    "price": pool.submit(extraction.price, local[code].get("price", ""), " ".join(text[code].get("price", []))),
+                    "references": pool.submit(extraction.references, local[code].get("pastPerformance", "")),
+                } for code in sorted(files)}
+            for code in sorted(files):
                 oid = f"{sol}-{code}"
-                cover = rules.parse_cover(" ".join(text.get("cover", [])))
-                lines, stated = rules.parse_price(" ".join(text.get("price", [])))
+                cover = jobs[code]["cover"].result()
+                lines, stated, price_meta = jobs[code]["price"].result()
+                refs, refs_meta = jobs[code]["references"].result() if "pastPerformance" in local[code] else ([], {"source": "none"})
                 notes = [f"Signed by {cover['signatory']}." if cover["signatory"] else "Cover letter is not signed."]
                 if stated is not None and abs(stated - sum(l["amount"] for l in lines)) > 1:
                     notes.append(f"Stated total ${stated:,.0f} does not equal the sum of CLINs.")
+                found = {"cover": {k: v for k, v in cover.items() if k not in ("certified",)}, "price": {**price_meta, "statedTotal": stated, "lines": len(lines)},
+                         "references": refs, "referencesMeta": refs_meta, "intakeNotes": notes}
                 offerors.append({"OfferorId": oid, "SolicitationId": sol, "OfferorCode": code, "Name": cover["name"] or code,
                                  "UEI": cover["uei"], "CAGE": cover["cage"], "PriceLinesJson": json.dumps(lines),
-                                 "ComplianceStatus": "Pending", "ComplianceNotes": " ".join(notes)})
-                for vol, vol_pages in text.items():
+                                 "ComplianceStatus": "Pending", "ComplianceNotes": " ".join(notes), "ExtractionJson": json.dumps(found)})
+                for vol, vol_pages in text[code].items():
                     for i, t in enumerate(vol_pages, start=1):
                         pages.append({"PageId": f"{oid}-{vol}-{i}", "SolicitationId": sol, "OfferorId": oid,
                                       "Volume": vol, "PageNumber": i, "PageText": t})
@@ -95,6 +115,37 @@ def ingest_proposals(input: SolicitationInput) -> IngestOutput:
         repo.audit(sol, "case", "ProposalsIngested", f"{len(offerors)} offerors, {len(pages)} pages")
         repo.set_solicitation(sol, Status="In evaluation", Stage="Proposal Intake", StartedAt=repo.now())
         out.offerorCount, out.pageCount = len(offerors), len(pages)
+    except Exception as exc:
+        return _fail(out, exc)
+    return out
+
+
+class ExtractOutput(Result):
+    extraction: str = ""
+    offerorCount: int = 0
+
+
+@traced(name="ExtractProposals", run_type="uipath")
+def extract_proposals(input: SolicitationInput) -> ExtractOutput:
+    """Read-only: what IXP extracts from each offeror's cover letter, price schedule and past performance volume, and any
+    IXP error, so the models can be checked against a solicitation's proposals without changing a record."""
+    out = ExtractOutput()
+    try:
+        repo.plan(input.solicitationId)  # fail fast if the solicitation is not seeded
+        files = _proposal_files(input.solicitationId)
+        results: dict[str, dict] = {}
+        with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor(max_workers=6) as pool:
+            jobs = {}
+            for code, volumes in sorted(files.items()):
+                for vol in ("cover", "price", "pastPerformance"):
+                    if vol in volumes:
+                        dest = str(Path(tmp) / f"{code}-{vol}.pdf")
+                        repo.download(repo.PROPOSALS_BUCKET, volumes[vol], dest)
+                        jobs[(code, vol, dest)] = pool.submit(extraction.ixp, vol, dest)
+            for (code, vol, dest), job in jobs.items():
+                found = job.result()
+                results.setdefault(code, {})[vol] = found if found is not None else {"error": extraction.ERRORS.get(dest, "IXP unavailable")}
+        out.extraction, out.offerorCount = json.dumps(results), len(results)
     except Exception as exc:
         return _fail(out, exc)
     return out
@@ -120,10 +171,14 @@ def screen_compliance(input: SolicitationInput) -> ScreenOutput:
         updates, summary = [], []
         for o in sorted(repo.rows("SSOfferor", sol), key=lambda o: o["Name"]):
             ref = refs.get(o.get("UEI"))
-            status, notes = rules.screen(plan, counts[o["OfferorId"]], ref)
-            prior = (o.get("ComplianceNotes") or "").strip()
-            if prior and "Signed by" in prior:
-                notes.append(prior)
+            found = json.loads(o.get("ExtractionJson") or "{}")
+            status, notes = rules.screen(plan, counts[o["OfferorId"]], ref, (found.get("cover") or {}).get("certifications"))
+            # Intake's own notes (signature, stated total) and the claimed-vs-CPARS check, rebuilt each run so a re-screen
+            # never repeats them. Offerors ingested before ExtractionJson keep their prior intake notes.
+            prior = found.get("intakeNotes") or ([(o.get("ComplianceNotes") or "").strip()] if "Signed by" in (o.get("ComplianceNotes") or "") else [])
+            notes += [n for n in prior if n]
+            if ref and found.get("references"):
+                notes += rules.cpars_check(found["references"], json.loads(ref.get("CparsSummaryJson") or "[]"), federal=not rules.is_sled(plan))
             updates.append({"OfferorId": o["OfferorId"], "SolicitationId": sol, "SamStatus": (ref or {}).get("SamStatus") or "Not found",
                             "Exclusion": bool((ref or {}).get("Exclusion")), "ComplianceStatus": status, "ComplianceNotes": " ".join(notes)})
             summary.append({"offerorId": o["OfferorId"], "offeror": o["Name"], "status": status, "notes": notes})
@@ -157,7 +212,11 @@ def _agent_inputs(sol: str, plan: dict, o: dict, f: dict, pages: list[dict], ref
         factor |= {"framework": "sled", "maxPoints": f.get("weight")}
     past = ""
     if f["volume"] == "pastPerformance" and ref:
-        past = json.dumps({"cpars": json.loads(ref.get("CparsSummaryJson") or "[]"), "fapiis": ref.get("FapiisRecords") or "None"})
+        cpars = json.loads(ref.get("CparsSummaryJson") or "[]")
+        claimed = json.loads(o.get("ExtractionJson") or "{}").get("references") or []
+        past = json.dumps({"cpars": cpars, "fapiis": ref.get("FapiisRecords") or "None",
+                           "claimedReferences": [{k: r[k] for k in ("contract", "customer", "rating") if r.get(k)} for r in claimed],
+                           "crossCheck": rules.cpars_check(claimed, cpars, federal=not rules.is_sled(plan))})
     base = {"solicitationId": sol, "offerorName": o["Name"], "factor": json.dumps(factor), "volume": f["volume"], "pastPerformance": past}
     budget = rules.AGENT_INPUT_LIMIT - len(json.dumps(base)) - 40
     return {**base, "proposalPages": rules.agent_pages(pages, budget)}
@@ -495,6 +554,7 @@ class RobotOutput(Result):
 # step -> (result field, detail field or extra-stats fields, count field) on the step's own output model
 RESULT_FIELDS = {
     "IngestProposals": (None, ["pageCount"], "offerorCount"),
+    "ExtractProposals": ("extraction", None, "offerorCount"),
     "ScreenCompliance": ("complianceSummary", None, None),
     "GenerateDraftFindings": (None, ["droppedFindingCount", "unavailableCount"], "draftFindingCount"),
     "CompileEvaluations": ("evaluationSet", "scales", "disagreementCount"),
@@ -507,6 +567,7 @@ RESULT_FIELDS = {
 
 STEPS = {
     "IngestProposals": (ingest_proposals, SolicitationInput),
+    "ExtractProposals": (extract_proposals, SolicitationInput),
     "ScreenCompliance": (screen_compliance, SolicitationInput),
     "GenerateDraftFindings": (generate_draft_findings, DraftInput),
     "CompileEvaluations": (compile_evaluations, SolicitationInput),

@@ -4,7 +4,7 @@ import { Button } from '@uipath/apollo-wind/components/ui/button'
 import MaestroDialog from './MaestroDialog'
 import { StepAction, waitingSteps } from './NextActions'
 import type { WaitingStep } from './NextActions'
-import { CASE_PLAN, casePlanFor } from '../lib/maestro'
+import { CASE_PLAN, NO_ACCESS, casePlanFor } from '../lib/maestro'
 import { useData } from '../lib/data'
 import type { LiveCase, LiveStage, LiveTask, TaskKind } from '../lib/maestro'
 import { stageIndex } from '../lib/eval'
@@ -76,7 +76,7 @@ export function LiveCasePanel({ sol, live, running, error }: { sol: Solicitation
   const branches = stages.filter((s) => s.secondary && phase(s.status) !== 'idle')
   const all = stages.flatMap((s) => s.tasks)
   const count = (k: TaskKind) => all.filter((t) => t.kind === k && phase(t.status) === 'done').length
-  const state = live ? live.status : live === null ? 'Not started' : 'Plan'
+  const state = live ? live.status : live === null ? 'Not started' : error === NO_ACCESS ? 'No access' : 'Plan'
   const tone = live
     ? running ? 'bg-primary/15 text-primary' : /complet/i.test(live.status) ? 'bg-[var(--ss-lvl-0)] text-[var(--ss-lvl-0-fg)]' : /fault/i.test(live.status) ? 'bg-[var(--ss-lvl-4)] text-[var(--ss-lvl-4-fg)]' : 'bg-muted text-muted-foreground'
     : 'bg-muted text-muted-foreground'
@@ -95,7 +95,7 @@ export function LiveCasePanel({ sol, live, running, error }: { sol: Solicitation
           <p className="text-xs text-muted-foreground">
             {live
               ? `${sol.SolicitationId} · ${count('robot')} robot, ${count('agent')} agent and ${count('human')} human steps done${live.startedTime ? ` · ${duration(live.startedTime, live.completedTime)}` : ''}`
-              : error ? `Could not reach Maestro: ${error}` : live === null ? `No process instance yet. Starting the ${terms.process} launches it in Maestro.` : 'The process Maestro runs: robots, agents and people, phase by phase.'}
+              : error ? (error === NO_ACCESS ? error : `Could not reach Maestro: ${error}`) : live === null ? `No process instance yet. Starting the ${terms.process} launches it in Maestro.` : 'The process Maestro runs: robots, agents and people, phase by phase.'}
           </p>
         </div>
         {(live || preview) && (

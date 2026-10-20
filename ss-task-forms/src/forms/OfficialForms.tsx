@@ -11,6 +11,7 @@ import type { Terms } from '../lib/terms'
 import { evaluatorBySlot, factorImportance, persona } from '../lib/types'
 import type { Offeror, Plan, Rating as RatingRow } from '../lib/types'
 import { AgentMark, Field, FormShell, Panel, auditRow, nowIso, textareaCls, useForm, withEvaluatorNames } from './common'
+import { FederalPriceForm } from './PriceDetermination'
 
 const parse = <T,>(s: unknown, fallback: T): T => {
   try { return typeof s === 'string' ? (s.trim() ? JSON.parse(s) as T : fallback) : (s as T) ?? fallback } catch { return fallback }
@@ -87,7 +88,12 @@ function priceLinesText(json: string, t: Terms) {
   } catch { return '' }
 }
 
+/** The CO's price step: the FAR price reasonableness determination, or (State & Local) the cost evaluation by formula. */
 export function PriceForm() {
+  return useTerms().sled ? <SledCostForm /> : <FederalPriceForm />
+}
+
+function SledCostForm() {
   const { backend, task, data, sol, plan, update } = useForm()
   const t = useTerms()
   // State & Local: cost points by formula, lowest total cost earns them all.

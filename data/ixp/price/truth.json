@@ -1,0 +1,977 @@
+{
+  "F01-ridgeway-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 7850000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-out",
+        "amount": 1220000
+      },
+      {
+        "item": "0003",
+        "description": "Program management",
+        "amount": 360000
+      },
+      {
+        "item": "0004",
+        "description": "Engineering and integration services",
+        "amount": 8970000
+      },
+      {
+        "item": "0005",
+        "description": "Transition-in",
+        "amount": 3310000
+      },
+      {
+        "item": "0006",
+        "description": "Operations and sustainment",
+        "amount": 4960000
+      }
+    ],
+    "stated_total": 26670000
+  },
+  "F02-upland-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 6940000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-out",
+        "amount": 3330000
+      },
+      {
+        "item": "0003",
+        "description": "Operations and sustainment",
+        "amount": 3110000
+      },
+      {
+        "item": "0004",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 2420000
+      },
+      {
+        "item": "0005",
+        "description": "Transition-in",
+        "amount": 3940000
+      }
+    ],
+    "stated_total": 19740000
+  },
+  "F03-glacier-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 8810000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-out",
+        "amount": 1970000
+      },
+      {
+        "item": "0003",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 760000
+      },
+      {
+        "item": "0004",
+        "description": "Engineering and integration services",
+        "amount": 570000
+      },
+      {
+        "item": "0005",
+        "description": "Operations and sustainment",
+        "amount": 7160000
+      },
+      {
+        "item": "0006",
+        "description": "Program management",
+        "amount": 450000
+      }
+    ],
+    "stated_total": 19720000
+  },
+  "F04-orchard-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 3270000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-in",
+        "amount": 4790000
+      },
+      {
+        "item": "0003",
+        "description": "Transition-out",
+        "amount": 2930000
+      },
+      {
+        "item": "0004",
+        "description": "Program management",
+        "amount": 6890000
+      }
+    ],
+    "stated_total": 17880000
+  },
+  "F05-northfield-price.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Program management",
+        "amount": 2550000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-out",
+        "amount": 8380000
+      },
+      {
+        "item": "0003",
+        "description": "Data migration",
+        "amount": 570000
+      },
+      {
+        "item": "0004",
+        "description": "Operations and sustainment",
+        "amount": 3950000
+      },
+      {
+        "item": "0005",
+        "description": "Transition-in",
+        "amount": 7470000
+      },
+      {
+        "item": "0006",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 5650000
+      }
+    ],
+    "stated_total": 28570000
+  },
+  "F06-copperfield-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 4280000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-out",
+        "amount": 8800000
+      },
+      {
+        "item": "0003",
+        "description": "Data migration",
+        "amount": 3260000
+      },
+      {
+        "item": "0004",
+        "description": "Transition-in",
+        "amount": 1880000
+      },
+      {
+        "item": "0005",
+        "description": "Operations and sustainment",
+        "amount": 8690000
+      }
+    ],
+    "stated_total": 26910000
+  },
+  "F07-granite-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Program management",
+        "amount": 5600000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-in",
+        "amount": 8430000
+      },
+      {
+        "item": "0003",
+        "description": "Operations and sustainment",
+        "amount": 3140000
+      },
+      {
+        "item": "0004",
+        "description": "Transition-out",
+        "amount": 8160000
+      }
+    ],
+    "stated_total": 25330000
+  },
+  "F08-cedarline-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 8370000
+      },
+      {
+        "item": "0002",
+        "description": "Engineering and integration services",
+        "amount": 7160000
+      },
+      {
+        "item": "0003",
+        "description": "Transition-in",
+        "amount": 6750000
+      },
+      {
+        "item": "0004",
+        "description": "Data migration",
+        "amount": 5310000
+      }
+    ],
+    "stated_total": 27590000
+  },
+  "F09-meridian-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Transition-in",
+        "amount": 4060000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-out",
+        "amount": 1480000
+      },
+      {
+        "item": "0003",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 5460000
+      },
+      {
+        "item": "0004",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 3010000
+      },
+      {
+        "item": "0005",
+        "description": "Operations and sustainment",
+        "amount": 4740000
+      },
+      {
+        "item": "0006",
+        "description": "Data migration",
+        "amount": 1050000
+      }
+    ],
+    "stated_total": 19800000
+  },
+  "F10-westbrook-price.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Program management",
+        "amount": 5700000
+      },
+      {
+        "item": "0002",
+        "description": "Operations and sustainment",
+        "amount": 7320000
+      },
+      {
+        "item": "0003",
+        "description": "Engineering and integration services",
+        "amount": 1430000
+      },
+      {
+        "item": "0004",
+        "description": "Transition-out",
+        "amount": 3140000
+      },
+      {
+        "item": "0005",
+        "description": "Data migration",
+        "amount": 6550000
+      }
+    ],
+    "stated_total": 24140000
+  },
+  "F11-foxglove-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Data migration",
+        "amount": 7070000
+      },
+      {
+        "item": "0002",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 3890000
+      },
+      {
+        "item": "0003",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 1010000
+      },
+      {
+        "item": "0004",
+        "description": "Program management",
+        "amount": 5200000
+      },
+      {
+        "item": "0005",
+        "description": "Engineering and integration services",
+        "amount": 8100000
+      },
+      {
+        "item": "0006",
+        "description": "Transition-out",
+        "amount": 2010000
+      }
+    ],
+    "stated_total": 27280000
+  },
+  "F12-meridian-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 5440000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-in",
+        "amount": 5130000
+      },
+      {
+        "item": "0003",
+        "description": "Operations and sustainment",
+        "amount": 2980000
+      },
+      {
+        "item": "0004",
+        "description": "Engineering and integration services",
+        "amount": 5090000
+      },
+      {
+        "item": "0005",
+        "description": "Transition-out",
+        "amount": 1050000
+      },
+      {
+        "item": "0006",
+        "description": "Program management",
+        "amount": 8420000
+      }
+    ],
+    "stated_total": 28150000
+  },
+  "F13-copperfield-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 8810000
+      },
+      {
+        "item": "0002",
+        "description": "Operations and sustainment",
+        "amount": 4650000
+      },
+      {
+        "item": "0003",
+        "description": "Program management",
+        "amount": 3850000
+      },
+      {
+        "item": "0004",
+        "description": "Engineering and integration services",
+        "amount": 2190000
+      }
+    ],
+    "stated_total": 19500000
+  },
+  "F14-northfield-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Engineering and integration services",
+        "amount": 5520000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-out",
+        "amount": 6560000
+      },
+      {
+        "item": "0003",
+        "description": "Transition-in",
+        "amount": 3280000
+      },
+      {
+        "item": "0004",
+        "description": "Data migration",
+        "amount": 940000
+      },
+      {
+        "item": "0005",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 3300000
+      }
+    ],
+    "stated_total": 19600000
+  },
+  "F15-tidewater-price.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Transition-out",
+        "amount": 7810000
+      },
+      {
+        "item": "0002",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 7260000
+      },
+      {
+        "item": "0003",
+        "description": "Data migration",
+        "amount": 5500000
+      },
+      {
+        "item": "0004",
+        "description": "Operations and sustainment",
+        "amount": 6480000
+      }
+    ],
+    "stated_total": 27050000
+  },
+  "F16-tidewater-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 8120000
+      },
+      {
+        "item": "0002",
+        "description": "Operations and sustainment",
+        "amount": 4390000
+      },
+      {
+        "item": "0003",
+        "description": "Transition-out",
+        "amount": 8330000
+      },
+      {
+        "item": "0004",
+        "description": "Transition-in",
+        "amount": 7290000
+      }
+    ],
+    "stated_total": 28130000
+  },
+  "F17-ridgeway-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Transition-in",
+        "amount": 2350000
+      },
+      {
+        "item": "0002",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 6090000
+      },
+      {
+        "item": "0003",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 1960000
+      },
+      {
+        "item": "0004",
+        "description": "Program management",
+        "amount": 8340000
+      },
+      {
+        "item": "0005",
+        "description": "Transition-out",
+        "amount": 340000
+      }
+    ],
+    "stated_total": 19080000
+  },
+  "F18-yarrow-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Transition-in",
+        "amount": 7600000
+      },
+      {
+        "item": "0002",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 3820000
+      },
+      {
+        "item": "0003",
+        "description": "Transition-out",
+        "amount": 330000
+      },
+      {
+        "item": "0004",
+        "description": "Operations and sustainment",
+        "amount": 580000
+      }
+    ],
+    "stated_total": 12330000
+  },
+  "F19-foxglove-price.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Engineering and integration services",
+        "amount": 6180000
+      },
+      {
+        "item": "0002",
+        "description": "Cloud hosting (other direct costs)",
+        "amount": 4330000
+      },
+      {
+        "item": "0003",
+        "description": "Data migration",
+        "amount": 5660000
+      },
+      {
+        "item": "0004",
+        "description": "Operations and sustainment",
+        "amount": 7370000
+      }
+    ],
+    "stated_total": 23540000
+  },
+  "F20-larkspur-price.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "0001",
+        "description": "Data migration",
+        "amount": 6540000
+      },
+      {
+        "item": "0002",
+        "description": "Transition-in",
+        "amount": 8210000
+      },
+      {
+        "item": "0003",
+        "description": "Operations and sustainment",
+        "amount": 3280000
+      },
+      {
+        "item": "0004",
+        "description": "Cybersecurity and continuous ATO support",
+        "amount": 1330000
+      }
+    ],
+    "stated_total": 19360000
+  },
+  "S21-ironbridge-price.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Software subscription and licenses",
+        "amount": 275000
+      },
+      {
+        "item": "2",
+        "description": "Implementation and data migration",
+        "amount": 783000
+      },
+      {
+        "item": "3",
+        "description": "Hardware and devices",
+        "amount": 614000
+      },
+      {
+        "item": "4",
+        "description": "Integration with district systems",
+        "amount": 657000
+      }
+    ],
+    "stated_total": 2339000
+  },
+  "S22-ridgeway-price.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Software subscription and licenses",
+        "amount": 443000
+      },
+      {
+        "item": "2",
+        "description": "Implementation and data migration",
+        "amount": 621000
+      },
+      {
+        "item": "3",
+        "description": "Integration with district systems",
+        "amount": 710000
+      },
+      {
+        "item": "4",
+        "description": "Hosting, support and maintenance",
+        "amount": 676000
+      },
+      {
+        "item": "5",
+        "description": "Training and change management",
+        "amount": 156000
+      },
+      {
+        "item": "6",
+        "description": "Hardware and devices",
+        "amount": 707000
+      }
+    ],
+    "stated_total": 3313000
+  },
+  "S23-evergreen-price.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Implementation and data migration",
+        "amount": 886000
+      },
+      {
+        "item": "2",
+        "description": "Integration with district systems",
+        "amount": 295000
+      },
+      {
+        "item": "3",
+        "description": "Training and change management",
+        "amount": 804000
+      },
+      {
+        "item": "4",
+        "description": "Hosting, support and maintenance",
+        "amount": 565000
+      },
+      {
+        "item": "5",
+        "description": "Hardware and devices",
+        "amount": 433000
+      },
+      {
+        "item": "6",
+        "description": "Software subscription and licenses",
+        "amount": 345000
+      }
+    ],
+    "stated_total": 3328000
+  },
+  "S24-bluewater-price.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Implementation and data migration",
+        "amount": 295000
+      },
+      {
+        "item": "2",
+        "description": "Software subscription and licenses",
+        "amount": 290000
+      },
+      {
+        "item": "3",
+        "description": "Hosting, support and maintenance",
+        "amount": 674000
+      },
+      {
+        "item": "4",
+        "description": "Integration with district systems",
+        "amount": 770000
+      },
+      {
+        "item": "5",
+        "description": "Training and change management",
+        "amount": 720000
+      }
+    ],
+    "stated_total": 2749000
+  },
+  "S25-highmark-price.pdf": {
+    "split": "holdout",
+    "framework": "sled",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Implementation and data migration",
+        "amount": 764000
+      },
+      {
+        "item": "2",
+        "description": "Hosting, support and maintenance",
+        "amount": 268000
+      },
+      {
+        "item": "3",
+        "description": "Hardware and devices",
+        "amount": 119000
+      },
+      {
+        "item": "4",
+        "description": "Software subscription and licenses",
+        "amount": 639000
+      },
+      {
+        "item": "5",
+        "description": "Integration with district systems",
+        "amount": 658000
+      }
+    ],
+    "stated_total": 2448000
+  },
+  "S26-pinecrest-price.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Hardware and devices",
+        "amount": 346000
+      },
+      {
+        "item": "2",
+        "description": "Hosting, support and maintenance",
+        "amount": 650000
+      },
+      {
+        "item": "3",
+        "description": "Training and change management",
+        "amount": 698000
+      },
+      {
+        "item": "4",
+        "description": "Software subscription and licenses",
+        "amount": 636000
+      },
+      {
+        "item": "5",
+        "description": "Integration with district systems",
+        "amount": 37000
+      }
+    ],
+    "stated_total": 2367000
+  },
+  "S27-cedarline-price.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Training and change management",
+        "amount": 195000
+      },
+      {
+        "item": "2",
+        "description": "Software subscription and licenses",
+        "amount": 265000
+      },
+      {
+        "item": "3",
+        "description": "Hosting, support and maintenance",
+        "amount": 797000
+      },
+      {
+        "item": "4",
+        "description": "Integration with district systems",
+        "amount": 158000
+      },
+      {
+        "item": "5",
+        "description": "Implementation and data migration",
+        "amount": 362000
+      }
+    ],
+    "stated_total": 1777000
+  },
+  "S28-evergreen-price.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "periods",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Hosting, support and maintenance",
+        "amount": 300000
+      },
+      {
+        "item": "2",
+        "description": "Software subscription and licenses",
+        "amount": 56000
+      },
+      {
+        "item": "3",
+        "description": "Training and change management",
+        "amount": 830000
+      },
+      {
+        "item": "4",
+        "description": "Hardware and devices",
+        "amount": 262000
+      }
+    ],
+    "stated_total": 1448000
+  },
+  "S29-larkspur-price.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "section_b",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Software subscription and licenses",
+        "amount": 511000
+      },
+      {
+        "item": "2",
+        "description": "Implementation and data migration",
+        "amount": 162000
+      },
+      {
+        "item": "3",
+        "description": "Hosting, support and maintenance",
+        "amount": 113000
+      },
+      {
+        "item": "4",
+        "description": "Training and change management",
+        "amount": 556000
+      },
+      {
+        "item": "5",
+        "description": "Hardware and devices",
+        "amount": 750000
+      }
+    ],
+    "stated_total": 2092000
+  },
+  "S30-inlet-price.pdf": {
+    "split": "holdout",
+    "framework": "sled",
+    "layout": "simple",
+    "lines": [
+      {
+        "item": "1",
+        "description": "Training and change management",
+        "amount": 740000
+      },
+      {
+        "item": "2",
+        "description": "Hosting, support and maintenance",
+        "amount": 240000
+      },
+      {
+        "item": "3",
+        "description": "Implementation and data migration",
+        "amount": 579000
+      },
+      {
+        "item": "4",
+        "description": "Software subscription and licenses",
+        "amount": 157000
+      },
+      {
+        "item": "5",
+        "description": "Integration with district systems",
+        "amount": 202000
+      }
+    ],
+    "stated_total": 1958000
+  }
+}

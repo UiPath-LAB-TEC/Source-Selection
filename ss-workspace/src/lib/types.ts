@@ -77,6 +77,8 @@ export interface Offeror {
   PriceLinesJson?: string
   TotalEvaluatedPrice?: number
   IgceVariancePct?: number
+  /** What intake extracted (IXP or the fallback rules): see components/Extraction.tsx. */
+  ExtractionJson?: string
 }
 
 export interface ProposalPage {

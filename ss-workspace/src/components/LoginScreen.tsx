@@ -60,7 +60,7 @@ function PersonaPicker({ value, onChange, disabled }: { value: PersonaId; onChan
   const current = people.find((p) => p.id === value)!
   return (
     <div className="space-y-1.5">
-      <label className="text-sm font-medium" id="ss-signin-as">Sign in as</label>
+      <label className="text-sm font-medium" id="ss-signin-as">User Role</label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <button type="button" disabled={disabled} aria-labelledby="ss-signin-as"
@@ -133,7 +133,7 @@ export function LoginScreen({ onLogin, error, busy = false, still = false, statu
         <div className="ss-in w-full max-w-sm space-y-6">
           <div className="space-y-1.5">
             <h2 className="text-2xl font-semibold tracking-tight">Sign in</h2>
-            <p className="text-sm text-muted-foreground">Use your UiPath account, then work the {t.process} as the persona you pick.</p>
+            <p className="text-sm text-muted-foreground">Select a user role, then work the {t.process} as the persona you pick.</p>
           </div>
           <div className="space-y-1.5">
             <span className="text-sm font-medium">Workspace</span>

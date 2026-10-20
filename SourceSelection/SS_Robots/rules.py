@@ -34,7 +34,7 @@ def clean_page(raw: str, solicitation_id: str) -> str:
 
 def parse_cover(text: str) -> dict:
     """Offeror identification from the cover letter (federal) or transmittal letter (State & Local: a state vendor ID
-    instead of UEI and CAGE). IXP (SS_ProposalExtraction) replaces this when deployed."""
+    instead of UEI and CAGE). The fallback when IXP can't be reached (extraction.cover)."""
     def grab(pattern: str) -> str:
         m = re.search(pattern, text)
         return m.group(1).strip() if m else ""
@@ -58,13 +58,67 @@ def parse_price(text: str) -> tuple[list[dict], float | None]:
 
 # ── Compliance and responsibility ───────────────────────────────────────────
 
-def screen(plan: dict, volumes: dict[str, int], ref: dict | None) -> tuple[str, list[str]]:
-    """Volumes present, page limits, SAM status and exclusion, FAPIIS. Returns (status, notes).
-    State & Local: required sections, page limits, state vendor registration and the state debarment list."""
+CERTIFICATIONS = {"nonCollusion": "Non-collusion affidavit", "debarment": "Suspension and debarment certification",
+                  "dataPrivacy": "Student data privacy agreement"}
+
+
+def certification_issues(plan: dict, certs: dict | None) -> tuple[str | None, list[str]]:
+    """What the cover letter's certifications (as extracted) mean for compliance: on a district RFP a missing required
+    form makes the proposal non-compliant; on a federal offer, SAM representations that aren't current are a
+    responsibility concern. Unknown (None) values raise nothing."""
+    certs = certs or {}
+    if is_sled(plan):
+        missing = [label for key, label in CERTIFICATIONS.items() if certs.get(key) is False]
+        return ("Non-compliant", [f"Required form not enclosed: {', '.join(missing)}."]) if missing else (None, [])
+    if certs.get("samRepsCurrent") is False:
+        return "Responsibility concern", ["SAM representations and certifications are not current."]
+    return None, []
+
+
+def _contract_key(s: str | None) -> str:
+    return re.sub(r"[^A-Z0-9]", "", (s or "").upper())
+
+
+CPARS_RATINGS = ["Exceptional", "Very Good", "Satisfactory", "Marginal", "Unsatisfactory"]
+
+
+def _rating(text: str) -> str:
+    """The first CPARS rating named ("Very Good in quality, Satisfactory in schedule" → "very good"): quality comes
+    first, as in CPARS itself. Text with no CPARS rating is compared as written."""
+    hits = [(m.start(), r) for r in CPARS_RATINGS for m in [re.search(rf"\b{r}\b", text or "", re.I)] if m]
+    return min(hits)[1].casefold() if hits else (text or "").strip().casefold()
+
+
+def cpars_check(references: list[dict], cpars: list[dict], federal: bool = True) -> list[str]:
+    """Each claimed past performance rating against the CPARS record for that contract: a different rating, or (federal)
+    a claimed contract with no assessment on file. These inform the past performance evaluators; they aren't a
+    compliance finding."""
+    record = {_contract_key(c.get("contract")): c for c in cpars}
+    notes = []
+    for r in references:
+        claimed = (r.get("rating") or "").strip()
+        c = record.get(_contract_key(r.get("contract")))
+        if c is None:
+            if federal and r.get("contract") and claimed:
+                notes.append(f"No CPARS assessment on file for {r['contract']} (claimed {claimed}).")
+        elif claimed and _rating(claimed) != _rating(str(c.get("rating", ""))):
+            year = f" ({c['year']})" if c.get("year") else ""
+            notes.append(f"Claims {claimed} on {r['contract']}; CPARS shows {c['rating']}{year}.")
+    return notes
+
+
+def screen(plan: dict, volumes: dict[str, int], ref: dict | None, certs: dict | None = None) -> tuple[str, list[str]]:
+    """Volumes present, page limits, SAM status and exclusion, FAPIIS, and the certifications the cover letter carries.
+    Returns (status, notes). State & Local: required sections and forms, page limits, state vendor registration and the
+    state debarment list."""
     sled = is_sled(plan)
     reg = "state vendor registration" if sled else "SAM registration"
     notes: list[str] = []
     status = "Compliant"
+    cert_status, cert_notes = certification_issues(plan, certs)
+    notes += cert_notes
+    if cert_status == "Non-compliant":
+        status = "Non-compliant"
     missing = [v for v in plan["submission"]["volumes"] if v not in volumes]
     if missing:
         status = "Non-compliant"
@@ -76,6 +130,8 @@ def screen(plan: dict, volumes: dict[str, int], ref: dict | None) -> tuple[str, 
         notes.append(f"Page limit exceeded: {', '.join(over)}.")
     if not missing and not over:
         notes.append(f"All required {'sections' if sled else 'volumes'} received; page limits met.")
+    if cert_status == "Responsibility concern" and status == "Compliant":
+        status = "Responsibility concern"
     if ref is None:
         notes.append(f"No {reg} found for the {'vendor ID' if sled else 'UEI'}.")
         return ("Non-compliant" if status == "Non-compliant" else "Responsibility concern"), notes

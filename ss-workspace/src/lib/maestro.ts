@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react'
 import type { UiPath } from '@uipath/uipath-typescript/core'
 import { ProcessInstances } from '@uipath/uipath-typescript/maestro-processes'
 import type { ProcessInstanceExecutionHistoryResponse, ProcessInstanceGetResponse } from '@uipath/uipath-typescript/maestro-processes'
+import { PROCESS_FOLDER } from './data'
 import { solicitationSlots } from './roles'
 import type { Solicitation } from './types'
 
 /** The BPMN process the solution deploys (SourceSelection/SourceSelectionProcess). */
 export const PROCESS_PACKAGE = 'SourceSelection.Agentic.SourceSelectionProcess'
 const MAESTRO = 'https://cloud.uipath.com/uipathlabs/Playground/maestro_'
+/** Why a recorded run can't be shown: the user has no role on the Orchestrator folder it runs in. */
+export const NO_ACCESS = 'Your account has no access to the Source Selection folder in Orchestrator, where this run and its tasks live. Ask the demo owner to add you to it.'
 
 export type TaskKind = 'robot' | 'agent' | 'human'
 export interface LiveTask { id: string; name: string; kind: TaskKind; status: string; startedTime?: string; completedTime?: string }
@@ -90,6 +93,10 @@ async function findInstance(sdk: UiPath, sol: Solicitation): Promise<ProcessInst
   if (sol.CaseInstanceId) {
     const hit = newest.find((x) => x.instanceId === sol.CaseInstanceId)
     if (hit) return hit
+    // The listing only covers folders the signed-in user can open: a recorded run missing from it is usually out of reach.
+    const direct = await pi.getById(sol.CaseInstanceId, PROCESS_FOLDER.folderKey).catch(() => undefined)
+    if (direct) return direct
+    if (!newest.length) throw new Error(NO_ACCESS)
   }
   for (const x of newest.slice(0, 8)) {
     const vars = await pi.getVariables(x.instanceId, x.folderKey).catch(() => undefined)

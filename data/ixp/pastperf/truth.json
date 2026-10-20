@@ -1,0 +1,1502 @@
+{
+  "F01-ridgeway-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Enterprise Cloud Migration",
+        "customer": "Naval Information Warfare Center",
+        "contract": "47QTCA-21-C-0492",
+        "value": 31000000,
+        "period": "May 2021 \u2013 September 2023",
+        "rating": "Very Good",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Case Management System Sustainment",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "75FCMC-22-C-7977",
+        "value": 29000000,
+        "period": "September 2022 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Zero Trust Architecture Implementation",
+        "customer": "Air Force Life Cycle Management Center",
+        "contract": "70CMSD-21-C-3758",
+        "value": 33000000,
+        "period": "November 2021 \u2013 April 2023",
+        "rating": "Very Good",
+        "relevance": "Very relevant"
+      }
+    ]
+  },
+  "F02-upland-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Benefits Claims Processing Modernization",
+        "customer": "Defense Health Agency",
+        "contract": "47QTCA-20-C-6751",
+        "value": 22000000,
+        "period": "March 2020 \u2013 July 2022",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "Army Contracting Command",
+        "contract": "75FCMC-20-C-6155",
+        "value": 24000000,
+        "period": "March 2020 \u2013 September 2024",
+        "rating": "Exceptional",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "Naval Information Warfare Center",
+        "contract": "70CMSD-19-C-2835",
+        "value": 7000000,
+        "period": "June 2019 \u2013 March 2021",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F03-glacier-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Zero Trust Architecture Implementation",
+        "customer": "Department of Homeland Security",
+        "contract": "36C10B-21-C-6026",
+        "value": 6000000,
+        "period": "September 2021 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Mission Application Rationalization",
+        "customer": "General Services Administration",
+        "contract": "FA8732-22-D-6455",
+        "value": 38000000,
+        "period": "December 2022 \u2013 January 2024",
+        "rating": "Satisfactory",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Mission Application Rationalization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "75N950-20-F-0073",
+        "value": 5000000,
+        "period": "April 2020 \u2013 March 2025",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F04-orchard-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Case Management System Sustainment",
+        "customer": "Department of Veterans Affairs",
+        "contract": "W91QUZ-19-C-6396",
+        "value": 35000000,
+        "period": "October 2019 \u2013 January 2022",
+        "rating": "Marginal",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Research Data Commons",
+        "customer": "Naval Information Warfare Center",
+        "contract": "N66001-23-C-2580",
+        "value": 10000000,
+        "period": "April 2023 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "Air Force Life Cycle Management Center",
+        "contract": "47QTCA-21-D-2942",
+        "value": 21000000,
+        "period": "August 2021 \u2013 May 2023",
+        "rating": "Exceptional",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F05-northfield-pastperf.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Enterprise Cloud Migration",
+        "customer": "Naval Information Warfare Center",
+        "contract": "75N950-23-D-2007",
+        "value": 36000000,
+        "period": "June 2023 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Zero Trust Architecture Implementation",
+        "customer": "Defense Health Agency",
+        "contract": "75FCMC-23-D-3946",
+        "value": 5000000,
+        "period": "July 2023 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Case Management System Sustainment",
+        "customer": "Defense Health Agency",
+        "contract": "36C10B-22-F-3328",
+        "value": 32000000,
+        "period": "May 2022 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Somewhat relevant"
+      }
+    ]
+  },
+  "F06-copperfield-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "DevSecOps Software Factory",
+        "customer": "Department of Veterans Affairs",
+        "contract": "75N950-19-D-8060",
+        "value": 38000000,
+        "period": "June 2019 \u2013 November 2021",
+        "rating": "Marginal",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Research Data Commons",
+        "customer": "Department of Veterans Affairs",
+        "contract": "N66001-22-F-2737",
+        "value": 24000000,
+        "period": "April 2022 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Enterprise Cloud Migration",
+        "customer": "Army Contracting Command",
+        "contract": "36C10B-23-C-0853",
+        "value": 31000000,
+        "period": "June 2023 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F07-granite-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "Air Force Life Cycle Management Center",
+        "contract": "75FCMC-23-C-4628",
+        "value": 29000000,
+        "period": "August 2023 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Research Data Commons",
+        "customer": "Department of Homeland Security",
+        "contract": "N66001-19-C-2683",
+        "value": 35000000,
+        "period": "January 2019 \u2013 December 2022",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "DevSecOps Software Factory",
+        "customer": "Army Contracting Command",
+        "contract": "70CMSD-21-D-9381",
+        "value": 35000000,
+        "period": "January 2021 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Very relevant"
+      }
+    ]
+  },
+  "F08-cedarline-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "Air Force Life Cycle Management Center",
+        "contract": "75FCMC-22-D-6540",
+        "value": 4000000,
+        "period": "January 2022 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Research Data Commons",
+        "customer": "Army Contracting Command",
+        "contract": "W91QUZ-19-F-5745",
+        "value": 34000000,
+        "period": "July 2019 \u2013 October 2022",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Zero Trust Architecture Implementation",
+        "customer": "National Institutes of Health",
+        "contract": "HT0011-21-C-2717",
+        "value": 21000000,
+        "period": "June 2021 \u2013 April 2023",
+        "rating": "Marginal",
+        "relevance": "Very relevant"
+      }
+    ]
+  },
+  "F09-meridian-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Zero Trust Architecture Implementation",
+        "customer": "Air Force Life Cycle Management Center",
+        "contract": "FA8732-20-F-5416",
+        "value": 7000000,
+        "period": "February 2020 \u2013 February 2025",
+        "rating": "Very Good",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "National Institutes of Health",
+        "contract": "HT0011-22-C-3278",
+        "value": 34000000,
+        "period": "April 2022 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Logistics Analytics Platform",
+        "customer": "National Institutes of Health",
+        "contract": "FA8732-22-D-0582",
+        "value": 29000000,
+        "period": "March 2022 \u2013 December 2024",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F10-westbrook-pastperf.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Benefits Claims Processing Modernization",
+        "customer": "General Services Administration",
+        "contract": "36C10B-23-C-5663",
+        "value": 13000000,
+        "period": "January 2023 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "HT0011-21-F-5715",
+        "value": 27000000,
+        "period": "July 2021 \u2013 June 2024",
+        "rating": "Exceptional",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Financial Systems Integration",
+        "customer": "Defense Health Agency",
+        "contract": "HT0011-23-F-0269",
+        "value": 8000000,
+        "period": "January 2023 \u2013 June 2025",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F11-foxglove-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Enterprise Cloud Migration",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "36C10B-20-D-9928",
+        "value": 10000000,
+        "period": "May 2020 \u2013 December 2024",
+        "rating": "Very Good",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Enterprise Cloud Migration",
+        "customer": "General Services Administration",
+        "contract": "W91QUZ-20-C-4221",
+        "value": 26000000,
+        "period": "November 2020 \u2013 August 2022",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Zero Trust Architecture Implementation",
+        "customer": "Defense Health Agency",
+        "contract": "75N950-20-D-9949",
+        "value": 37000000,
+        "period": "June 2020 \u2013 July 2025",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F12-meridian-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Research Data Commons",
+        "customer": "Department of Homeland Security",
+        "contract": "N66001-20-D-9395",
+        "value": 29000000,
+        "period": "October 2020 \u2013 October 2023",
+        "rating": "Satisfactory",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Logistics Analytics Platform",
+        "customer": "Department of Veterans Affairs",
+        "contract": "36C10B-19-C-7379",
+        "value": 35000000,
+        "period": "July 2019 \u2013 August 2024",
+        "rating": "Marginal",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Logistics Analytics Platform",
+        "customer": "General Services Administration",
+        "contract": "75N950-23-F-3231",
+        "value": 40000000,
+        "period": "June 2023 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Very relevant"
+      }
+    ]
+  },
+  "F13-copperfield-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Enterprise Cloud Migration",
+        "customer": "Department of Veterans Affairs",
+        "contract": "W91QUZ-21-D-4867",
+        "value": 11000000,
+        "period": "July 2021 \u2013 November 2024",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "DevSecOps Software Factory",
+        "customer": "Naval Information Warfare Center",
+        "contract": "FA8732-19-D-1905",
+        "value": 24000000,
+        "period": "October 2019 \u2013 August 2024",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Logistics Analytics Platform",
+        "customer": "General Services Administration",
+        "contract": "75N950-23-C-1135",
+        "value": 16000000,
+        "period": "September 2023 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F14-northfield-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Case Management System Sustainment",
+        "customer": "Naval Information Warfare Center",
+        "contract": "75N950-20-C-1573",
+        "value": 34000000,
+        "period": "May 2020 \u2013 May 2025",
+        "rating": "Exceptional",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Zero Trust Architecture Implementation",
+        "customer": "General Services Administration",
+        "contract": "FA8732-23-D-4799",
+        "value": 25000000,
+        "period": "June 2023 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Mission Application Rationalization",
+        "customer": "Army Contracting Command",
+        "contract": "N66001-19-C-0613",
+        "value": 37000000,
+        "period": "January 2019 \u2013 April 2021",
+        "rating": "Very Good",
+        "relevance": "Somewhat relevant"
+      }
+    ]
+  },
+  "F15-tidewater-pastperf.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Benefits Claims Processing Modernization",
+        "customer": "General Services Administration",
+        "contract": "N66001-19-D-5532",
+        "value": 21000000,
+        "period": "March 2019 \u2013 November 2023",
+        "rating": "Satisfactory",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Zero Trust Architecture Implementation",
+        "customer": "Department of Veterans Affairs",
+        "contract": "70CMSD-20-D-9583",
+        "value": 38000000,
+        "period": "January 2020 \u2013 July 2022",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Mission Application Rationalization",
+        "customer": "National Institutes of Health",
+        "contract": "W91QUZ-23-C-8169",
+        "value": 16000000,
+        "period": "December 2023 \u2013 November 2025",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F16-tidewater-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "70CMSD-21-F-3330",
+        "value": 15000000,
+        "period": "September 2021 \u2013 December 2023",
+        "rating": "Exceptional",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Benefits Claims Processing Modernization",
+        "customer": "Air Force Life Cycle Management Center",
+        "contract": "75FCMC-23-D-0587",
+        "value": 13000000,
+        "period": "November 2023 \u2013 December 2025",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Benefits Claims Processing Modernization",
+        "customer": "Naval Information Warfare Center",
+        "contract": "HT0011-20-F-5018",
+        "value": 39000000,
+        "period": "August 2020 \u2013 June 2022",
+        "rating": "Very Good",
+        "relevance": "Very relevant"
+      }
+    ]
+  },
+  "F17-ridgeway-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Logistics Analytics Platform",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "HT0011-20-F-9229",
+        "value": 8000000,
+        "period": "November 2020 \u2013 February 2024",
+        "rating": "Exceptional",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Research Data Commons",
+        "customer": "Department of Homeland Security",
+        "contract": "70CMSD-22-F-6040",
+        "value": 36000000,
+        "period": "February 2022 \u2013 present",
+        "rating": "Very Good",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "DevSecOps Software Factory",
+        "customer": "National Institutes of Health",
+        "contract": "75FCMC-21-D-9604",
+        "value": 20000000,
+        "period": "October 2021 \u2013 October 2024",
+        "rating": "Satisfactory",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F18-yarrow-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Financial Systems Integration",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "FA8732-21-C-5450",
+        "value": 3000000,
+        "period": "February 2021 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Enterprise Cloud Migration",
+        "customer": "Air Force Life Cycle Management Center",
+        "contract": "47QTCA-23-F-2045",
+        "value": 38000000,
+        "period": "April 2023 \u2013 July 2025",
+        "rating": "Exceptional",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "DevSecOps Software Factory",
+        "customer": "Army Contracting Command",
+        "contract": "75N950-21-C-7034",
+        "value": 15000000,
+        "period": "January 2021 \u2013 February 2025",
+        "rating": "Marginal",
+        "relevance": "Somewhat relevant"
+      }
+    ]
+  },
+  "F19-foxglove-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "table",
+    "references": [
+      {
+        "program": "DevSecOps Software Factory",
+        "customer": "General Services Administration",
+        "contract": "70CMSD-21-D-1931",
+        "value": 15000000,
+        "period": "February 2021 \u2013 April 2025",
+        "rating": "Marginal",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Logistics Analytics Platform",
+        "customer": "Department of Veterans Affairs",
+        "contract": "W91QUZ-19-F-5459",
+        "value": 34000000,
+        "period": "March 2019 \u2013 November 2023",
+        "rating": "Marginal",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Clinical Data Warehouse Modernization",
+        "customer": "Naval Information Warfare Center",
+        "contract": "HT0011-20-D-0919",
+        "value": 29000000,
+        "period": "February 2020 \u2013 July 2022",
+        "rating": "Marginal",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "F20-larkspur-pastperf.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Enterprise Cloud Migration",
+        "customer": "Department of Veterans Affairs",
+        "contract": "75FCMC-19-D-8662",
+        "value": 11000000,
+        "period": "November 2019 \u2013 September 2023",
+        "rating": "Marginal",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Logistics Analytics Platform",
+        "customer": "General Services Administration",
+        "contract": "47QTCA-20-C-7275",
+        "value": 23000000,
+        "period": "March 2020 \u2013 May 2022",
+        "rating": "Very Good",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Case Management System Sustainment",
+        "customer": "General Services Administration",
+        "contract": "W91QUZ-19-C-7338",
+        "value": 19000000,
+        "period": "October 2019 \u2013 November 2024",
+        "rating": "Very Good",
+        "relevance": "Very relevant"
+      }
+    ]
+  },
+  "S21-ironbridge-pastperf.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Student Information System Implementation",
+        "customer": "Maple Hollow County Schools",
+        "contract": "Agreement 2023-739",
+        "value": 3700000,
+        "period": "January 2023 \u2013 present",
+        "rating": "Satisfactory (3 of 5)",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Special Education Case Management",
+        "customer": "Riverbend School District",
+        "contract": "Agreement 2019-586",
+        "value": 2400000,
+        "period": "June 2019 \u2013 May 2021",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Student Information System Implementation",
+        "customer": "Eastgate Public Schools",
+        "contract": "Agreement 2021-180",
+        "value": 500000,
+        "period": "September 2021 \u2013 present",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "S22-ridgeway-pastperf.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Special Education Case Management",
+        "customer": "North Fork Unified School District",
+        "contract": "Agreement 2019-240",
+        "value": 1700000,
+        "period": "April 2019 \u2013 April 2021",
+        "rating": "Good (4 of 5)",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Student Information System Implementation",
+        "customer": "Riverbend School District",
+        "contract": "Agreement 2021-837",
+        "value": 2300000,
+        "period": "July 2021 \u2013 November 2025",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Parent Communication Platform",
+        "customer": "Riverbend School District",
+        "contract": "Agreement 2020-844",
+        "value": 3500000,
+        "period": "December 2020 \u2013 March 2022",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "S23-evergreen-pastperf.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Special Education Case Management",
+        "customer": "Silver Creek Independent School District",
+        "contract": "Agreement 2021-374",
+        "value": 3100000,
+        "period": "December 2021 \u2013 March 2024",
+        "rating": "Good (4 of 5)",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Parent Communication Platform",
+        "customer": "Lakeshore Unified School District",
+        "contract": "Agreement 2019-992",
+        "value": 3000000,
+        "period": "January 2019 \u2013 September 2024",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Transportation Routing Software",
+        "customer": "Bayview Unified School District",
+        "contract": "Agreement 2022-463",
+        "value": 1000000,
+        "period": "April 2022 \u2013 April 2025",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "S24-bluewater-pastperf.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Learning Management System Rollout",
+        "customer": "Bayview Unified School District",
+        "contract": "Agreement 2023-679",
+        "value": 600000,
+        "period": "October 2023 \u2013 present",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Parent Communication Platform",
+        "customer": "Silver Creek Independent School District",
+        "contract": "Agreement 2019-995",
+        "value": 2900000,
+        "period": "June 2019 \u2013 July 2024",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Special Education Case Management",
+        "customer": "Pine Ridge Public Schools",
+        "contract": "Agreement 2020-457",
+        "value": 2600000,
+        "period": "June 2020 \u2013 March 2023",
+        "rating": "Good (4 of 5)",
+        "relevance": "Very relevant"
+      }
+    ]
+  },
+  "S25-highmark-pastperf.pdf": {
+    "split": "holdout",
+    "framework": "sled",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Nutrition Services Point of Sale",
+        "customer": "Eastgate Public Schools",
+        "contract": "Agreement 2022-285",
+        "value": 2900000,
+        "period": "June 2022 \u2013 present",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Student Information System Implementation",
+        "customer": "Riverbend School District",
+        "contract": "Agreement 2023-875",
+        "value": 3000000,
+        "period": "July 2023 \u2013 August 2025",
+        "rating": "Good (4 of 5)",
+        "relevance": "Somewhat relevant"
+      },
+      {
+        "program": "Parent Communication Platform",
+        "customer": "Lakeshore Unified School District",
+        "contract": "Agreement 2023-621",
+        "value": 3200000,
+        "period": "August 2023 \u2013 present",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Very relevant"
+      }
+    ]
+  },
+  "S26-pinecrest-pastperf.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Nutrition Services Point of Sale",
+        "customer": "North Fork Unified School District",
+        "contract": "Agreement 2021-268",
+        "value": 2700000,
+        "period": "April 2021 \u2013 October 2024",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Parent Communication Platform",
+        "customer": "Bayview Unified School District",
+        "contract": "Agreement 2022-656",
+        "value": 1300000,
+        "period": "April 2022 \u2013 present",
+        "rating": "Good (4 of 5)",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Student Information System Implementation",
+        "customer": "Lakeshore Unified School District",
+        "contract": "Agreement 2022-451",
+        "value": 3900000,
+        "period": "August 2022 \u2013 present",
+        "rating": "Satisfactory (3 of 5)",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "S27-cedarline-pastperf.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Learning Management System Rollout",
+        "customer": "Silver Creek Independent School District",
+        "contract": "Agreement 2021-288",
+        "value": 3700000,
+        "period": "January 2021 \u2013 present",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Learning Management System Rollout",
+        "customer": "Silver Creek Independent School District",
+        "contract": "Agreement 2023-740",
+        "value": 1500000,
+        "period": "March 2023 \u2013 present",
+        "rating": "Good (4 of 5)",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Learning Management System Rollout",
+        "customer": "Silver Creek Independent School District",
+        "contract": "Agreement 2022-843",
+        "value": 2300000,
+        "period": "October 2022 \u2013 present",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Somewhat relevant"
+      }
+    ]
+  },
+  "S28-evergreen-pastperf.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "table",
+    "references": [
+      {
+        "program": "Learning Management System Rollout",
+        "customer": "Lakeshore Unified School District",
+        "contract": "Agreement 2023-532",
+        "value": 3900000,
+        "period": "September 2023 \u2013 present",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Student Information System Implementation",
+        "customer": "Maple Hollow County Schools",
+        "contract": "Agreement 2021-248",
+        "value": 2000000,
+        "period": "June 2021 \u2013 April 2024",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Nutrition Services Point of Sale",
+        "customer": "Riverbend School District",
+        "contract": "Agreement 2020-662",
+        "value": 2400000,
+        "period": "November 2020 \u2013 September 2023",
+        "rating": "Satisfactory (3 of 5)",
+        "relevance": "Relevant"
+      }
+    ]
+  },
+  "S29-larkspur-pastperf.pdf": {
+    "split": "train",
+    "framework": "sled",
+    "layout": "headed",
+    "references": [
+      {
+        "program": "Learning Management System Rollout",
+        "customer": "Riverbend School District",
+        "contract": "Agreement 2020-445",
+        "value": 2400000,
+        "period": "July 2020 \u2013 April 2025",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Transportation Routing Software",
+        "customer": "Silver Creek Independent School District",
+        "contract": "Agreement 2022-107",
+        "value": 1300000,
+        "period": "June 2022 \u2013 August 2025",
+        "rating": "Good (4 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Learning Management System Rollout",
+        "customer": "Eastgate Public Schools",
+        "contract": "Agreement 2022-177",
+        "value": 2500000,
+        "period": "June 2022 \u2013 present",
+        "rating": "Excellent (5 of 5)",
+        "relevance": "Somewhat relevant"
+      }
+    ]
+  },
+  "S30-inlet-pastperf.pdf": {
+    "split": "holdout",
+    "framework": "sled",
+    "layout": "narrative",
+    "references": [
+      {
+        "program": "Special Education Case Management",
+        "customer": "Silver Creek Independent School District",
+        "contract": "Agreement 2019-501",
+        "value": 3500000,
+        "period": "December 2019 \u2013 March 2023",
+        "rating": "Good (4 of 5)",
+        "relevance": "Very relevant"
+      },
+      {
+        "program": "Special Education Case Management",
+        "customer": "Lakeshore Unified School District",
+        "contract": "Agreement 2020-613",
+        "value": 1200000,
+        "period": "May 2020 \u2013 January 2025",
+        "rating": "Satisfactory (3 of 5)",
+        "relevance": "Relevant"
+      },
+      {
+        "program": "Student Information System Implementation",
+        "customer": "Eastgate Public Schools",
+        "contract": "Agreement 2021-728",
+        "value": 4000000,
+        "period": "March 2021 \u2013 present",
+        "rating": "Good (4 of 5)",
+        "relevance": "Somewhat relevant"
+      }
+    ]
+  },
+  "F31-evergreen-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Space Systems Command DevSecOps Platform",
+        "customer": "Space Systems Command",
+        "contract": "W91QUZ-20-C-7485",
+        "value": 21700000,
+        "period": "July 2020 \u2013 April 2025",
+        "rating": "Satisfactory",
+        "relevance": null,
+        "start": "2020",
+        "end": "2023"
+      },
+      {
+        "program": "Defense Logistics Agency Supply Chain Analytics",
+        "customer": "Defense Logistics Agency",
+        "contract": "FA8732-22-C-4612",
+        "value": 32700000,
+        "period": "May 2022 \u2013 present",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2022",
+        "end": "present"
+      },
+      {
+        "program": "Army Contracting Command Readiness Analytics",
+        "customer": "Army Contracting Command",
+        "contract": "47QTCA-21-F-0104",
+        "value": 9400000,
+        "period": "July 2021 \u2013 present",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2021",
+        "end": "present"
+      }
+    ]
+  },
+  "F32-highmark-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Department of the Navy Cloud Hosting",
+        "customer": "Department of the Navy",
+        "contract": "FA8732-19-F-6982",
+        "value": 31700000,
+        "period": "December 2019 \u2013 November 2023",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2019",
+        "end": "2022"
+      },
+      {
+        "program": "Air Force Materiel Command Application Migration",
+        "customer": "Air Force Materiel Command",
+        "contract": "70CMSD-23-C-1059",
+        "value": 10900000,
+        "period": "August 2023 \u2013 present",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2023",
+        "end": "present"
+      },
+      {
+        "program": "Department of Homeland Security Case Management Sustainment",
+        "customer": "Department of Homeland Security",
+        "contract": "47QTCA-20-D-0361",
+        "value": 25300000,
+        "period": "June 2020 \u2013 November 2025",
+        "rating": "Satisfactory",
+        "relevance": null,
+        "start": "2020",
+        "end": "2024"
+      }
+    ]
+  },
+  "F33-glacier-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Space Systems Command DevSecOps Platform",
+        "customer": "Space Systems Command",
+        "contract": "W91QUZ-21-C-5577",
+        "value": 16900000,
+        "period": "May 2021 \u2013 December 2023",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2021",
+        "end": "2023"
+      },
+      {
+        "program": "Department of the Navy Cloud Hosting",
+        "customer": "Department of the Navy",
+        "contract": "FA8732-21-D-1657",
+        "value": 15500000,
+        "period": "November 2021 \u2013 July 2023",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2021",
+        "end": "2023"
+      },
+      {
+        "program": "Army Contracting Command Readiness Analytics",
+        "customer": "Army Contracting Command",
+        "contract": "36C10B-22-F-6318",
+        "value": 5400000,
+        "period": "January 2022 \u2013 present",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2022",
+        "end": "present"
+      }
+    ]
+  },
+  "F34-bluewater-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Department of Veterans Affairs Benefits Intake Platform",
+        "customer": "Department of Veterans Affairs",
+        "contract": "W91QUZ-22-F-0825",
+        "value": 44100000,
+        "period": "May 2022 \u2013 November 2025",
+        "rating": "Satisfactory",
+        "relevance": null,
+        "start": "2022",
+        "end": "2026"
+      },
+      {
+        "program": "Department of Homeland Security Case Management Sustainment",
+        "customer": "Department of Homeland Security",
+        "contract": "W91QUZ-22-C-6623",
+        "value": 40800000,
+        "period": "August 2022 \u2013 June 2025",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2022",
+        "end": "2024"
+      },
+      {
+        "program": "Air Force Materiel Command Application Migration",
+        "customer": "Air Force Materiel Command",
+        "contract": "FA8732-23-C-3393",
+        "value": 8600000,
+        "period": "August 2023 \u2013 present",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2023",
+        "end": "present"
+      }
+    ]
+  },
+  "F35-upland-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Air Force Materiel Command Application Migration",
+        "customer": "Air Force Materiel Command",
+        "contract": "HT0011-20-F-9306",
+        "value": 7600000,
+        "period": "December 2020 \u2013 May 2023",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2020",
+        "end": "2023"
+      },
+      {
+        "program": "National Cancer Institute Data Commons Operations",
+        "customer": "National Cancer Institute",
+        "contract": "N66001-19-F-2895",
+        "value": 22900000,
+        "period": "July 2019 \u2013 July 2024",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2019",
+        "end": "2022"
+      },
+      {
+        "program": "Centers for Medicare & Medicaid Services Claims Data Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "FA8732-20-C-0066",
+        "value": 16700000,
+        "period": "April 2020 \u2013 June 2023",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2020",
+        "end": "2024"
+      }
+    ]
+  },
+  "F36-vantage-pastperf.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Department of Homeland Security Case Management Sustainment",
+        "customer": "Department of Homeland Security",
+        "contract": "75FCMC-20-D-2460",
+        "value": 15000000,
+        "period": "May 2020 \u2013 October 2023",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2020",
+        "end": "2022"
+      },
+      {
+        "program": "Department of Veterans Affairs Benefits Intake Platform",
+        "customer": "Department of Veterans Affairs",
+        "contract": "75N950-20-D-0446",
+        "value": 24900000,
+        "period": "October 2020 \u2013 May 2023",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2020",
+        "end": "2022"
+      },
+      {
+        "program": "Army Contracting Command Readiness Analytics",
+        "customer": "Army Contracting Command",
+        "contract": "FA8732-21-F-5341",
+        "value": 15400000,
+        "period": "October 2021 \u2013 present",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2021",
+        "end": "present"
+      }
+    ]
+  },
+  "F37-northfield-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Defense Health Agency Hosting Consolidation",
+        "customer": "Defense Health Agency",
+        "contract": "FA8732-22-D-4066",
+        "value": 15600000,
+        "period": "August 2022 \u2013 August 2025",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2022",
+        "end": "2026"
+      },
+      {
+        "program": "Centers for Medicare & Medicaid Services Claims Data Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "47QTCA-19-D-9326",
+        "value": 11000000,
+        "period": "February 2019 \u2013 October 2024",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2019",
+        "end": "2021"
+      },
+      {
+        "program": "Centers for Medicare & Medicaid Services Claims Data Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "75FCMC-19-C-5098",
+        "value": 21700000,
+        "period": "May 2019 \u2013 November 2022",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2019",
+        "end": "2022"
+      }
+    ]
+  },
+  "F38-quarry-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Department of the Navy Cloud Hosting",
+        "customer": "Department of the Navy",
+        "contract": "HT0011-19-C-6744",
+        "value": 4200000,
+        "period": "January 2019 \u2013 February 2022",
+        "rating": "Satisfactory",
+        "relevance": null,
+        "start": "2019",
+        "end": "2023"
+      },
+      {
+        "program": "Defense Logistics Agency Supply Chain Analytics",
+        "customer": "Defense Logistics Agency",
+        "contract": "FA8732-19-D-7156",
+        "value": 17600000,
+        "period": "February 2019 \u2013 February 2021",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2019",
+        "end": "2023"
+      },
+      {
+        "program": "Air Force Materiel Command Application Migration",
+        "customer": "Air Force Materiel Command",
+        "contract": "HT0011-22-C-6739",
+        "value": 35500000,
+        "period": "August 2022 \u2013 present",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2022",
+        "end": "present"
+      }
+    ]
+  },
+  "F39-vantage-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Space Systems Command DevSecOps Platform",
+        "customer": "Space Systems Command",
+        "contract": "W91QUZ-22-F-1230",
+        "value": 26400000,
+        "period": "April 2022 \u2013 present",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2022",
+        "end": "present"
+      },
+      {
+        "program": "Department of Veterans Affairs Benefits Intake Platform",
+        "customer": "Department of Veterans Affairs",
+        "contract": "FA8732-23-D-2221",
+        "value": 33500000,
+        "period": "September 2023 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": null,
+        "start": "2023",
+        "end": "present"
+      },
+      {
+        "program": "Space Systems Command DevSecOps Platform",
+        "customer": "Space Systems Command",
+        "contract": "36C10B-20-C-0019",
+        "value": 13500000,
+        "period": "November 2020 \u2013 July 2025",
+        "rating": "Satisfactory",
+        "relevance": null,
+        "start": "2020",
+        "end": "2023"
+      }
+    ]
+  },
+  "F40-pinecrest-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Centers for Medicare & Medicaid Services Claims Data Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "HT0011-23-C-6940",
+        "value": 39200000,
+        "period": "January 2023 \u2013 September 2025",
+        "rating": "Satisfactory",
+        "relevance": null,
+        "start": "2023",
+        "end": "2025"
+      },
+      {
+        "program": "Army Contracting Command Readiness Analytics",
+        "customer": "Army Contracting Command",
+        "contract": "36C10B-22-F-6220",
+        "value": 12000000,
+        "period": "December 2022 \u2013 March 2025",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2022",
+        "end": "2026"
+      },
+      {
+        "program": "Centers for Medicare & Medicaid Services Claims Data Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "47QTCA-20-C-9767",
+        "value": 32900000,
+        "period": "November 2020 \u2013 October 2022",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2020",
+        "end": "2024"
+      }
+    ]
+  },
+  "F41-lantern-pastperf.pdf": {
+    "split": "train",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Department of Homeland Security Case Management Sustainment",
+        "customer": "Department of Homeland Security",
+        "contract": "W91QUZ-22-D-2644",
+        "value": 38600000,
+        "period": "December 2022 \u2013 June 2024",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2022",
+        "end": "2026"
+      },
+      {
+        "program": "Space Systems Command DevSecOps Platform",
+        "customer": "Space Systems Command",
+        "contract": "36C10B-22-F-4319",
+        "value": 23800000,
+        "period": "August 2022 \u2013 January 2025",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2022",
+        "end": "2025"
+      },
+      {
+        "program": "Department of Veterans Affairs Benefits Intake Platform",
+        "customer": "Department of Veterans Affairs",
+        "contract": "FA8732-23-C-4899",
+        "value": 10100000,
+        "period": "March 2023 \u2013 present",
+        "rating": "Satisfactory",
+        "relevance": null,
+        "start": "2023",
+        "end": "present"
+      }
+    ]
+  },
+  "F42-driftwood-pastperf.pdf": {
+    "split": "holdout",
+    "framework": "federal",
+    "layout": "areas",
+    "references": [
+      {
+        "program": "Centers for Medicare & Medicaid Services Claims Data Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "HT0011-21-C-1747",
+        "value": 3000000,
+        "period": "June 2021 \u2013 February 2023",
+        "rating": "Exceptional",
+        "relevance": null,
+        "start": "2021",
+        "end": "2024"
+      },
+      {
+        "program": "Space Systems Command DevSecOps Platform",
+        "customer": "Space Systems Command",
+        "contract": "75FCMC-19-D-0654",
+        "value": 36100000,
+        "period": "September 2019 \u2013 November 2021",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2019",
+        "end": "2021"
+      },
+      {
+        "program": "Centers for Medicare & Medicaid Services Claims Data Modernization",
+        "customer": "Centers for Medicare & Medicaid Services",
+        "contract": "70CMSD-23-D-7902",
+        "value": 24900000,
+        "period": "January 2023 \u2013 present",
+        "rating": "Very Good",
+        "relevance": null,
+        "start": "2023",
+        "end": "present"
+      }
+    ]
+  }
+}
