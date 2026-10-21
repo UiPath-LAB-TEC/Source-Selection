@@ -5,14 +5,19 @@ import { Entities } from '@uipath/uipath-typescript/entities'
 import { ProcessInstances } from '@uipath/uipath-typescript/maestro-processes'
 import type { ProcessInstanceGetResponse } from '@uipath/uipath-typescript/maestro-processes'
 import { ENTITY, FOLDER, all } from './data'
+import { AWARD_ENTITY, AWARD_PROCESS_FOLDER } from './apps'
 import { PROPOSALS_BUCKET } from './intake'
 import { PROCESS_PACKAGE, RUNNING } from './maestro'
 import type { Solicitation } from './types'
 
 /** Where the robots file the award record (SSDD, SSEB report, audit trail) under <solicitationId>/. */
 const RECORDS_BUCKET = 'SS-Records'
-/** Children first and the solicitation row last, so a delete that stops part way never leaves rows without a parent. */
-const ENTITIES = [ENTITY.offerors, ENTITY.pages, ENTITY.findings, ENTITY.ratings, ENTITY.decisions, ENTITY.audit, ENTITY.solicitations]
+/**
+ * Children first and the solicitation row last, so a delete that stops part way never leaves rows without a parent. The
+ * Award app's rows go too: the record is one record across both apps.
+ */
+const ENTITIES = [ENTITY.offerors, ENTITY.pages, ENTITY.findings, ENTITY.ratings, ENTITY.decisions, ENTITY.audit,
+  AWARD_ENTITY.correspondence, AWARD_ENTITY.protests, AWARD_ENTITY.awards, ENTITY.solicitations]
 
 export interface DeleteSummary { runsCancelled: number; records: number; files: number }
 
@@ -32,6 +37,14 @@ async function runningRuns(pi: ProcessInstances, sol: Solicitation): Promise<Pro
     if (vars?.globalVariables.some((v) => v.name === 'solicitationId' && String(v.value) === sol.SolicitationId)) out.push(x)
   }
   return out
+}
+
+/** The solicitation's Award-phase runs still going (each SSAward row records its run). */
+async function runningAwardRuns(pi: ProcessInstances, entities: Entities, sol: Solicitation): Promise<ProcessInstanceGetResponse[]> {
+  const rows = (await all<{ SolicitationId?: string; CaseInstanceId?: string }>(entities, AWARD_ENTITY.awards).catch(() => []))
+    .filter((r) => r.SolicitationId === sol.SolicitationId && r.CaseInstanceId)
+  const runs = await Promise.all(rows.map((r) => pi.getById(r.CaseInstanceId!, AWARD_PROCESS_FOLDER.folderKey).catch(() => undefined)))
+  return runs.filter((r): r is ProcessInstanceGetResponse => !!r && RUNNING.has(r.latestRunStatus))
 }
 
 async function filesUnder(buckets: Buckets, bucket: string, solicitationId: string): Promise<string[]> {
@@ -112,19 +125,20 @@ export async function deleteEvaluation(sdk: UiPath, sol: Solicitation, onStep: (
   const id = sol.SolicitationId
   const pi = new ProcessInstances(sdk)
 
+  const entities = new Entities(sdk)
   onStep('Stopping the Maestro run')
-  const runs = await runningRuns(pi, sol)
+  const running = async () => [...await runningRuns(pi, sol), ...await runningAwardRuns(pi, entities, sol)]
+  const runs = await running()
   for (const r of runs) await pi.cancel(r.instanceId, r.folderKey, { comment: `Evaluation ${id} deleted from the workspace` })
   // Let the cancels land before the rows go, so no robot step writes into a solicitation that is being removed.
   for (let i = 0; i < 15 && runs.length; i++) {
-    const still = (await runningRuns(pi, sol)).length
+    const still = (await running()).length
     if (!still) break
     await new Promise((r) => setTimeout(r, 2000))
   }
 
   const files = await deleteFolder(new Buckets(sdk), id, onStep)
 
-  const entities = new Entities(sdk)
   let records = 0
   for (const name of ENTITIES) {
     onStep(`Deleting ${name.replace(/^SS/, '').replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()} records`)

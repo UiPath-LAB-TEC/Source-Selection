@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Bot, ClipboardCheck, Cpu, Database, ScanText, Workflow } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import robot from '../assets/uipath-robot.png'
 
+export interface OrbitProduct { label: string; icon: LucideIcon; title: string }
+
 /** The UiPath products this solution runs on, orbiting the robot. */
-const PRODUCTS = [
+const PRODUCTS: OrbitProduct[] = [
   { label: 'Maestro', icon: Workflow, title: 'Maestro case management runs the evaluation lifecycle' },
   { label: 'Agents', icon: Bot, title: 'Agents draft findings, consensus and the award document with citations' },
   { label: 'Actions', icon: ClipboardCheck, title: 'Action Center carries every evaluator and official decision' },
@@ -12,14 +15,15 @@ const PRODUCTS = [
   { label: 'Robots', icon: Cpu, title: 'Robots ingest, screen, price and publish' },
 ]
 
-export function ProductOrbit({ small }: { small?: boolean }) {
-  const step = 36 / PRODUCTS.length
+/** The robot with the solution's products circling it. Another app in the system passes its own products. */
+export function ProductOrbit({ small, products = PRODUCTS }: { small?: boolean; products?: OrbitProduct[] }) {
+  const step = 36 / products.length
   return (
     <div className={`ss-orbit shrink-0 ${small ? 'sm' : ''}`} aria-label="UiPath products in this solution">
       <div className="ss-ring outer" />
       <div className="ss-ring inner" />
       <div className="ss-core"><img src={robot} alt="UiPath robot" /></div>
-      {PRODUCTS.map((p, i) => (
+      {products.map((p, i) => (
         <div key={p.label} className="ss-orbit-item" style={{ animationDelay: `-${(i * step).toFixed(2)}s` }}>
           <div className="ss-orbit-chip" title={p.title}>
             <p.icon className="h-5 w-5" />

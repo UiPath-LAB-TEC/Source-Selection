@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { BadgeDollarSign, Check, ChevronsUpDown, ClipboardCheck, FileSearch, Gavel, Inbox, Landmark, Loader2, LockKeyhole, ShieldCheck, Sparkles, Users } from 'lucide-react'
 import { Alert, AlertDescription } from '@uipath/apollo-wind/components/ui/alert'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@uipath/apollo-wind/components/ui/popover'
-import robot from '../assets/uipath-robot.png'
 import { ProductOrbit } from './ProductOrbit'
+import { StageJourney } from './StageJourney'
 import { PersonaAvatar } from './Flair'
 import { rememberPersona, storedPersona } from '../hooks/usePersona'
 import { FrameworkSwitch } from './FrameworkSwitch'
@@ -14,42 +14,11 @@ import type { PersonaId } from '../lib/types'
 
 const ICONS = [Inbox, ClipboardCheck, Users, BadgeDollarSign, Gavel]
 
-/** Horizontal stage track for the dark brand panel; the robot hops station to station. */
+/** The five stages on the dark brand panel, each with who holds it; the robot hops station to station (StageJourney). */
 function HeroJourney() {
   const t = useTerms()
   const WHO = [t.co, 'Evaluators', t.chair, t.co, t.ssa]
-  const [i, setI] = useState(0)
-  const [hop, setHop] = useState(0)
-  const reduced = useRef(typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
-  useEffect(() => {
-    if (reduced.current) return
-    const t = setTimeout(() => { setI((n) => (n + 1) % STAGES.length); setHop((h) => h + 1) }, 2200)
-    return () => clearTimeout(t)
-  }, [i])
-  const pct = (n: number) => 10 + (n * 80) / (STAGES.length - 1)
-  return (
-    <div className="ss-hj relative h-[140px] w-full max-w-2xl">
-      <div className="ss-track"><div className="ss-track-fill" style={{ width: `${(i / (STAGES.length - 1)) * 100}%` }} /></div>
-      <div className="ss-runner" style={{ left: `${pct(i)}%` }} aria-hidden="true">
-        <div key={hop} className={hop ? 'hop' : 'idle'}><img src={robot} alt="" /><div className="ss-runner-shadow" /></div>
-      </div>
-      <ol className="absolute inset-x-0 top-[14px] flex">
-        {STAGES.map((s, n) => {
-          const Icon = ICONS[n]
-          const on = n === i
-          return (
-            <li key={s} className="flex min-w-0 flex-1 flex-col items-center text-center">
-              <span className={`ss-station ${on ? 'on bg-white text-[var(--ss-brand-1)]' : n < i ? 'bg-white/35 text-white' : 'bg-white/12 text-white/70'}`}>
-                <Icon className="h-5 w-5" />
-              </span>
-              <span className={`mt-2 w-full text-balance px-1 text-xs leading-tight ${on ? 'font-semibold text-white' : 'text-white/75'}`}>{stageName(s, t.id)}</span>
-              <span className={`mt-0.5 w-full text-balance px-1 text-[10px] leading-tight transition-colors ${on ? 'text-white/85' : 'text-white/0'}`}>{WHO[n]}</span>
-            </li>
-          )
-        })}
-      </ol>
-    </div>
-  )
+  return <StageJourney stages={STAGES.map((s, n) => ({ name: stageName(s, t.id), icon: ICONS[n], who: WHO[n] }))} />
 }
 
 /** Demo: one UiPath account plays every role — pick the persona to start as. */

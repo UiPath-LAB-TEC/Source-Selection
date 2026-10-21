@@ -1,0 +1,60 @@
+{
+ "displayName": "SS Correspondence",
+ "description": "Notices, debriefing requests, debriefings and follow-up questions exchanged with offerors",
+ "fields": [
+  {
+   "name": "CorrespondenceId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "OfferorId",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "Text",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "AgentText",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "DisclosureCheckJson",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "ReceivedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "DeliveredAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "DueAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "FilePath",
+   "type": "STRING"
+  },
+  {
+   "name": "Author",
+   "type": "STRING"
+  }
+ ]
+}

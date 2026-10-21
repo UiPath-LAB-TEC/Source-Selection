@@ -1,0 +1,6 @@
+/* Source Selection's action-app stylesheet (Tailwind, Apollo tokens, the ss- look), so every task form looks the same. */
+@import '../../ss-task-forms/src/index.css';
+
+@source './';
+/* The shared host and form pieces rendered from Source Selection's source. */
+@source '../../ss-task-forms/src';

@@ -1,0 +1,56 @@
+{
+ "displayName": "SS Award",
+ "description": "Award phase state per solicitation: contract award, notices, debriefings, protest window",
+ "fields": [
+  {
+   "name": "AwardId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "Stage",
+   "type": "STRING"
+  },
+  {
+   "name": "CaseInstanceId",
+   "type": "STRING"
+  },
+  {
+   "name": "ContractNumber",
+   "type": "STRING"
+  },
+  {
+   "name": "ContractValue",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "AwardedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "NoticesSentAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "ClocksJson",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "PerformanceStatus",
+   "type": "STRING"
+  },
+  {
+   "name": "StartedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "ClosedAt",
+   "type": "DATETIME_WITH_TZ"
+  }
+ ]
+}

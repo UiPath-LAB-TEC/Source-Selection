@@ -1,0 +1,37 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/AwardProcess.bpmn#Start_Award",
+      "uniqueId": "f4022f17-ac0e-41cb-9cd5-f4fd6443a19d",
+      "type": "ProcessOrchestration",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string"
+          },
+          "contractingOfficer": {
+            "type": "string"
+          },
+          "agencyCounsel": {
+            "type": "string"
+          },
+          "sourceSelectionAuthority": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "awardStage": {
+            "type": "string"
+          }
+        }
+      },
+      "displayName": "Start award"
+    }
+  ]
+}

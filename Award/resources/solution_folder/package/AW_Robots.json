@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AW_Robots",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "54bb2c6c-7c67-4f72-aa00-f9a62cc9a30f",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "AW_Robots"
+    },
+    "locks": [],
+    "key": "d965765f-198d-49f1-bd2d-f23334047ad2",
+    "files": []
+  }
+}

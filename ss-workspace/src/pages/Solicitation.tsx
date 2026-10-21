@@ -28,6 +28,7 @@ import { useLiveCase } from '../lib/maestro'
 import type { LiveCase } from '../lib/maestro'
 import { STAGES } from '../lib/types'
 import { planOf, useData } from '../lib/data'
+import { appUrl } from '../lib/apps'
 import { cell, forSolicitation, money, moneyShort, rank, rated, stageIndex, when } from '../lib/eval'
 import type { RatingMethod } from '../lib/types'
 
@@ -101,6 +102,11 @@ export function Solicitation() {
               </div>
               <p className="text-sm text-white/80"><span className="font-mono text-xs">{plan.solicitationId}</span> · {plan.agency} · {plan.contractType}</p>
             </div>
+            {sol.Status === 'Awarded' && (
+              <Button size="sm" asChild className="shrink-0 bg-white text-[var(--ss-brand-1)] hover:bg-white/90">
+                <a href={appUrl('award', `/a/${encodeURIComponent(sol.SolicitationId)}`)}><Gavel className="mr-1.5 h-4 w-4" />Open in Award</a>
+              </Button>
+            )}
             {persona.id === 'admin' && !preview && (
               <Button variant="ghost" size="sm" onClick={() => setDeleting(true)} className="shrink-0 text-white/80 hover:bg-white/15 hover:text-white">
                 <Trash2 className="mr-1.5 h-4 w-4" />Delete evaluation

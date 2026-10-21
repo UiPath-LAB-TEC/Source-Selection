@@ -56,6 +56,7 @@ export function DeleteEvaluationDialog({ open, onOpenChange, sol, running, onDel
           {live && <li className="flex gap-2"><span aria-hidden>•</span>Cancels its Maestro run, which is still going</li>}
           {d && <li className="flex gap-2"><span aria-hidden>•</span>{n(d.offerors.length, 'offeror')}, {n(d.pages.length, 'proposal page')}, {n(d.findings.length, 'finding')}, {n(d.ratings.length, 'rating')}, {n(d.decisions.length, 'decision')} and {n(d.audit.length, 'audit event')}</li>}
           <li className="flex gap-2"><span aria-hidden>•</span>Its uploaded proposal PDFs and any filed award record</li>
+          {sol.Status === 'Awarded' && <li className="flex gap-2"><span aria-hidden>•</span>Its Award records: notices, debriefings and any protest</li>}
         </ul>
         <p className="text-sm font-medium text-[var(--ss-critical)]">This can't be undone.</p>
         <label className="block space-y-1.5">

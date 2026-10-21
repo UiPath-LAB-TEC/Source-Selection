@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import { useScopedData } from '../hooks/useFramework'
-import type { RefObject } from 'react'
 import { Search, Sparkles } from 'lucide-react'
 import robot from '../assets/uipath-robot.png'
 import { kindTone } from '../lib/eval'
+import { useFeed, useLoop } from '../lib/feed'
 
 interface Cite { kind: string; page: number }
 
@@ -41,46 +41,10 @@ function useCites(): Cite[] {
   }, [data])
 }
 
-/**
- * Which loop the element's CSS animation is on, read from the animation's own clock rather than animationiteration
- * events, which a browser skips while the page isn't being drawn (a background tab, a hidden pane).
- */
-function useLoop(ref: RefObject<HTMLElement | null>) {
-  const [n, setN] = useState(0)
-  useEffect(() => {
-    const id = setInterval(() => {
-      const it = ref.current?.getAnimations()[0]?.effect?.getComputedTiming().currentIteration
-      if (typeof it === 'number') setN(it)
-    }, 200)
-    return () => clearInterval(id)
-  }, [ref])
-  return n
-}
-
-/**
- * A live feed of cited findings: a new one glides in at the top every couple of seconds, the others ease down a row,
- * and the oldest drifts out the bottom as it fades. One extra item is kept while it fades out.
- */
-function useFeed(cites: Cite[]) {
-  const [items, setItems] = useState<{ id: number; cite: Cite }[]>([])
-  const nextId = useRef(0)
-  useEffect(() => {
-    let i = 0
-    const add = () => {
-      const id = nextId.current++
-      setItems((xs) => [{ id, cite: cites[i++ % cites.length] }, ...xs].slice(0, CHIPS + 1))
-    }
-    add()
-    const t = setInterval(add, 2000)
-    return () => clearInterval(t)
-  }, [cites])
-  return items
-}
-
 /** Hero animation: the UiPath robot reads a proposal while the evaluation agent's cited findings pop out of it. */
 export function RobotReader() {
   const cites = useCites()
-  const feed = useFeed(cites)
+  const feed = useFeed(cites, CHIPS)
   // A new document each time the magnifier finishes a full sweep of the page.
   const scan = useRef<HTMLDivElement>(null)
   const n = useLoop(scan)
@@ -100,7 +64,7 @@ export function RobotReader() {
         </div>
       </div>
       <div className="ss-reader-chips" aria-hidden>
-        {feed.map(({ id, cite }, i) => (
+        {feed.map(({ id, item: cite }, i) => (
           <div key={id} className="ss-reader-chip" data-leaving={i >= CHIPS} style={{ transform: `translateY(${i * 46}px)` }}>
             <span className="ss-reader-dot" style={{ background: `var(--ss-${kindTone(cite.kind)})` }} />
             <span className="ss-reader-kind">{cite.kind}</span>

@@ -1,0 +1,42 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AW_Robots",
+    "kind": "process",
+    "type": "function",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "54bb2c6c-7c67-4f72-aa00-f9a62cc9a30f",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "AW_Robots"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Function",
+      "name": "AW_Robots",
+      "package": {
+        "key": "d965765f-198d-49f1-bd2d-f23334047ad2"
+      },
+      "packageName": "Award.function.AW_Robots",
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n    \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n    \"$id\": \"entry-points.json\",\n    \"entryPoints\": [\n        {\n            \"filePath\": \"AW_Robots\",\n            \"uniqueId\": \"78bc9c63-e9e2-4a5c-b9c4-13fc1bdb1754\",\n            \"type\": \"function\",\n            \"input\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"step\": {\n                        \"default\": \"\",\n                        \"title\": \"Step\",\n                        \"type\": \"string\"\n                    },\n                    \"solicitationId\": {\n                        \"default\": \"\",\n                        \"title\": \"Solicitationid\",\n                        \"type\": \"string\"\n                    }\n                },\n                \"required\": [],\n                \"title\": \"RobotInput\"\n            },\n            \"output\": {\n                \"type\": \"object\",\n                \"properties\": {\n                    \"error_type\": {\n                        \"default\": \"\",\n                        \"title\": \"Error Type\",\n                        \"type\": \"string\"\n                    },\n                    \"error_message\": {\n                        \"default\": \"\",\n                        \"title\": \"Error Message\",\n                        \"type\": \"string\"\n                    },\n                    \"step\": {\n                        \"default\": \"\",\n                        \"title\": \"Step\",\n                        \"type\": \"string\"\n                    },\n                    \"content\": {\n                        \"default\": \"\",\n                        \"title\": \"Content\",\n                        \"type\": \"string\"\n                    },\n                    \"detail\": {\n                        \"default\": \"\",\n                        \"title\": \"Detail\",\n                        \"type\": \"string\"\n                    },\n                    \"count\": {\n                        \"default\": 0,\n                        \"title\": \"Count\",\n                        \"type\": \"integer\"\n                    }\n                },\n                \"required\": [],\n                \"title\": \"RobotOutput\"\n            },\n            \"graph\": {\n                \"nodes\": [\n                    {\n                        \"id\": \"main.py:111\",\n                        \"name\": \"run\",\n                        \"type\": \"function\",\n                        \"metadata\": {\n                            \"file\": \"main.py\"\n                        }\n                    }\n                ],\n                \"edges\": []\n            }\n        }\n    ]\n}",
+      "entryPointName": "AW_Robots",
+      "entryPointUniqueId": "78bc9c63-e9e2-4a5c-b9c4-13fc1bdb1754"
+    },
+    "locks": [],
+    "key": "dadeccc4-ff66-49a6-b4e3-952289923bc7",
+    "files": []
+  }
+}

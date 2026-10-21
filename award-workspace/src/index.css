@@ -1,0 +1,17 @@
+/* Source Selection's stylesheet (Tailwind, Apollo tokens, the ss- look), so both apps look like one system. */
+@import '../../ss-workspace/src/index.css';
+
+@source './';
+/* Shell pieces the Award app renders from Source Selection's source. */
+@source '../../ss-workspace/src/components';
+@source '../../ss-workspace/src/hooks';
+
+/*
+ * Contract Award's own accent: deep teal where Source Selection is blue, on the hero banners, the app tile, progress
+ * tracks and the backdrop glow, so it's clear at a glance which app you're in. Buttons, ratings and status colors stay
+ * shared (one system). White text on --ss-brand-2 is 4.6:1.
+ */
+:root { --ss-brand-1: #0b3a4a; --ss-brand-2: #0a7f8c; --ss-brand-3: #5eead4; --ss-glow: rgba(10, 127, 140, 0.16); }
+.dark { --ss-glow: rgba(13, 148, 160, 0.22); }
+.aw-step-current { background: color-mix(in srgb, var(--ss-brand-2) 15%, transparent); color: var(--ss-brand-2); }
+.dark .aw-step-current { color: var(--ss-brand-3); }

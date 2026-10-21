@@ -1,0 +1,17 @@
+{
+  "version": "2.0",
+  "resources": [
+    {
+      "resource": "process",
+      "key": "solution_folder.AW_Robots",
+      "value": {
+        "name": {
+          "defaultValue": "AW_Robots"
+        },
+        "folderPath": {
+          "defaultValue": "solution_folder"
+        }
+      }
+    }
+  ]
+}

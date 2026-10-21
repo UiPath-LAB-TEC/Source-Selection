@@ -1,0 +1,78 @@
+{
+    "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+    "$id": "entry-points.json",
+    "entryPoints": [
+        {
+            "filePath": "AW_Robots",
+            "uniqueId": "78bc9c63-e9e2-4a5c-b9c4-13fc1bdb1754",
+            "type": "function",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "step": {
+                        "default": "",
+                        "title": "Step",
+                        "type": "string"
+                    },
+                    "solicitationId": {
+                        "default": "",
+                        "title": "Solicitationid",
+                        "type": "string"
+                    }
+                },
+                "required": [],
+                "title": "RobotInput"
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "error_type": {
+                        "default": "",
+                        "title": "Error Type",
+                        "type": "string"
+                    },
+                    "error_message": {
+                        "default": "",
+                        "title": "Error Message",
+                        "type": "string"
+                    },
+                    "step": {
+                        "default": "",
+                        "title": "Step",
+                        "type": "string"
+                    },
+                    "content": {
+                        "default": "",
+                        "title": "Content",
+                        "type": "string"
+                    },
+                    "detail": {
+                        "default": "",
+                        "title": "Detail",
+                        "type": "string"
+                    },
+                    "count": {
+                        "default": 0,
+                        "title": "Count",
+                        "type": "integer"
+                    }
+                },
+                "required": [],
+                "title": "RobotOutput"
+            },
+            "graph": {
+                "nodes": [
+                    {
+                        "id": "main.py:111",
+                        "name": "run",
+                        "type": "function",
+                        "metadata": {
+                            "file": "main.py"
+                        }
+                    }
+                ],
+                "edges": []
+            }
+        }
+    ]
+}

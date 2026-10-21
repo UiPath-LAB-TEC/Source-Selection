@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AwardProcess",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "27fe1898-e1d1-4d93-987d-95c65f5f254f",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "AwardProcess"
+    },
+    "locks": [],
+    "key": "7f4f496f-53df-4b0c-b765-8c2ffd0541a8",
+    "files": []
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "clientId": "90b28584-7e8a-4022-9e86-b18f1f663e7c",
+  "scope": "OR.Execution OR.Execution.Read OR.Jobs OR.Jobs.Read OR.Jobs.Write OR.Buckets OR.Buckets.Read OR.Folders.Read OR.Tasks OR.Tasks.Read PIMS DataFabric.Data.Read DataFabric.Data.Write DataFabric.Schema.Read",
+  "orgName": "uipathlabs",
+  "tenantName": "Playground",
+  "baseUrl": "https://api.uipath.com",
+  "redirectUri": "http://localhost:5175"
+}

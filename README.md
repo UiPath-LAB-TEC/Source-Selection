@@ -41,6 +41,9 @@ officer to review.
 | `ss-workspace/` | React + TypeScript coded web app: the workspace, setup wizard, evaluation pages and in-app task dialog |
 | `ss-task-forms/` | Action Center coded action app: release, evaluation worksheet, consensus board, price/cost and award forms. Also hosts the shared terms, ratings and scoring logic |
 | `SourceSelection/` | UiPath solution: the Maestro BPMN process, six low-code agents and the `SS_Robots` Python function (with tests) |
+| `award-workspace/` | Award web app (contract award, notices, debriefings, protests): same sign-in, record and look as the workspace, which it imports from source (`@ss`) |
+| `award-task-forms/` | Award action app: its forms run on the task host shared with `ss-task-forms` (`@forms/host`) |
+| `Award/` | Award solution: the `AwardProcess` BPMN process and the `AW_Robots` Python function (with tests). Scope in `docs/design/award-phase-scope.md` |
 | `tools/` | Data Fabric seeding, synthetic proposal and solicitation generators, and helper scripts |
 | `evaluation-plans/`, `samples/` | Evaluation plans and ready-to-upload demo packages (federal VA and K-12 district) |
 | `docs/design/` | Solution design documents |

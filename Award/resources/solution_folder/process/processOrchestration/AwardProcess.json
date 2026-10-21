@@ -1,0 +1,57 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AwardProcess",
+    "kind": "process",
+    "type": "processOrchestration",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "27fe1898-e1d1-4d93-987d-95c65f5f254f",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "AwardProcess"
+      }
+    ],
+    "runtimeDependencies": [
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.AW_Robots",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "AW_Robots",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "Process"
+      }
+    ],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "ProcessOrchestration",
+      "name": "AwardProcess",
+      "package": {
+        "key": "7f4f496f-53df-4b0c-b765-8c2ffd0541a8"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/AwardProcess.bpmn#Start_Award\",\n      \"uniqueId\": \"f4022f17-ac0e-41cb-9cd5-f4fd6443a19d\",\n      \"type\": \"ProcessOrchestration\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\"\n          },\n          \"contractingOfficer\": {\n            \"type\": \"string\"\n          },\n          \"agencyCounsel\": {\n            \"type\": \"string\"\n          },\n          \"sourceSelectionAuthority\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"awardStage\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"displayName\": \"Start award\"\n    }\n  ]\n}\n",
+      "entryPointName": "/content/AwardProcess.bpmn#Start_Award",
+      "entryPointUniqueId": "f4022f17-ac0e-41cb-9cd5-f4fd6443a19d"
+    },
+    "locks": [],
+    "key": "a6c21f92-2bc1-4073-9ac4-a5e09632f3d3",
+    "files": []
+  }
+}

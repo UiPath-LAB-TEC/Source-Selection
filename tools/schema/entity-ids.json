@@ -6,5 +6,8 @@
  "SSRating": "6addb0d6-4ec6-f111-bf5b-000d3a66d571",
  "SSDecision": "7eddb0d6-4ec6-f111-bf5b-000d3a66d571",
  "SSAuditEvent": "90ddb0d6-4ec6-f111-bf5b-000d3a66d571",
- "SSRefVendor": "a1ddb0d6-4ec6-f111-bf5b-000d3a66d571"
+ "SSRefVendor": "a1ddb0d6-4ec6-f111-bf5b-000d3a66d571",
+ "SSAward": "d84a5203-8fcd-f111-bf5b-000d3a66d571",
+ "SSCorrespondence": "ee4a5203-8fcd-f111-bf5b-000d3a66d571",
+ "SSProtest": "054b5203-8fcd-f111-bf5b-000d3a66d571"
 }

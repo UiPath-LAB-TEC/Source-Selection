@@ -159,7 +159,7 @@ export interface Dataset {
 
 export const STAGES = ['Proposal Intake', 'Individual Evaluation', 'Consensus', 'Price Evaluation', 'Award Decision'] as const
 
-export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'admin'
+export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'admin' | 'counsel'
 
 export interface Persona {
   id: PersonaId

@@ -1,0 +1,17 @@
+{
+  "DocVersion": "1.0.0",
+  "StudioMinVersion": "2025.10.0",
+  "SolutionId": "ed7293ed-8d91-4d38-bc7f-0dc7247e28e9",
+  "Projects": [
+    {
+      "Type": "processOrchestration",
+      "ProjectRelativePath": "AwardProcess/project.uiproj",
+      "Id": "27fe1898-e1d1-4d93-987d-95c65f5f254f"
+    },
+    {
+      "Type": "Function",
+      "ProjectRelativePath": "AW_Robots/project.uiproj",
+      "Id": "54bb2c6c-7c67-4f72-aa00-f9a62cc9a30f"
+    }
+  ]
+}

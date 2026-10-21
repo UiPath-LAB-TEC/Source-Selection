@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom'
 import { useScopedData } from '../hooks/useFramework'
-import { Check, ChevronsUpDown, CirclePlus, FolderKanban, House, Inbox, Landmark, LogOut, RefreshCw, ShieldCheck } from 'lucide-react'
+import { Check, ChevronsUpDown, CirclePlus, FolderKanban, House, Inbox, LogOut, RefreshCw, ShieldCheck } from 'lucide-react'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@uipath/apollo-wind/components/ui/popover'
 import { ThemeToggle } from './Theme'
+import { AppSwitcher } from './AppSwitcher'
 import { PersonaAvatar } from './Flair'
 import { usePersona } from '../hooks/usePersona'
 import { useNewLinkState } from '../lib/backlink'
@@ -77,13 +78,7 @@ export function Sidebar({ onSignOut, onNavigate }: { onSignOut: () => void; onNa
 
   return (
     <div className="flex h-full flex-col gap-4 p-4">
-      <div className="flex items-center gap-2.5 px-1">
-        <div className="ss-hero flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"><Landmark className="relative z-10 h-5 w-5" /></div>
-        <div className="min-w-0 leading-tight">
-          <div className="truncate font-semibold">{t.sled ? 'RFP Evaluation' : 'Source Selection'}</div>
-          <div className="truncate text-[11px] text-muted-foreground">{t.sled ? 'Agentic Procurement' : 'Agentic Acquisition'}</div>
-        </div>
-      </div>
+      <AppSwitcher current="source-selection" />
 
       <nav className="space-y-1" onClick={onNavigate}>
         <NavLink to="/" end className={link}><House className="h-4 w-4" />My workspace</NavLink>

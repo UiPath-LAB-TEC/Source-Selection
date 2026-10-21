@@ -1,0 +1,17 @@
+{
+  "id": "a545ff9d-e1db-472c-bde7-389575d77039",
+  "functions": {
+    "AW_Robots": "main.py:run"
+  },
+  "packOptions": {
+    "fileExtensionsIncluded": [
+      ".py",
+      ".json"
+    ],
+    "directoriesExcluded": [
+      "tests",
+      "__pycache__",
+      ".venv"
+    ]
+  }
+}

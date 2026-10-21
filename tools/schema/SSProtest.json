@@ -1,0 +1,68 @@
+{
+ "displayName": "SS Protest",
+ "description": "Bid protests against an award, each ground mapped to the evaluation record",
+ "fields": [
+  {
+   "name": "ProtestId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "OfferorId",
+   "type": "STRING"
+  },
+  {
+   "name": "Forum",
+   "type": "STRING"
+  },
+  {
+   "name": "DocketNumber",
+   "type": "STRING"
+  },
+  {
+   "name": "FiledAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "NoticeReceivedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "StayRequired",
+   "type": "BOOLEAN"
+  },
+  {
+   "name": "GroundsJson",
+   "type": "MULTILINE_TEXT"
+  },
+  {
+   "name": "Position",
+   "type": "STRING"
+  },
+  {
+   "name": "ReportDueAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "ReportFiledAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "DecisionDueAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "Outcome",
+   "type": "STRING"
+  },
+  {
+   "name": "FilePath",
+   "type": "STRING"
+  }
+ ]
+}
