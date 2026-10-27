@@ -1,0 +1,85 @@
+{
+ "displayName": "SS Schedule",
+ "description": "A contract's dated obligations: periods, options, extensions, milestones, deliverables and performance evaluations",
+ "fields": [
+  {
+   "name": "ScheduleId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "Name",
+   "type": "STRING"
+  },
+  {
+   "name": "Code",
+   "type": "STRING"
+  },
+  {
+   "name": "Period",
+   "type": "STRING"
+  },
+  {
+   "name": "Clin",
+   "type": "STRING"
+  },
+  {
+   "name": "StartDay",
+   "type": "STRING"
+  },
+  {
+   "name": "EndDay",
+   "type": "STRING"
+  },
+  {
+   "name": "DueDay",
+   "type": "STRING"
+  },
+  {
+   "name": "NoticeDay",
+   "type": "STRING"
+  },
+  {
+   "name": "Recurrence",
+   "type": "STRING"
+  },
+  {
+   "name": "ReceivedDay",
+   "type": "STRING"
+  },
+  {
+   "name": "AcceptedDay",
+   "type": "STRING"
+  },
+  {
+   "name": "Amount",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "ClauseRef",
+   "type": "STRING"
+  },
+  {
+   "name": "ClauseText",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "Owner",
+   "type": "STRING"
+  }
+ ]
+}

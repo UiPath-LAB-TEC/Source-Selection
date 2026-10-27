@@ -1,0 +1,10 @@
+{
+  "ProjectType": "AppV2",
+  "WebAppSettings": {
+    "AppId": null,
+    "IsCoreProject": false
+  },
+  "Name": "AwardTaskForms",
+  "Description": "Contract Award's Action Center forms (built from award-task-forms)",
+  "MainFile": null
+}

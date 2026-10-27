@@ -12,6 +12,18 @@
           "defaultValue": "solution_folder"
         }
       }
+    },
+    {
+      "resource": "app",
+      "key": "solution_folder.AwardTaskForms",
+      "value": {
+        "name": {
+          "defaultValue": "AwardTaskForms"
+        },
+        "folderPath": {
+          "defaultValue": "solution_folder"
+        }
+      }
     }
   ]
 }

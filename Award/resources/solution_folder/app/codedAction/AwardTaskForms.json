@@ -1,0 +1,35 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AwardTaskForms",
+    "kind": "app",
+    "type": "codedAction",
+    "apiVersion": "apps.uipath.com/v1",
+    "projectKey": "29cef739-7f5b-45ac-8992-d69f81eba55c",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "AwardTaskForms"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "AwardTaskForms",
+      "version": "1.0.0",
+      "package": {
+        "key": "cb9a6ca9-98ab-4115-a791-3aef9650b6e9"
+      },
+      "externalClientId": "90b28584-7e8a-4022-9e86-b18f1f663e7c",
+      "actionSchema": "{\"key\":\"774fd176-1576-5b89-a0a7-c7b4b4928547\",\"version\":0,\"description\":\"Action Schema\",\"id\":\"ID7ad815f9aefb558c8391cf4775c1b902\",\"name\":\"ActionSchema\",\"inputs\":[{\"name\":\"actionType\",\"key\":\"60fcb658-73c6-5f5f-850d-f276c5cbb64d\",\"required\":true,\"description\":\"Which form to render: executeAward, recordDebriefRequests, deliverDebriefings, followUpQuestions, protestWindow, agencyPosition, recordDecision\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"solicitationId\",\"key\":\"8bd1042b-09f4-589c-b5dc-5441e8817b0a\",\"required\":true,\"description\":\"Solicitation number; key into Data Fabric\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"awardDraft\",\"key\":\"2179e6c2-4b70-51cd-86be-f1341462782f\",\"required\":false,\"description\":\"Contract award summary drafted by the robot (JSON)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"noticesDraft\",\"key\":\"8f5eecce-34f5-566d-b14d-c710b56809ff\",\"required\":false,\"description\":\"Notices drafted for the awardee and each unsuccessful offeror (JSON)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"debriefDrafts\",\"key\":\"9ffbfaeb-7748-5a06-8db7-70498ebf9964\",\"required\":false,\"description\":\"Debriefings drafted per requesting offeror, with disclosure checks (JSON)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"followUpDrafts\",\"key\":\"c833b22e-7772-591d-bed1-f99c08c4ee9b\",\"required\":false,\"description\":\"Drafted answers to DoD follow-up questions (JSON)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"protestAnalysis\",\"key\":\"d50dfdff-030c-5116-b34c-be4d16a147fc\",\"required\":false,\"description\":\"Protest grounds mapped to the record (JSON)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]}],\"outputs\":[{\"name\":\"decision\",\"key\":\"66095b7f-e9e9-5416-a74f-baf5259163e4\",\"required\":false,\"description\":\"The outcome the person chose (e.g. Signed, Protest filed, Defend)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"notes\",\"key\":\"b050f57e-4e9f-57fd-878d-59c42d29fe1b\",\"required\":false,\"description\":\"Free-text notes\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]},{\"name\":\"payload\",\"key\":\"67614071-45d5-53ce-be5e-13df4bb7ecc4\",\"required\":false,\"description\":\"The form's result (JSON or document text)\",\"version\":0,\"typeNamespace\":\"system\",\"isList\":false,\"collectionDataType\":null,\"type\":\"System.String\",\"properties\":[]}],\"inOuts\":[],\"outcomes\":[{\"name\":\"Submit\",\"key\":\"75c771d2-9d80-5cf5-95e2-1a6c7ec59c5f\",\"required\":false,\"type\":\"System.String\",\"typeNamespace\":\"system\",\"isList\":false,\"properties\":[],\"version\":0}]}"
+    },
+    "locks": [],
+    "key": "7007ef13-0c7a-406e-8e39-a3adb7c634b1",
+    "files": []
+  }
+}

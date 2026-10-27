@@ -28,6 +28,21 @@
           }
         },
         "resourceKind": "Process"
+      },
+      {
+        "bindingType": "app",
+        "bindingKey": "solution_folder.AwardTaskForms",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "AwardTaskForms",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "App"
       }
     ],
     "folders": [
@@ -46,7 +61,7 @@
       "retentionPeriod": 30,
       "staleRetentionAction": "Delete",
       "staleRetentionPeriod": 180,
-      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/AwardProcess.bpmn#Start_Award\",\n      \"uniqueId\": \"f4022f17-ac0e-41cb-9cd5-f4fd6443a19d\",\n      \"type\": \"ProcessOrchestration\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\"\n          },\n          \"contractingOfficer\": {\n            \"type\": \"string\"\n          },\n          \"agencyCounsel\": {\n            \"type\": \"string\"\n          },\n          \"sourceSelectionAuthority\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"awardStage\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"displayName\": \"Start award\"\n    }\n  ]\n}\n",
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/AwardProcess.bpmn#Start_Award\",\n      \"uniqueId\": \"f4022f17-ac0e-41cb-9cd5-f4fd6443a19d\",\n      \"type\": \"ProcessOrchestration\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\"\n          },\n          \"contractingOfficer\": {\n            \"type\": \"string\"\n          },\n          \"agencyCounsel\": {\n            \"type\": \"string\"\n          },\n          \"sourceSelectionAuthority\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"awardStage\": {\n            \"type\": \"string\"\n          },\n          \"contractNumber\": {\n            \"type\": \"string\"\n          },\n          \"noticesUri\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"displayName\": \"Start award\"\n    }\n  ]\n}\n",
       "entryPointName": "/content/AwardProcess.bpmn#Start_Award",
       "entryPointUniqueId": "f4022f17-ac0e-41cb-9cd5-f4fd6443a19d"
     },

@@ -1,25 +1,38 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, ArrowUpRight, CheckCircle2, Gavel, Inbox, Mail, MessagesSquare, Scale, ShieldAlert, Users } from 'lucide-react'
+import { ArrowRight, CheckCircle2, FileClock, FileStack, Gavel, Inbox, Landmark, ListChecks, MessagesSquare, Receipt, Scale, ShieldAlert, Wallet } from 'lucide-react'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { useTerms } from '@forms/lib/terms'
 import type { Terms } from '@forms/lib/terms'
-import { AgencyMark, HeroTile, PersonaAvatar } from '@ss/components/Flair'
+import { HeroTile, PersonaAvatar } from '@ss/components/Flair'
 import { CountUp } from '@ss/components/ProductOrbit'
-import { appUrl } from '@ss/lib/apps'
 import { when } from '@ss/lib/eval'
 import { greeting } from '@ss/lib/roles'
 import { actorName } from '@ss/lib/types'
 import type { Persona, Solicitation } from '@ss/lib/types'
+import { ActionGroups } from '../components/ActionItems'
+import { ContractCard } from '../components/ContractCard'
 import { RecordReader } from '../components/RecordReader'
 import { useAwardPersona } from '../hooks/usePersona'
-import { AWARD_STAGES, atAwardDecision, awardStageIndex, isAwarded } from '../lib/award'
+import { fundsOf } from '../lib/award'
 import type { AwardDataset } from '../lib/award'
 import { useScopedAwardData } from '../lib/data'
-import { AwardCard } from './Awards'
+import { actionsFor } from '../lib/alerts'
+import { fmtDay, shortMoney } from '../lib/status'
+import { AwardCard, AwaitingList, awardsOf } from './Awards'
+import { contractsOf } from './Contracts'
 import { myTasks } from './MyTasks'
+import { OpenAwardTask, taskSolicitationId } from '../components/AwardTask'
 
 const to = (s: Solicitation) => `/a/${encodeURIComponent(s.SolicitationId)}`
+
+/**
+ * What the live activity panel shows: the record's milestones (decision, contract signed, notices out, options
+ * exercised, administration opened). Not the daily watch runs or anyone picking up an action item; those would bury
+ * the milestones within a week.
+ */
+const MILESTONE = /Award|Notice|Debrief|Protest|Report|Contract|Administration|Option/
+const NOT_A_MILESTONE = /^ContractWatched$|^Alert/
 
 /** Top-level section header, as on Source Selection's home. */
 function SectionHeader({ title, description, link }: { title: string; description: string; link?: { to: string; label: string } }) {
@@ -34,74 +47,96 @@ function SectionHeader({ title, description, link }: { title: string; descriptio
   )
 }
 
-/** The Award phase in numbers, from the record: who is still owed a notice, who asked for a debriefing, what's protested. */
-function counts(d: AwardDataset, t: Terms) {
-  const awarded = d.solicitations.filter(isAwarded)
-  const awardOf = (s: Solicitation) => d.awards.find((a) => a.SolicitationId === s.SolicitationId)
-  const inProgress = awarded.filter((s) => awardStageIndex(awardOf(s), t.id) < AWARD_STAGES[t.id].length)
-  const unsuccessful = d.offerors.filter((o) => awarded.some((s) => s.SolicitationId === o.SolicitationId && s.AwardeeName !== o.Name))
-  const delivered = (kind: RegExp) => (o: { OfferorId: string }) => d.correspondence.some((c) => c.OfferorId === o.OfferorId && kind.test(c.Kind) && c.Status === 'Delivered')
-  const requested = d.correspondence.filter((c) => c.Kind === 'DebriefRequest')
+/** The record in numbers, from what the robots and people wrote: awards, contracts, action items, money, the award phase. */
+function counts(d: AwardDataset, p: Persona) {
+  const awards = awardsOf(d)
+  const contracts = contractsOf(d)
+  const actions = actionsFor(d, p)
+  const activeIds = new Set(contracts.active.map((s) => s.SolicitationId))
+  const lines = d.awards.filter((a) => activeIds.has(a.SolicitationId)).flatMap((a) => fundsOf(a)?.lines ?? [])
+  const soonest = d.awards.filter((a) => activeIds.has(a.SolicitationId) && a.CurrentPeriod).map((a) => d.schedule.find((r) => r.SolicitationId === a.SolicitationId && r.Name === a.CurrentPeriod)?.EndDay ?? '').filter(Boolean).sort()[0]
   return {
-    awarded, inProgress, awardOf,
-    notStarted: inProgress.filter((s) => !awardOf(s)),
-    toNotify: unsuccessful.filter((o) => !delivered(/Notice/)(o)).length,
-    debriefsOpen: requested.filter((r) => !delivered(/^Debriefing$/)({ OfferorId: r.OfferorId })).length,
+    awards, contracts, actions, soonest,
+    notStarted: awards.inProgress.filter((s) => !d.awards.some((a) => a.SolicitationId === s.SolicitationId)),
+    shortfall: lines.filter((l) => l.runOut && l.runOut < l.periodEnd).reduce((s, l) => s + Math.max(0, l.atPeriodEnd - l.obligated), 0),
+    obligated: lines.reduce((s, l) => s + l.obligated, 0),
+    invoicesWaiting: new Set(d.funding.filter((f) => f.Kind === 'Invoice' && f.Status === 'Received' && activeIds.has(f.SolicitationId)).map((f) => f.Reference)).size,
+    deliverablesDue: d.schedule.filter((r) => activeIds.has(r.SolicitationId) && r.Kind === 'Deliverable' && r.Status === 'Due' && !!r.DueDay && !r.ReceivedDay
+      && r.DueDay <= new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10)).length,
+    debriefsOpen: d.correspondence.filter((c) => c.Kind === 'DebriefRequest').filter((r) => !d.correspondence.some((c) => c.OfferorId === r.OfferorId && c.Kind === 'Debriefing' && c.Status === 'Delivered')).length,
     debriefsDelivered: d.correspondence.filter((c) => c.Kind === 'Debriefing' && c.Status === 'Delivered').length,
-    protestsOpen: d.protests.filter((p) => !p.Outcome).length,
-    reportsDue: d.protests.filter((p) => !p.Outcome && !p.ReportFiledAt).length,
-    signed: d.decisions.filter((x) => x.Kind === 'Award' && awarded.some((s) => s.SolicitationId === x.SolicitationId)).length,
+    protestsOpen: d.protests.filter((x) => !x.Outcome).length,
+    reportsDue: d.protests.filter((x) => !x.Outcome && !x.ReportFiledAt).length,
+    signed: d.decisions.filter((x) => x.Kind === 'Award').length,
   }
 }
 
-function tiles(c: ReturnType<typeof counts>, p: Persona, waiting: number, t: Terms): { icon: ReactNode; label: string; value: number; sub: string }[] {
-  const awards = { icon: <Gavel className="h-3.5 w-3.5" />, label: 'Awards', value: c.inProgress.length, sub: c.notStarted.length ? `${c.notStarted.length} not started` : 'all under way' }
+type Tile = { icon: ReactNode; label: string; value: number | string; sub: string }
+
+function tiles(c: ReturnType<typeof counts>, p: Persona, waiting: number, t: Terms): Tile[] {
+  const needs: Tile = { icon: <ListChecks className="h-3.5 w-3.5" />, label: 'Needs action', value: c.actions.needs.length, sub: `${c.actions.inHand.length} in hand · ${c.actions.coming.length} coming up` }
+  const active: Tile = { icon: <FileStack className="h-3.5 w-3.5" />, label: 'Active contracts', value: c.contracts.active.length, sub: c.soonest ? `next period ends ${fmtDay(c.soonest, false)}` : 'none performing' }
+  const awards: Tile = { icon: <Gavel className="h-3.5 w-3.5" />, label: 'Awards in progress', value: c.awards.inProgress.length, sub: c.awards.awaiting.length ? `${c.awards.awaiting.length} awaiting decision` : 'none waiting on a decision' }
+  if (p.id === 'cor') {
+    return [needs,
+      { icon: <Receipt className="h-3.5 w-3.5" />, label: 'Invoices', value: c.invoicesWaiting, sub: 'waiting on your approval' },
+      { icon: <FileClock className="h-3.5 w-3.5" />, label: 'Deliverables', value: c.deliverablesDue, sub: 'due in 14 days or late' },
+      active]
+  }
+  if (p.id === 'rm') {
+    return [{ icon: <Wallet className="h-3.5 w-3.5" />, label: 'Funds short', value: shortMoney(c.shortfall), sub: 'more needed to reach period ends' },
+      needs,
+      { icon: <Landmark className="h-3.5 w-3.5" />, label: 'Obligated', value: shortMoney(c.obligated), sub: 'this period, across contracts' },
+      active]
+  }
   if (p.id === 'counsel') {
     return [
       { icon: <ShieldAlert className="h-3.5 w-3.5" />, label: 'Protests', value: c.protestsOpen, sub: 'open' },
       { icon: <Scale className="h-3.5 w-3.5" />, label: 'Reports due', value: c.reportsDue, sub: 'agency reports to file' },
       { icon: <MessagesSquare className="h-3.5 w-3.5" />, label: t.sled ? 'Notices sent' : 'Debriefings', value: c.debriefsDelivered, sub: 'delivered, on the record' },
-      awards,
-    ]
+      awards]
   }
   if (p.id === 'ssa') {
     return [
       { icon: <CheckCircle2 className="h-3.5 w-3.5" />, label: t.sled ? 'Recommendations' : 'Decisions', value: c.signed, sub: t.sled ? 'you signed for the Board' : 'you signed' },
-      awards,
-      { icon: <MessagesSquare className="h-3.5 w-3.5" />, label: t.sled ? 'Notices sent' : 'Debriefings', value: c.debriefsDelivered, sub: 'citing your decision' },
-      { icon: <ShieldAlert className="h-3.5 w-3.5" />, label: 'Protests', value: c.protestsOpen, sub: 'against your awards' },
-    ]
+      awards, active,
+      { icon: <ShieldAlert className="h-3.5 w-3.5" />, label: 'Protests', value: c.protestsOpen, sub: 'against your awards' }]
   }
-  return [
-    awards,
-    { icon: <Mail className="h-3.5 w-3.5" />, label: 'To notify', value: c.toNotify, sub: 'owed a notice' },
-    { icon: <Users className="h-3.5 w-3.5" />, label: t.sled ? 'Protests' : 'Debriefings', value: t.sled ? c.protestsOpen : c.debriefsOpen, sub: t.sled ? 'in the protest period' : 'requested, open' },
-    { icon: <Inbox className="h-3.5 w-3.5" />, label: 'Waiting on you', value: waiting, sub: 'actions to take' },
-  ]
+  return [needs, { icon: <Inbox className="h-3.5 w-3.5" />, label: 'Waiting on you', value: waiting, sub: 'tasks to take' }, active, awards]
 }
 
-/** Personal home: the signed-in official's awards, what's waiting on them, and what the record shows so far. */
+/**
+ * Personal home: what needs the signed-in person's action, then their awards (not yet contracts) and their active
+ * contracts as two distinct lists, their tasks, and the record's milestones.
+ */
 export function Home() {
   const { data, tasks } = useScopedAwardData()
   const { persona } = useAwardPersona()
   const t = useTerms()
   if (!data) return null
-  const c = counts(data, t)
+  const c = counts(data, persona)
   const open = myTasks(tasks, persona)
   // Begin award is the Contracting Officer's first step on each award; once it runs, the process's tasks take over.
   const toBegin = persona.id === 'co' ? c.notStarted : []
   const waiting = open.length + toBegin.length
-  const coming = data.solicitations.filter(atAwardDecision)
-  const awardIds = new Set(c.awarded.map((s) => s.SolicitationId))
-  // The award's milestones, not every rating along the way: the decision, the filed record, and each Award-phase step.
-  const activity = data.audit.filter((e) => awardIds.has(e.SolicitationId) && /Award|Notice|Debrief|Protest|Report|Contract/.test(e.Action)).sort((a, b) => b.OccurredAt.localeCompare(a.OccurredAt)).slice(0, 8)
+  const contractWork = ['co', 'cor', 'rm'].includes(persona.id)
+  const awardWork = ['co', 'counsel', 'ssa'].includes(persona.id)
+  const ids = new Set([...c.awards.inProgress, ...c.contracts.active, ...c.contracts.closed].map((s) => s.SolicitationId))
+  const activity = data.audit.filter((e) => ids.has(e.SolicitationId) && MILESTONE.test(e.Action) && !NOT_A_MILESTONE.test(e.Action))
+    .sort((a, b) => b.OccurredAt.localeCompare(a.OccurredAt)).slice(0, 8)
   const title = (id: string) => data.solicitations.find((s) => s.SolicitationId === id)?.Title ?? id
+  const awardOf = (s: Solicitation) => data.awards.find((a) => a.SolicitationId === s.SolicitationId)
+  const n = c.actions.needs.length
+  const count = (k: number, one: string, many: string) => `${k || 'no'} ${k === 1 ? one : many}`
+  const summary = `${count(c.contracts.active.length, 'active contract', 'active contracts')}${awardWork ? `, ${count(c.awards.inProgress.length, 'award', 'awards')} in progress` : ''}.`
+    .replace(/^no/, 'No')
 
   const message = persona.id === 'counsel'
     ? (c.protestsOpen ? <><span className="font-semibold text-white">{c.protestsOpen} protest{c.protestsOpen > 1 ? 's' : ''}</span> need{c.protestsOpen > 1 ? '' : 's'} the agency's position.</> : <>No protests filed. A task reaches you the moment one is.</>)
-    : waiting
-      ? <><span className="font-semibold text-white">{waiting} item{waiting > 1 ? 's' : ''}</span> waiting on you across {c.inProgress.length} award{c.inProgress.length === 1 ? '' : 's'}.</>
-      : <>You're caught up. {c.inProgress.length ? `${c.inProgress.length} award${c.inProgress.length > 1 ? 's' : ''} in progress around you.` : ''}</>
+    : <>
+        {n ? <><span className="font-semibold text-white">{n} thing{n > 1 ? 's' : ''}</span> need{n > 1 ? '' : 's'} your action</> : <>Nothing needs your action right now</>}
+        {waiting ? <>, and <span className="font-semibold text-white">{waiting} task{waiting > 1 ? 's' : ''}</span> {waiting > 1 ? 'are' : 'is'} waiting</> : null}. {summary}
+      </>
 
   return (
     <div className="space-y-6">
@@ -119,7 +154,7 @@ export function Home() {
             <p className="ss-rise max-w-xl text-lg text-white/90" style={{ ['--d' as string]: '0.15s' }}>{message}</p>
             {/* Four across only on the widest screens: beside the robot, narrower tiles would cut their labels short. */}
             <div className="ss-rise grid grid-cols-2 gap-3 pt-1 2xl:grid-cols-4" style={{ ['--d' as string]: '0.3s' }}>
-              {tiles(c, persona, waiting, t).map((x) => <HeroTile key={x.label} icon={x.icon} label={x.label} value={<CountUp value={x.value} />} sub={x.sub} />)}
+              {tiles(c, persona, waiting, t).map((x) => <HeroTile key={x.label} icon={x.icon} label={x.label} value={typeof x.value === 'number' ? <CountUp value={x.value} /> : x.value} sub={x.sub} />)}
             </div>
           </div>
           {/* Below the text on tablets; beside it from xl, as on Source Selection's home. */}
@@ -128,70 +163,62 @@ export function Home() {
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="min-w-0 space-y-6">
-          <div className="space-y-3">
-            <SectionHeader title="My awards" link={{ to: '/awards', label: 'All awards' }}
-              description={persona.id === 'counsel' ? 'Awards you may be asked to defend' : `Awards ${persona.id === 'ssa' ? 'you decided' : 'you manage'}, from contract award to close`} />
-            {c.inProgress.length ? (
-              <div className="space-y-3">
-                {c.inProgress.map((s, n) => <AwardCard key={s.SolicitationId} s={s} n={n} award={c.awardOf(s)} />)}
-              </div>
-            ) : (
-              <p className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
-                No awards in progress. An evaluation arrives here once its {t.sled ? 'recommendation of award' : 'source selection decision'} is signed.
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-3">
-            <SectionHeader title="My tasks" link={{ to: '/tasks', label: 'All tasks' }} description="Waiting on you across your awards" />
-            <ul className="space-y-2">
-              {toBegin.map((s) => (
-                <li key={s.SolicitationId} className="relative flex flex-wrap items-center gap-3 overflow-hidden rounded-2xl border border-primary/40 bg-card p-4 pl-5"><span className="ss-accent absolute inset-y-0 left-0 w-1" />
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium">Begin the award phase</span>
-                    <span className="block truncate text-xs text-muted-foreground">{s.Title} · {s.SolicitationId}</span>
-                  </span>
-                  <Button size="sm" asChild><Link to={to(s)}>Open<ArrowRight className="ml-1.5 h-3.5 w-3.5" /></Link></Button>
-                </li>
-              ))}
-              {open.slice(0, 5).map((x) => (
-                <li key={x.id} className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-4">
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium">{x.title}</span>
-                    <span className="block truncate text-xs text-muted-foreground">Assigned {when(x.createdTime)}</span>
-                  </span>
-                  <Button size="sm" asChild><Link to="/tasks">Open<ArrowRight className="ml-1.5 h-3.5 w-3.5" /></Link></Button>
-                </li>
-              ))}
-              {!waiting && <li className="flex items-center gap-2 rounded-2xl border border-dashed border-border bg-card p-4 text-sm text-muted-foreground"><CheckCircle2 className="h-4 w-4 text-[var(--ss-good)]" />Nothing waiting on you. New work appears here when an award reaches your step.</li>}
-            </ul>
-          </div>
-
-          {coming.length > 0 && (
+        <div className="min-w-0 space-y-8">
+          {contractWork && (
             <div className="space-y-3">
-              <SectionHeader title={t.sled ? 'At the award recommendation' : 'At the award decision'}
-                description={`Still with the ${t.ssa} in ${t.sled ? 'RFP Evaluation' : 'Source Selection'}. Each arrives here once it's signed.`} />
+              <SectionHeader title="Needs action" link={{ to: '/actions', label: 'All action items' }}
+                description={persona.id === 'co' ? 'Across your contracts: not picked up yet, and overdue or due within 14 days' : 'Yours: not picked up yet, and overdue or due within 14 days'} />
+              <ActionGroups groups={c.actions} showContract empty="Nothing needs your action right now." />
+            </div>
+          )}
+
+          {(open.length > 0 || toBegin.length > 0) && (
+            <div className="space-y-3">
+              <SectionHeader title="My tasks" link={{ to: '/tasks', label: 'All tasks' }} description="Waiting on you in Action Center" />
               <ul className="space-y-2">
-                {coming.map((s) => (
-                  <li key={s.SolicitationId}>
-                    <a href={appUrl('source-selection', `/s/${encodeURIComponent(s.SolicitationId)}`)} className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 hover:bg-muted/50">
-                      <AgencyMark agency={s.Agency} size={32} />
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-medium">{s.Title}</span>
-                        <span className="block truncate text-xs text-muted-foreground"><span className="font-mono">{s.SolicitationId}</span> · {s.Agency}</span>
-                      </span>
-                      <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground"><span className="hidden sm:inline">Open in {t.sled ? 'RFP Evaluation' : 'Source Selection'}</span><ArrowUpRight className="h-3.5 w-3.5" /></span>
-                    </a>
+                {toBegin.map((s) => (
+                  <li key={s.SolicitationId} className="relative flex flex-wrap items-center gap-3 overflow-hidden rounded-2xl border border-primary/40 bg-card p-4 pl-5"><span className="ss-accent absolute inset-y-0 left-0 w-1" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-medium">Begin the award phase</span>
+                      <span className="block truncate text-xs text-muted-foreground">{s.Title} · {s.SolicitationId}</span>
+                    </span>
+                    <Button size="sm" asChild><Link to={to(s)}>Open<ArrowRight className="ml-1.5 h-3.5 w-3.5" /></Link></Button>
+                  </li>
+                ))}
+                {open.slice(0, 5).map((x) => (
+                  <li key={x.id} className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-4">
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-medium">{x.title}</span>
+                      <span className="block truncate text-xs text-muted-foreground">{taskSolicitationId(x) ? `${title(taskSolicitationId(x)!)} · ` : ''}Assigned {when(x.createdTime)}</span>
+                    </span>
+                    <OpenAwardTask task={x} size="sm" />
                   </li>
                 ))}
               </ul>
             </div>
           )}
+
+          {awardWork && (
+            <div className="space-y-3">
+              <SectionHeader title="Awards in progress" link={{ to: '/awards', label: 'All awards' }} description="Decisions on their way to a signed contract" />
+              {c.awards.inProgress.length > 0 && <div className="space-y-3">{c.awards.inProgress.map((s, i) => <AwardCard key={s.SolicitationId} s={s} n={i} award={awardOf(s)} />)}</div>}
+              {c.awards.awaiting.length > 0 && <AwaitingList rows={c.awards.awaiting} />}
+              {!c.awards.inProgress.length && !c.awards.awaiting.length && (
+                <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">No awards in progress. An evaluation arrives here once its {t.sled ? 'recommendation of award' : 'source selection decision'} is signed.</p>
+              )}
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <SectionHeader title="Active contracts" link={{ to: '/contracts', label: 'All contracts' }} description="Signed and performing, the ones needing action first" />
+            {c.contracts.active.length
+              ? <div className="space-y-3">{c.contracts.active.map((s, i) => <ContractCard key={s.SolicitationId} s={s} n={i} award={awardOf(s)} />)}</div>
+              : <p className="rounded-xl border border-dashed border-border p-4 text-sm text-muted-foreground">No active contracts. A contract appears here the day its award is signed.</p>}
+          </div>
         </div>
 
         <aside className="space-y-3 xl:sticky xl:top-6 xl:self-start">
-          <SectionHeader title="Live activity" description="The latest on your awards' record" />
+          <SectionHeader title="Milestones" description="The latest on the record" />
           <ol className="space-y-3 rounded-2xl border border-border bg-card p-4">
             {activity.map((e) => (
               <li key={e.EventId} className="text-sm">
@@ -200,7 +227,7 @@ export function Home() {
                 <p className="truncate text-xs text-muted-foreground">{title(e.SolicitationId)}</p>
               </li>
             ))}
-            {!activity.length && <li className="text-sm text-muted-foreground">Nothing yet. Steps on your awards show here as they happen.</li>}
+            {!activity.length && <li className="text-sm text-muted-foreground">Nothing yet. Milestones on your contracts show here as they happen.</li>}
           </ol>
         </aside>
       </div>

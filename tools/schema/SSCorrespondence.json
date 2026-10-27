@@ -26,15 +26,18 @@
   },
   {
    "name": "Text",
-   "type": "MULTILINE_TEXT"
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
   },
   {
    "name": "AgentText",
-   "type": "MULTILINE_TEXT"
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
   },
   {
    "name": "DisclosureCheckJson",
-   "type": "MULTILINE_TEXT"
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
   },
   {
    "name": "ReceivedAt",

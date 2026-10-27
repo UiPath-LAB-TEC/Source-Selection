@@ -4,3 +4,7 @@
 @source './';
 /* The shared host and form pieces rendered from Source Selection's source. */
 @source '../../ss-task-forms/src';
+
+/* Contract Management's teal accent, as in the Contract Management web app (Source Selection is blue). */
+:root { --ss-brand-1: #0b3a4a; --ss-brand-2: #0a7f8c; --ss-brand-3: #5eead4; --ss-glow: rgba(10, 127, 140, 0.16); }
+.dark { --ss-glow: rgba(13, 148, 160, 0.22); }

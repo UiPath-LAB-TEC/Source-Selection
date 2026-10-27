@@ -13,6 +13,8 @@ import type { Dataset } from './types'
 export const ENTITY = {
   solicitations: 'SSSolicitation', offerors: 'SSOfferor', pages: 'SSProposalPage', findings: 'SSFinding',
   ratings: 'SSRating', decisions: 'SSDecision', audit: 'SSAuditEvent',
+  // The Award phase's own rows: Contract Award's forms read and write them, Source Selection's forms ignore them.
+  awards: 'SSAward', correspondence: 'SSCorrespondence', protests: 'SSProtest',
 } as const
 export type EntityKey = keyof typeof ENTITY
 
@@ -307,10 +309,12 @@ class PreviewBackend implements Backend {
   }
 
   async load(id: string): Promise<Dataset> {
-    return Object.fromEntries((Object.keys(ENTITY) as EntityKey[]).map((k) => [k, this.data[k].filter((r) => r.SolicitationId === id)])) as unknown as Dataset
+    // A snapshot from before the Award entities has no rows for them.
+    return Object.fromEntries((Object.keys(ENTITY) as EntityKey[]).map((k) => [k, (this.data[k] ?? []).filter((r) => r.SolicitationId === id)])) as unknown as Dataset
   }
 
   async upsert(k: EntityKey, key: string, rows: Row[]) {
+    this.data[k] ??= []
     for (const r of rows) {
       const i = this.data[k].findIndex((x) => x[key] === r[key])
       if (i >= 0) this.data[k][i] = { ...this.data[k][i], ...r }

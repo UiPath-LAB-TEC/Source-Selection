@@ -22,7 +22,7 @@ export interface AppInfo {
 export const APPS: AppInfo[] = [
   { id: 'source-selection', name: 'Source Selection', sledName: 'RFP Evaluation', blurb: 'Evaluate proposals and make the award decision',
     sledBlurb: 'Score proposals and recommend the award', route: 'source-selection', devPort: 5173, accent: '#2a78d6' },
-  { id: 'award', name: 'Contract Award', sledName: 'Contract Award', blurb: 'Contract award, notices, debriefings and protests',
+  { id: 'award', name: 'Contract Management', sledName: 'Contract Management', blurb: 'Contract award through administration and closeout',
     sledBlurb: 'Notice of intent, protests and Board approval', route: 'award', devPort: 5175, accent: '#0a7f8c' },
 ]
 
@@ -34,8 +34,13 @@ export function appUrl(id: AppId, path = '/'): string {
   return `${base}#${path}`
 }
 
-/** The Award phase's own entities. The Award app writes them; Delete evaluation removes them with the rest of the record. */
-export const AWARD_ENTITY = { awards: 'SSAward', correspondence: 'SSCorrespondence', protests: 'SSProtest' } as const
+/**
+ * The Award app's own entities: the award phase (awards, correspondence, protests) and the contract's administration after
+ * award (schedule, funding, alerts). The Award app writes them; Delete evaluation removes them with the rest of the record.
+ */
+export const AWARD_ENTITY = {
+  awards: 'SSAward', correspondence: 'SSCorrespondence', protests: 'SSProtest', schedule: 'SSSchedule', funding: 'SSFunding', alerts: 'SSAlert',
+} as const
 
 /** The Award solution's deployment folder (AMER Presales/Public Sector/Source Selection/Award), where its runs live. By key, as every folder here. */
 export const AWARD_PROCESS_FOLDER = { folderKey: '81e14639-e758-4614-a76b-305416269c98' }

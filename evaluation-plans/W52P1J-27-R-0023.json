@@ -4,6 +4,7 @@
   "agency": "Department of the Army",
   "office": "Army Contracting Command — Rock Island",
   "contractType": "Firm-fixed-price with labor-hour CLINs, 1 base year and 4 option years",
+  "laborHourClins": ["0002", "0003"],
   "basisForAward": "Best value tradeoff (FAR 15.101-1)",
   "ratingMethod": "color",
   "relativeImportance": "Technical Approach is more important than Management Approach, which is of equal importance to Past Performance. All non-price factors combined are significantly more important than Price.",

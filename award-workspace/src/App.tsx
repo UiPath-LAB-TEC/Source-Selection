@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
-import { Outlet, RouterProvider, createHashRouter, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, RouterProvider, createHashRouter, useLocation } from 'react-router-dom'
 import { Menu } from 'lucide-react'
 import { Alert, AlertDescription } from '@uipath/apollo-wind/components/ui/alert'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
@@ -12,7 +12,9 @@ import { AwardPersonaProvider } from './hooks/usePersona'
 import { Sidebar } from './components/Sidebar'
 import { LoginScreen } from './components/LoginScreen'
 import { AwardDataProvider, useAwardData } from './lib/data'
+import { Actions } from './pages/Actions'
 import { Awards } from './pages/Awards'
+import { Contracts } from './pages/Contracts'
 import { Home } from './pages/Home'
 import { Award } from './pages/Award'
 import { MyTasks } from './pages/MyTasks'
@@ -36,7 +38,7 @@ function Shell() {
       </aside>
       <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/90 px-4 py-2.5 backdrop-blur lg:hidden">
         <Button variant="ghost" size="icon" onClick={() => setOpen(true)} aria-label="Open menu"><Menu className="h-5 w-5" /></Button>
-        <span className="font-semibold">Contract Award</span>
+        <span className="font-semibold">Contract Management</span>
       </header>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-72 p-0">
@@ -61,6 +63,9 @@ const router = createHashRouter([{
     { path: '/', element: <Home /> },
     { path: '/awards', element: <Awards /> },
     { path: '/tasks', element: <MyTasks /> },
+    { path: '/contracts', element: <Contracts /> },
+    { path: '/actions', element: <Actions /> },
+    { path: '/alerts', element: <Navigate to="/actions" replace /> },
     { path: '/a/:id', element: <Award /> },
   ],
 }])

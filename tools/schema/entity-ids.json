@@ -9,5 +9,8 @@
  "SSRefVendor": "a1ddb0d6-4ec6-f111-bf5b-000d3a66d571",
  "SSAward": "d84a5203-8fcd-f111-bf5b-000d3a66d571",
  "SSCorrespondence": "ee4a5203-8fcd-f111-bf5b-000d3a66d571",
- "SSProtest": "054b5203-8fcd-f111-bf5b-000d3a66d571"
+ "SSProtest": "054b5203-8fcd-f111-bf5b-000d3a66d571",
+ "SSSchedule": "e41ad3eb-04cf-f111-bf5b-000d3a66d571",
+ "SSFunding": "2a6be5f1-04cf-f111-bf5b-000d3a66d571",
+ "SSAlert": "486be5f1-04cf-f111-bf5b-000d3a66d571"
 }

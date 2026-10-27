@@ -7,7 +7,8 @@ import type { TaskGetResponse } from '@uipath/uipath-typescript/tasks'
 import { all, loadDataset, withTaskContext } from '@ss/lib/data'
 import { AWARD_ENTITY } from '@ss/lib/apps'
 import { frameworkOfSolicitation, useFrameworkMode } from '@ss/hooks/useFramework'
-import type { AwardDataset, AwardRow, Correspondence, Protest } from './award'
+import { importedHeader, isImported } from './award'
+import type { AlertRow, AwardDataset, AwardRow, Correspondence, FundingRow, Protest, ScheduleRow } from './award'
 
 /**
  * The Award process's Action Center tasks, tagged "award", land in the Award solution's folder (Source Selection/Award),
@@ -15,16 +16,29 @@ import type { AwardDataset, AwardRow, Correspondence, Protest } from './award'
  */
 export const AWARD_TASK_FOLDER_ID = 2214981
 
-/** One load: every Source Selection entity (the record the award stands on) and the Award phase's own three. */
+/**
+ * Every contract gets a header the pages can read: Source Selection's solicitation row, or, for a contract awarded
+ * elsewhere (Origin Imported), one built from its SSAward row.
+ */
+export function withContractHeaders(d: AwardDataset): AwardDataset {
+  const known = new Set(d.solicitations.map((s) => s.SolicitationId))
+  const imported = d.awards.filter((a) => isImported(a) && !known.has(a.SolicitationId)).map(importedHeader)
+  return { ...d, schedule: d.schedule ?? [], funding: d.funding ?? [], alerts: d.alerts ?? [], solicitations: [...d.solicitations, ...imported] }
+}
+
+/** One load: every Source Selection entity (the record the award stands on), the award phase's own, and the administration's. */
 export async function loadAwardDataset(sdk: UiPath): Promise<AwardDataset> {
   const e = new Entities(sdk)
-  const [base, awards, correspondence, protests] = await Promise.all([
+  const [base, awards, correspondence, protests, schedule, funding, alerts] = await Promise.all([
     loadDataset(sdk),
     all<AwardRow>(e, AWARD_ENTITY.awards),
     all<Correspondence>(e, AWARD_ENTITY.correspondence),
     all<Protest>(e, AWARD_ENTITY.protests),
+    all<ScheduleRow>(e, AWARD_ENTITY.schedule),
+    all<FundingRow>(e, AWARD_ENTITY.funding),
+    all<AlertRow>(e, AWARD_ENTITY.alerts),
   ])
-  return { ...base, awards, correspondence, protests }
+  return withContractHeaders({ ...base, awards, correspondence, protests, schedule, funding, alerts })
 }
 
 async function loadAwardTasks(sdk: UiPath): Promise<TaskGetResponse[]> {
@@ -63,7 +77,7 @@ export function AwardDataProvider({ sdk, children, preview }: { sdk: UiPath; chi
     try {
       // Dev-only preview: the awarded evaluations from a Data Fabric snapshot (tools/export_snapshot.py --only), no sign-in.
       const [d, t] = preview && import.meta.env.DEV
-        ? [(await import('../dev/snapshot.json')).default as unknown as AwardDataset, []]
+        ? [withContractHeaders((await import('../dev/snapshot.json')).default as unknown as AwardDataset), []]
         : await Promise.all([loadAwardDataset(sdk), loadAwardTasks(sdk).catch(() => [])])
       setData(d)
       setTasks(t)

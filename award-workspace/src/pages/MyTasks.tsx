@@ -5,6 +5,7 @@ import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { Card, CardContent } from '@uipath/apollo-wind/components/ui/card'
 import { EmptyState } from '@uipath/apollo-wind/components/ui/empty-state'
 import { ACTION_CENTER } from '@ss/lib/data'
+import { OpenAwardTask, taskSolicitationId } from '../components/AwardTask'
 import { when } from '@ss/lib/eval'
 import { tasksFor } from '@ss/lib/roles'
 import type { Persona } from '@ss/lib/types'
@@ -18,7 +19,8 @@ type Show = 'open' | 'done'
 
 /** The Award process's Action Center tasks for the selected persona: open first, completed behind their own filter. */
 export function MyTasks() {
-  const { tasks } = useScopedAwardData()
+  const { tasks, data } = useScopedAwardData()
+  const title = (id?: string) => (id ? data?.solicitations.find((s) => s.SolicitationId === id)?.Title : undefined)
   const { persona } = useAwardPersona()
   const mine = tasksFor(tasks, persona)
   const open = mine.filter((t) => !t.isCompleted).sort((a, b) => b.createdTime.localeCompare(a.createdTime))
@@ -39,7 +41,7 @@ export function MyTasks() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">My tasks</h1>
-          <p className="text-sm text-muted-foreground">Award work assigned to {persona.name}, {persona.label}, in Action Center.</p>
+          <p className="text-sm text-muted-foreground">Award work assigned to {persona.name}, {persona.label}, in Action Center. Tasks open right here.</p>
         </div>
         <div role="tablist" aria-label="Show tasks" className="inline-flex rounded-xl border border-border bg-muted/50 p-1">
           {tab('open', 'In progress', open.length)}
@@ -59,11 +61,15 @@ export function MyTasks() {
             <div key={t.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
               <div className="min-w-0 flex-1">
                 <p className="truncate font-medium">{t.title}</p>
-                <p className="text-xs text-muted-foreground">{t.isCompleted ? `Completed ${when(t.completedTime ?? t.createdTime)}` : `Assigned ${when(t.createdTime)}`}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {title(taskSolicitationId(t)) ? <><span className="font-medium text-foreground/80">{title(taskSolicitationId(t))}</span> · {taskSolicitationId(t)} · </> : ''}
+                  {t.isCompleted ? `Completed ${when(t.completedTime ?? t.createdTime)}` : `Assigned ${when(t.createdTime)}`}
+                </p>
               </div>
-              <Button size="sm" variant="outline" asChild>
-                <a href={`${ACTION_CENTER}/${t.id}`} target="_blank" rel="noopener"><ExternalLink className="mr-1.5 h-3.5 w-3.5" />Open in Action Center</a>
+              <Button size="sm" variant="ghost" asChild title="Open in Action Center">
+                <a href={`${ACTION_CENTER}/${t.id}`} target="_blank" rel="noopener" aria-label="Open in Action Center"><ExternalLink className="h-3.5 w-3.5" /></a>
               </Button>
+              <OpenAwardTask task={t} size="sm" />
             </div>
           ))}
         </CardContent></Card>

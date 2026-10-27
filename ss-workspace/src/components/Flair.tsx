@@ -4,6 +4,7 @@ import type { PersonaId } from '../lib/types'
 
 const PERSONA_COLOR: Record<PersonaId, string> = {
   co: '#1d3a8a', evaluator1: '#2a78d6', evaluator2: '#0e7490', evaluator3: '#7c3aed', chair: '#b45309', ssa: '#be123c', admin: '#475467', counsel: '#0f766e',
+  cor: '#4d7c0f', rm: '#9333ea',
 }
 
 /**

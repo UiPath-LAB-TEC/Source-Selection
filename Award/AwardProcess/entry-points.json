@@ -28,6 +28,12 @@
         "properties": {
           "awardStage": {
             "type": "string"
+          },
+          "contractNumber": {
+            "type": "string"
+          },
+          "noticesUri": {
+            "type": "string"
           }
         }
       },

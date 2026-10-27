@@ -3,7 +3,7 @@ import { BookOpenCheck, Sparkles } from 'lucide-react'
 import robot from '@ss/assets/uipath-robot.png'
 import { useFeed, useLoop } from '@ss/lib/feed'
 import { useTerms } from '@forms/lib/terms'
-import { isAwarded } from '../lib/award'
+import { isAwarded, isImportedHeader } from '../lib/award'
 import { useScopedAwardData } from '../lib/data'
 
 interface Draft { kind: string; tone: string; to: string }
@@ -25,7 +25,8 @@ function useDrafts(): Draft[] {
   const { data } = useScopedAwardData()
   const t = useTerms()
   return useMemo(() => {
-    const awarded = (data?.solicitations ?? []).filter(isAwarded)
+    // Awarded here: a contract brought in from elsewhere has no notices or debriefings to draft.
+    const awarded = (data?.solicitations ?? []).filter((s) => isAwarded(s) && !isImportedHeader(s))
     const out: Draft[] = []
     for (const s of awarded) {
       const offerors = (data?.offerors ?? []).filter((o) => o.SolicitationId === s.SolicitationId)

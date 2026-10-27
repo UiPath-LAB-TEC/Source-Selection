@@ -1,0 +1,76 @@
+{
+ "displayName": "SS Funding",
+ "description": "A contract's money: obligations and deobligations by modification, and invoice lines",
+ "fields": [
+  {
+   "name": "FundingId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "Reference",
+   "type": "STRING"
+  },
+  {
+   "name": "Clin",
+   "type": "STRING"
+  },
+  {
+   "name": "Period",
+   "type": "STRING"
+  },
+  {
+   "name": "Amount",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "Hours",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "ServiceStart",
+   "type": "STRING"
+  },
+  {
+   "name": "ServiceEnd",
+   "type": "STRING"
+  },
+  {
+   "name": "ReceivedDay",
+   "type": "STRING"
+  },
+  {
+   "name": "AcceptedDay",
+   "type": "STRING"
+  },
+  {
+   "name": "DueDay",
+   "type": "STRING"
+  },
+  {
+   "name": "PaidDay",
+   "type": "STRING"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "Appropriation",
+   "type": "STRING"
+  },
+  {
+   "name": "FundsExpireDay",
+   "type": "STRING"
+  }
+ ]
+}

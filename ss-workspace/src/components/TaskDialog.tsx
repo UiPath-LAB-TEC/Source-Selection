@@ -20,8 +20,11 @@ import type { Solicitation } from '../lib/types'
 import { WorkspaceBackend } from '../lib/taskBackend'
 import { taskTitle, useTerms } from '@forms/lib/terms'
 
+/** A form for each task actionType. */
+export type TaskForms = Record<string, () => ReactNode>
+
 /** The same forms Action Center renders, keyed by the task's actionType. */
-const FORMS: Record<string, () => ReactNode> = {
+const FORMS: TaskForms = {
   releaseToEvaluation: () => <ReleaseForm />,
   individualEvaluation: () => <EvaluationWorksheet />,
   consensus: () => <ConsensusBoard />,
@@ -51,8 +54,8 @@ function Problem({ message, onRetry }: { message: string; onRetry: () => void })
   )
 }
 
-/** Loads the task and its evaluation record, then renders the matching form. */
-function TaskForm({ backend }: { backend: WorkspaceBackend }) {
+/** Loads the task and its record, then renders the matching form. */
+function TaskForm({ backend, forms }: { backend: WorkspaceBackend; forms: TaskForms }) {
   const [task, setTask] = useState<LoadedTask>()
   const [data, setData] = useState<Dataset>()
   const [error, setError] = useState<string>()
@@ -84,7 +87,7 @@ function TaskForm({ backend }: { backend: WorkspaceBackend }) {
   if (!sol) return <Problem message={`Solicitation ${task.data.solicitationId || '(none)'} was not found in Data Fabric.`} onRetry={reload} />
   let plan: Plan
   try { plan = JSON.parse(sol.PlanJson) as Plan } catch { return <Problem message={`The evaluation plan for ${sol.SolicitationId} could not be read.`} onRetry={reload} /> }
-  const render = FORMS[task.data.actionType]
+  const render = forms[task.data.actionType]
   if (!render) return <Problem message={`This task has no form for "${task.data.actionType || 'unknown'}".`} onRetry={reload} />
   return (
     <FormBoundary onRetry={reload}>
@@ -93,21 +96,29 @@ function TaskForm({ backend }: { backend: WorkspaceBackend }) {
   )
 }
 
+/** Source Selection's task dialog: its own forms, acting as the persona in use. */
+export function TaskDialog(props: { task: TaskGetResponse; open: boolean; onOpenChange: (open: boolean) => void; onCompleted?: () => void }) {
+  const { persona } = usePersona()
+  return <TaskDialogView {...props} forms={FORMS} actor={persona.name} />
+}
+
 /**
- * An Action Center task opened inside the workspace: the real form, submitted straight to Action Center, so the user
- * never leaves the page. Action Center stays one click away for anything the dialog doesn't cover.
+ * An Action Center task opened inside an app: the real form, submitted straight to Action Center, so the user never
+ * leaves the page. Action Center stays one click away for anything the dialog doesn't cover. Every app in the system
+ * uses this view with its own forms (Contract Management passes the Award forms).
  */
-export function TaskDialog({ task, open, onOpenChange, onCompleted }: {
-  task: TaskGetResponse; open: boolean; onOpenChange: (open: boolean) => void; onCompleted?: () => void
+export function TaskDialogView({ task, open, onOpenChange, onCompleted, forms, actor, record }: {
+  task: TaskGetResponse; open: boolean; onOpenChange: (open: boolean) => void; onCompleted?: () => void; forms: TaskForms; actor: string
+  /** What the loading screen calls the record; Source Selection's "evaluation record" by default. */
+  record?: string
 }) {
   const { sdk } = useAuth()
-  const { persona } = usePersona()
   const t = useTerms()
   const backend = useMemo(
-    () => new WorkspaceBackend(sdk, task.id, task.folderId, persona.name, () => { onOpenChange(false); onCompleted?.() }),
+    () => new WorkspaceBackend(sdk, task.id, task.folderId, actor, () => { onOpenChange(false); onCompleted?.() }, record),
     // A fresh backend per open, so a reopened task reloads from Action Center.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [sdk, task.id, task.folderId, persona.name, open],
+    [sdk, task.id, task.folderId, actor, record, open],
   )
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -122,7 +133,7 @@ export function TaskDialog({ task, open, onOpenChange, onCompleted }: {
           </Button>
         </div>
         <div className="ss-embed min-h-0 flex-1 overflow-y-auto">
-          {open && <TaskForm key={`${task.id}-${String(open)}`} backend={backend} />}
+          {open && <TaskForm key={`${task.id}-${String(open)}`} backend={backend} forms={forms} />}
         </div>
       </DialogContent>
     </Dialog>

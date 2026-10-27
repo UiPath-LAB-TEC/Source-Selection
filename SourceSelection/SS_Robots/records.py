@@ -15,6 +15,8 @@ def _latin(s: str) -> str:
 
 FEDERAL_BANNER = "SOURCE SELECTION INFORMATION - SEE FAR 2.101 AND 3.104 - SYNTHETIC DEMO DATA"
 SLED_BANNER = "CONFIDENTIAL PROCUREMENT RECORD - EXEMPT FROM DISCLOSURE UNTIL BOARD ACTION - SYNTHETIC DEMO DATA"
+# Letters the agency sends out (notices of award, the contract) are not source selection information.
+RELEASED_BANNER = "SYNTHETIC DEMO DATA - NOT AN ACTUAL GOVERNMENT DOCUMENT"
 
 
 class _Doc(FPDF):
@@ -42,9 +44,10 @@ class _Doc(FPDF):
         self.cell(0, 4, f"Page {self.page_no()}", align="R")
 
 
-def render(title: str, header: str, sections: list[tuple[str, str]], sled: bool = False) -> bytes:
-    """sections: (heading, body) pairs. Body paragraphs are separated by blank lines. `sled`: a District record's banner."""
-    pdf = _Doc(header, SLED_BANNER if sled else FEDERAL_BANNER)
+def render(title: str, header: str, sections: list[tuple[str, str]], sled: bool = False, banner: str | None = None) -> bytes:
+    """sections: (heading, body) pairs. Body paragraphs are separated by blank lines. `sled`: a District record's banner;
+    `banner` overrides both (RELEASED_BANNER for documents sent to offerors)."""
+    pdf = _Doc(header, banner or (SLED_BANNER if sled else FEDERAL_BANNER))
     pdf.add_page()
     pdf.set_font("helvetica", "B", 15)
     pdf.multi_cell(0, 7, _latin(title), new_x="LMARGIN", new_y="NEXT")

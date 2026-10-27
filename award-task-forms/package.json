@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node src/lib/clocks.test.ts && node src/lib/record.test.ts",
+    "build:solution": "tsc -b && vite build --outDir ../Award/AwardTaskForms/source/dist --emptyOutDir && cp action-schema.json ../Award/AwardTaskForms/ && cp uipath.json ../Award/AwardTaskForms/source/"
   },
   "dependencies": {
     "@uipath/apollo-core": "^5.15.1",

@@ -1,6 +1,6 @@
 {
  "displayName": "SS Award",
- "description": "Award phase state per solicitation: contract award, notices, debriefings, protest window",
+ "description": "One row per contract: the award phase (contract award, notices, debriefings, protest window) and its administration after award",
  "fields": [
   {
    "name": "AwardId",
@@ -38,7 +38,8 @@
   },
   {
    "name": "ClocksJson",
-   "type": "MULTILINE_TEXT"
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
   },
   {
    "name": "PerformanceStatus",
@@ -50,6 +51,92 @@
   },
   {
    "name": "ClosedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "Phase",
+   "type": "STRING"
+  },
+  {
+   "name": "Origin",
+   "type": "STRING"
+  },
+  {
+   "name": "Framework",
+   "type": "STRING"
+  },
+  {
+   "name": "Title",
+   "type": "STRING"
+  },
+  {
+   "name": "Agency",
+   "type": "STRING"
+  },
+  {
+   "name": "Office",
+   "type": "STRING"
+  },
+  {
+   "name": "AwardeeName",
+   "type": "STRING"
+  },
+  {
+   "name": "ContractType",
+   "type": "STRING"
+  },
+  {
+   "name": "PeriodStart",
+   "type": "STRING"
+  },
+  {
+   "name": "PeriodEnd",
+   "type": "STRING"
+  },
+  {
+   "name": "CurrentPeriod",
+   "type": "STRING"
+  },
+  {
+   "name": "CeilingValue",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "ObligatedValue",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "InvoicedValue",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "FundsJson",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "AbstractJson",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "CorName",
+   "type": "STRING"
+  },
+  {
+   "name": "CorEmail",
+   "type": "STRING"
+  },
+  {
+   "name": "PredecessorId",
+   "type": "STRING"
+  },
+  {
+   "name": "SuccessorId",
+   "type": "STRING"
+  },
+  {
+   "name": "WatchedAt",
    "type": "DATETIME_WITH_TZ"
   }
  ]

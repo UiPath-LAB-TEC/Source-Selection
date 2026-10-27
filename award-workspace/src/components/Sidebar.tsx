@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { Check, ChevronsUpDown, Gavel, House, Inbox, LogOut, RefreshCw } from 'lucide-react'
+import { Check, ChevronsUpDown, FileStack, Gavel, House, Inbox, ListChecks, LogOut, RefreshCw } from 'lucide-react'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@uipath/apollo-wind/components/ui/popover'
 import { useFramework } from '@forms/lib/terms'
@@ -8,6 +8,9 @@ import { PersonaAvatar } from '@ss/components/Flair'
 import { ThemeToggle } from '@ss/components/Theme'
 import { awardTitled, useAwardPersona } from '../hooks/usePersona'
 import { AWARD_PERSONAS } from '../lib/award'
+import { actionsFor } from '../lib/alerts'
+import { awardsOf } from '../pages/Awards'
+import { contractsOf } from '../pages/Contracts'
 import { useScopedAwardData } from '../lib/data'
 import { myTasks } from '../pages/MyTasks'
 
@@ -51,9 +54,12 @@ function PersonaCard() {
 }
 
 export function Sidebar({ onSignOut, onNavigate }: { onSignOut: () => void; onNavigate?: () => void }) {
-  const { tasks, loading, reload } = useScopedAwardData()
+  const { data, tasks, loading, reload } = useScopedAwardData()
   const { persona } = useAwardPersona()
   const mine = myTasks(tasks, persona).length
+  const needs = actionsFor(data, persona).needs.length
+  const awards = data ? awardsOf(data).inProgress.length : 0
+  const contracts = data ? contractsOf(data).active.length : 0
   const link = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-primary/10 font-medium text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`
 
@@ -63,7 +69,12 @@ export function Sidebar({ onSignOut, onNavigate }: { onSignOut: () => void; onNa
 
       <nav className="space-y-1" onClick={onNavigate}>
         <NavLink to="/" end className={link}><House className="h-4 w-4" />My workspace</NavLink>
-        <NavLink to="/awards" className={link}><Gavel className="h-4 w-4" />Awards</NavLink>
+        <NavLink to="/awards" className={link}><Gavel className="h-4 w-4" />Awards<span className="ml-auto text-xs tabular-nums text-muted-foreground">{awards || ''}</span></NavLink>
+        <NavLink to="/contracts" className={link}><FileStack className="h-4 w-4" />Contracts<span className="ml-auto text-xs tabular-nums text-muted-foreground">{contracts || ''}</span></NavLink>
+        <NavLink to="/actions" className={link}>
+          <ListChecks className="h-4 w-4" />Action items
+          {needs > 0 && <span className="ml-auto rounded-full bg-[var(--ss-serious)] px-1.5 text-[11px] font-semibold text-white tabular-nums" title="Need action">{needs}</span>}
+        </NavLink>
         <NavLink to="/tasks" className={link}>
           <Inbox className="h-4 w-4" />My tasks
           {mine > 0 && <span className="ml-auto rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground">{mine}</span>}

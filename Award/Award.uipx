@@ -12,6 +12,16 @@
       "Type": "Function",
       "ProjectRelativePath": "AW_Robots/project.uiproj",
       "Id": "54bb2c6c-7c67-4f72-aa00-f9a62cc9a30f"
+    },
+    {
+      "Type": "AppV2",
+      "ProjectRelativePath": "AwardTaskForms/project.uiproj",
+      "Id": "29cef739-7f5b-45ac-8992-d69f81eba55c"
+    },
+    {
+      "Type": "processOrchestration",
+      "ProjectRelativePath": "ContractWatchProcess/project.uiproj",
+      "Id": "1e462cb3-9d9d-43f1-b433-952ae296b632"
     }
   ]
 }

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/ContractWatchProcess.bpmn#Start_Watch",
+      "uniqueId": "c25dac75-e53d-458a-9c69-56a6147b2e4b",
+      "type": "ProcessOrchestration",
+      "input": {
+        "type": "object",
+        "properties": {
+          "asOf": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string"
+          }
+        }
+      },
+      "displayName": "Start contract watch"
+    }
+  ]
+}

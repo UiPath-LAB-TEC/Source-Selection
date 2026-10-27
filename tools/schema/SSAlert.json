@@ -1,0 +1,83 @@
+{
+ "displayName": "SS Alert",
+ "description": "What the daily contract watch found coming due or running short, with the rule behind each",
+ "fields": [
+  {
+   "name": "AlertId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "Rule",
+   "type": "STRING"
+  },
+  {
+   "name": "Subject",
+   "type": "STRING"
+  },
+  {
+   "name": "Severity",
+   "type": "STRING"
+  },
+  {
+   "name": "Title",
+   "type": "STRING"
+  },
+  {
+   "name": "Detail",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "DueDay",
+   "type": "STRING"
+  },
+  {
+   "name": "Owner",
+   "type": "STRING"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "EvidenceJson",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "RaisedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "ResolvedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "ActedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "ActedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "Reason",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "ProcessInstanceId",
+   "type": "STRING"
+  }
+ ]
+}

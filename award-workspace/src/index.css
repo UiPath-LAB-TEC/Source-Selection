@@ -5,9 +5,11 @@
 /* Shell pieces the Award app renders from Source Selection's source. */
 @source '../../ss-workspace/src/components';
 @source '../../ss-workspace/src/hooks';
+/* Contract Management's forms and shared record code. */
+@source '../../award-task-forms/src';
 
 /*
- * Contract Award's own accent: deep teal where Source Selection is blue, on the hero banners, the app tile, progress
+ * Contract Management's own accent: deep teal where Source Selection is blue, on the hero banners, the app tile, progress
  * tracks and the backdrop glow, so it's clear at a glance which app you're in. Buttons, ratings and status colors stay
  * shared (one system). White text on --ss-brand-2 is 4.6:1.
  */

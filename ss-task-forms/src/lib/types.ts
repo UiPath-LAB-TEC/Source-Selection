@@ -152,6 +152,10 @@ export interface Dataset {
   ratings: Rating[]
   decisions: Decision[]
   audit: AuditEvent[]
+  /** The Award phase's rows, typed in award-task-forms/src/lib/record.ts (Source Selection's forms don't read them). */
+  awards?: Record<string, unknown>[]
+  correspondence?: Record<string, unknown>[]
+  protests?: Record<string, unknown>[]
 }
 
 export const STAGES = ['Proposal Intake', 'Individual Evaluation', 'Consensus', 'Price Evaluation', 'Award Decision'] as const

@@ -18,6 +18,11 @@
                         "default": "",
                         "title": "Solicitationid",
                         "type": "string"
+                    },
+                    "asOf": {
+                        "default": "",
+                        "title": "Asof",
+                        "type": "string"
                     }
                 },
                 "required": [],
@@ -63,7 +68,7 @@
             "graph": {
                 "nodes": [
                     {
-                        "id": "main.py:111",
+                        "id": "main.py:357",
                         "name": "run",
                         "type": "function",
                         "metadata": {

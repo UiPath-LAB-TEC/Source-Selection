@@ -1,0 +1,71 @@
+{
+  "inputs": {
+    "type": "object",
+    "properties": {
+      "actionType": {
+        "type": "string",
+        "required": true,
+        "description": "Which form to render: executeAward, recordDebriefRequests, deliverDebriefings, followUpQuestions, protestWindow, agencyPosition, recordDecision"
+      },
+      "solicitationId": {
+        "type": "string",
+        "required": true,
+        "description": "Solicitation number; key into Data Fabric"
+      },
+      "awardDraft": {
+        "type": "string",
+        "required": false,
+        "description": "Contract award summary drafted by the robot (JSON)"
+      },
+      "noticesDraft": {
+        "type": "string",
+        "required": false,
+        "description": "Notices drafted for the awardee and each unsuccessful offeror (JSON)"
+      },
+      "debriefDrafts": {
+        "type": "string",
+        "required": false,
+        "description": "Debriefings drafted per requesting offeror, with disclosure checks (JSON)"
+      },
+      "followUpDrafts": {
+        "type": "string",
+        "required": false,
+        "description": "Drafted answers to DoD follow-up questions (JSON)"
+      },
+      "protestAnalysis": {
+        "type": "string",
+        "required": false,
+        "description": "Protest grounds mapped to the record (JSON)"
+      }
+    }
+  },
+  "outputs": {
+    "type": "object",
+    "properties": {
+      "decision": {
+        "type": "string",
+        "description": "The outcome the person chose (e.g. Signed, Protest filed, Defend)"
+      },
+      "notes": {
+        "type": "string",
+        "description": "Free-text notes"
+      },
+      "payload": {
+        "type": "string",
+        "description": "The form's result (JSON or document text)"
+      }
+    }
+  },
+  "inOuts": {
+    "type": "object",
+    "properties": {}
+  },
+  "outcomes": {
+    "type": "object",
+    "properties": {
+      "Submit": {
+        "type": "string"
+      }
+    }
+  }
+}

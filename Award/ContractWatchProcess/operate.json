@@ -1,0 +1,11 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/operate",
+  "projectId": "b31ebf96-842b-4cd5-8619-f18c6ecd105c",
+  "main": "/content/ContractWatchProcess.bpmn#Start_Watch",
+  "contentType": "ProcessOrchestration",
+  "targetFramework": "Portable",
+  "runtimeOptions": {
+    "requiresUserInteraction": false,
+    "isAttended": false
+  }
+}

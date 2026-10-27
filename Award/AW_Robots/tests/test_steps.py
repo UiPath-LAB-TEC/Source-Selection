@@ -81,8 +81,8 @@ def test_a_retry_leaves_an_award_under_way_where_it_is(platform):
 
 
 def test_stage_names_match_the_award_app():
-    """The robot writes the stage names the Award app's tracker reads (AWARD_STAGES in award.ts)."""
-    ts = (ROOT / "award-workspace" / "src" / "lib" / "award.ts").read_text()
+    """The robot writes the stage names the Award app's tracker reads (AWARD_STAGES in record.ts)."""
+    ts = (ROOT / "award-task-forms" / "src" / "lib" / "record.ts").read_text()
     for fw, names in main.STAGES.items():
         listed = re.search(rf"^\s*{fw}: \[(.*?)\],?$", ts, re.M)
         assert listed and re.findall(r"'([^']+)'", listed.group(1)) == names, fw

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Archive, Bot, Check, ChevronsUpDown, ClipboardCheck, Cpu, Database, FileSignature, FileStack, Gavel, Landmark, Loader2, LockKeyhole, Mail, MessagesSquare, ShieldAlert, ShieldCheck, Sparkles, Vote, Workflow } from 'lucide-react'
+import { Archive, Bot, CalendarClock, Check, ChevronsUpDown, ClipboardCheck, Cpu, Database, FileSignature, FileStack, Gavel, Landmark, Loader2, LockKeyhole, Mail, MessagesSquare, ShieldAlert, ShieldCheck, Sparkles, Vote, Workflow } from 'lucide-react'
 import { Alert, AlertDescription } from '@uipath/apollo-wind/components/ui/alert'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@uipath/apollo-wind/components/ui/popover'
@@ -16,17 +16,17 @@ import { AWARD_PERSONAS, AWARD_STAGES } from '../lib/award'
 
 /** The UiPath products the Award phase runs on, circling the robot as they do on Source Selection's sign-in. */
 const PRODUCTS: OrbitProduct[] = [
-  { label: 'Maestro', icon: Workflow, title: 'Maestro runs the award process, from contract award to close' },
+  { label: 'Maestro', icon: Workflow, title: 'Maestro runs the award process and the daily contract watch' },
   { label: 'Agents', icon: Bot, title: 'Agents draft debriefings, answer follow-up questions and map protest grounds to the record' },
   { label: 'Actions', icon: ClipboardCheck, title: 'Action Center carries every Contracting Officer and counsel decision' },
   { label: 'Storage', icon: Archive, title: 'Storage files every notice, debriefing and agency report with the award record' },
-  { label: 'Data Fabric', icon: Database, title: 'Data Fabric holds the one record Source Selection and Contract Award share' },
-  { label: 'Robots', icon: Cpu, title: 'Robots issue notices, check every debriefing for disclosures and assemble the agency report' },
+  { label: 'Data Fabric', icon: Database, title: 'Data Fabric holds the one record Source Selection and Contract Management share' },
+  { label: 'Robots', icon: Cpu, title: 'Robots issue notices, assemble the agency report and watch every contract\u2019s deadlines and funds' },
 ]
 
-const ICONS = { federal: [FileSignature, Mail, MessagesSquare, ShieldAlert, Gavel], sled: [Mail, ShieldAlert, Vote, FileSignature, Landmark] }
+const ICONS = { federal: [FileSignature, Mail, MessagesSquare, ShieldAlert, CalendarClock], sled: [Mail, ShieldAlert, Vote, FileSignature, Landmark] }
 
-/** Sign-in for Contract Award: the same look, motion, framework switch and persona choice as Source Selection's, with its own steps and products. */
+/** Sign-in for Contract Management: the same look, motion, framework switch and persona choice as Source Selection's, with its own steps and products. */
 export function LoginScreen({ onLogin, error, busy = false, still = false, status }: {
   onLogin: () => void; error: string | null; busy?: boolean; still?: boolean; status?: string
 }) {
@@ -35,8 +35,10 @@ export function LoginScreen({ onLogin, error, busy = false, still = false, statu
   const [open, setOpen] = useState(false)
   const people = AWARD_PERSONAS.map((p) => awardTitled(p, t.id))
   const counsel = t.sled ? 'District Counsel' : 'Agency Counsel'
-  const who = { federal: [t.co, t.co, `${t.co} and the agent`, counsel, t.co], sled: [t.co, counsel, 'Board of Education', t.co, t.co] }[t.id]
-  const stages = AWARD_STAGES[t.id].map((name, n) => ({ name, icon: ICONS[t.id][n], who: who[n] }))
+  const who = { federal: [t.co, t.co, `${t.co} and the agent`, counsel, 'COR and the contract watch'], sled: [t.co, counsel, 'Board of Education', t.co, t.co] }[t.id]
+  // Federal: the award phase's steps, then the contract's administration in place of "Closed".
+  const names = t.sled ? AWARD_STAGES.sled : [...AWARD_STAGES.federal.slice(0, 4), 'Administration']
+  const stages = names.map((name, n) => ({ name, icon: ICONS[t.id][n], who: who[n] }))
   const signer = people.find((p) => p.id === as)!
   const choose = (id: PersonaId) => { setAs(id); rememberPersona(id); setOpen(false) }
   return (
@@ -45,7 +47,7 @@ export function LoginScreen({ onLogin, error, busy = false, still = false, statu
         <div className="relative z-10 flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/30"><Gavel className="h-5 w-5" /></div>
           <div className="leading-tight">
-            <div className="font-semibold">Contract Award</div>
+            <div className="font-semibold">Contract Management</div>
             <div className="text-xs text-white/75">{t.sled ? 'Agentic Procurement' : 'Agentic Acquisition'} on UiPath</div>
           </div>
         </div>
@@ -54,10 +56,10 @@ export function LoginScreen({ onLogin, error, busy = false, still = false, statu
           <div className="space-y-5">
             <p className="ss-rise inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-medium ring-1 ring-white/25"><Sparkles className="h-3.5 w-3.5" />After the {t.sled ? 'recommendation' : 'award decision'}</p>
             <h1 className="ss-rise max-w-xl text-4xl font-semibold leading-tight tracking-tight md:text-5xl" style={{ ['--d' as string]: '.08s' }}>
-              {t.sled ? 'Notices, protests and Board approval, from one record.' : 'Notices, debriefings and protests, answered from the record.'}
+              {t.sled ? 'Notices, protests and Board approval, from one record.' : 'From contract award to closeout, run from the record.'}
             </h1>
             <p className="ss-rise max-w-lg text-lg text-white/85" style={{ ['--d' as string]: '.16s' }}>
-              The same record {t.sled ? 'RFP Evaluation' : 'Source Selection'} built. Agents draft from it, and the {t.co} and counsel decide what goes out.
+              The same record {t.sled ? 'RFP Evaluation' : 'Source Selection'} built. Agents draft from it, {t.sled ? '' : 'the contract watch keeps every deadline and dollar in view, '}and the {t.co}{t.sled ? '' : ', the COR'} and counsel decide.
             </p>
           </div>
           <div className="ss-rise hidden xl:block" style={{ ['--d' as string]: '.2s' }}><ProductOrbit products={PRODUCTS} /></div>

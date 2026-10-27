@@ -38,7 +38,8 @@
   },
   {
    "name": "GroundsJson",
-   "type": "MULTILINE_TEXT"
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
   },
   {
    "name": "Position",

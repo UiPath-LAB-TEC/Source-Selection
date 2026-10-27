@@ -12,12 +12,13 @@ import { solicitationSlots } from '../lib/roles'
 import { stageName, useTerms } from '@forms/lib/terms'
 import type { Solicitation } from '../lib/types'
 
-type Phase = 'done' | 'active' | 'faulted' | 'idle'
-const phase = (status: string): Phase =>
+export type Phase = 'done' | 'active' | 'faulted' | 'idle'
+/** A Maestro element or instance status as one of four states. Shared with the other apps' process panels. */
+export const phase = (status: string): Phase =>
   /fault|fail|error/i.test(status) ? 'faulted' : /complet/i.test(status) ? 'done' : /progress|running|pending|active|waiting/i.test(status) ? 'active' : 'idle'
 
-const KIND_ICON: Record<TaskKind, typeof Bot> = { robot: Bot, agent: Sparkles, human: UserRound }
-const KIND_LABEL: Record<TaskKind, string> = { robot: 'Robot', agent: 'Agent', human: 'Person' }
+export const KIND_ICON: Record<TaskKind, typeof Bot> = { robot: Bot, agent: Sparkles, human: UserRound }
+export const KIND_LABEL: Record<TaskKind, string> = { robot: 'Robot', agent: 'Agent', human: 'Person' }
 
 /** Before the process runs (or in preview), the plan as designed, with progress taken from the solicitation's stage. */
 export function designedCase(sol: Solicitation): LiveStage[] {
@@ -33,7 +34,7 @@ export function designedCase(sol: Solicitation): LiveStage[] {
   })
 }
 
-function StatusMark({ p, className = 'h-3.5 w-3.5' }: { p: Phase; className?: string }) {
+export function StatusMark({ p, className = 'h-3.5 w-3.5' }: { p: Phase; className?: string }) {
   if (p === 'done') return <Check className={`${className} text-[var(--ss-lvl-0-fg)]`} />
   if (p === 'active') return <Loader2 className={`${className} animate-spin text-primary`} />
   if (p === 'faulted') return <TriangleAlert className={`${className} text-[var(--ss-lvl-4)]`} />
@@ -57,7 +58,7 @@ function TaskRow({ t, waiting }: { t: LiveTask; waiting?: WaitingStep }) {
   )
 }
 
-function duration(from?: string, to?: string) {
+export function duration(from?: string, to?: string) {
   if (!from) return ''
   const ms = (to ? Date.parse(to) : Date.now()) - Date.parse(from)
   if (!(ms > 0)) return ''

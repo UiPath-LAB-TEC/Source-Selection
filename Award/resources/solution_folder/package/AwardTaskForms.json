@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AwardTaskForms",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "29cef739-7f5b-45ac-8992-d69f81eba55c",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "AwardTaskForms"
+    },
+    "locks": [],
+    "key": "cb9a6ca9-98ab-4115-a791-3aef9650b6e9",
+    "files": []
+  }
+}

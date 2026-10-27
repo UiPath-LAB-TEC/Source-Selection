@@ -13,7 +13,8 @@ ROOT = Path(__file__).resolve().parent.parent
 IDS = json.loads((ROOT / "tools" / "schema" / "entity-ids.json").read_text())
 KEYS = {"SSSolicitation": "solicitations", "SSOfferor": "offerors", "SSProposalPage": "pages", "SSFinding": "findings",
         "SSRating": "ratings", "SSDecision": "decisions", "SSAuditEvent": "audit",
-        "SSAward": "awards", "SSCorrespondence": "correspondence", "SSProtest": "protests"}
+        "SSAward": "awards", "SSCorrespondence": "correspondence", "SSProtest": "protests",
+        "SSSchedule": "schedule", "SSFunding": "funding", "SSAlert": "alerts"}
 
 
 def uip(*args):

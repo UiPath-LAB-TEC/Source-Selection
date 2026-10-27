@@ -3,14 +3,10 @@ import type { UiPath } from '@uipath/uipath-typescript/core'
 import { Buckets } from '@uipath/uipath-typescript/buckets'
 import { Entities } from '@uipath/uipath-typescript/entities'
 import { Tasks, TaskType } from '@uipath/uipath-typescript/tasks'
-import { PROPOSALS, keepLocalDraft, proposalPath, withLocalDraft } from '@forms/lib/backend'
+import { ENTITY, PROPOSALS, keepLocalDraft, proposalPath, withLocalDraft } from '@forms/lib/backend'
 import type { Backend, EntityKey, LoadedTask, Status, TaskData } from '@forms/lib/backend'
 import type { Dataset } from '@forms/lib/types'
 
-const ENTITY: Record<EntityKey, string> = {
-  solicitations: 'SSSolicitation', offerors: 'SSOfferor', pages: 'SSProposalPage', findings: 'SSFinding',
-  ratings: 'SSRating', decisions: 'SSDecision', audit: 'SSAuditEvent',
-}
 type Row = Record<string, unknown>
 
 /** Task data can arrive as an object or as a JSON string. */
@@ -32,13 +28,16 @@ export class WorkspaceBackend implements Backend {
   private folderId: number
   private actor: string
   private onCompleted: (outcome: string) => void
+  /** What the loading screen calls the record ("evaluation record"; Contract Management's "award record"). */
+  private record: string
 
-  constructor(sdk: UiPath, taskId: number, folderId: number, actor: string, onCompleted: (outcome: string) => void) {
+  constructor(sdk: UiPath, taskId: number, folderId: number, actor: string, onCompleted: (outcome: string) => void, record = 'evaluation record') {
     this.sdk = sdk
     this.taskId = taskId
     this.folderId = folderId
     this.actor = actor
     this.onCompleted = onCompleted
+    this.record = record
   }
 
   async getTask(status?: Status): Promise<LoadedTask> {
@@ -91,7 +90,7 @@ export class WorkspaceBackend implements Backend {
   }
 
   async load(id: string, status?: Status): Promise<Dataset> {
-    status?.('Loading the evaluation record…')
+    status?.(`Loading the ${this.record}…`)
     const keys = Object.keys(ENTITY) as EntityKey[]
     const all = await Promise.all(keys.map((k) => this.all(k)))
     return Object.fromEntries(keys.map((k, i) => [k, all[i].filter((r) => r.SolicitationId === id)])) as unknown as Dataset

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:uipath="http://uipath.org/schema/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_ContractWatch" targetNamespace="http://bpmn.io/schema/bpmn" exporter="UiPath Maestro (https://uipath.com)" exporterVersion="1.204.0">
+  <bpmn:process id="ContractWatchProcess" name="Contract watch">
+    <bpmn:documentation>The daily contract watch: opens administration on any contract signed since the last run, then checks every contract under administration against its schedule, funds and invoices and raises, updates or resolves its alerts. Started each morning by an Orchestrator time trigger, or on demand from Contract Management (Run check now). Slice A only watches; later slices start a response process for each alert that needs action.</bpmn:documentation>
+    <bpmn:extensionElements>
+      <uipath:variables version="v1">
+        <uipath:input id="in_asOf" name="asOf" type="string" elementId="Start_Watch" />
+        <uipath:output id="out_summary" name="summary" type="string" elementId="End_Watched" />
+        <uipath:inputOutput id="asOf" name="asOf" type="string" elementId="ContractWatchProcess" />
+        <uipath:inputOutput id="watchSummary" name="watchSummary" type="string" elementId="ContractWatchProcess" />
+      </uipath:variables>
+      <uipath:bindings version="v1">
+        <uipath:binding id="bCw4Rb7Ns" name="name" type="string" default="AW_Robots" resource="process" resourceKey="solution_folder.AW_Robots" propertyAttribute="name" />
+        <uipath:binding id="bCw6Fd2Yt" name="folderPath" type="string" default="" resource="process" resourceKey="solution_folder.AW_Robots" propertyAttribute="folderPath" />
+      </uipath:bindings>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Start_Watch" name="Start contract watch">
+      <bpmn:extensionElements>
+        <uipath:entryPointId value="c25dac75-e53d-458a-9c69-56a6147b2e4b" />
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="asOf" type="string" var="asOf" source="=vars.in_asOf" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>F_Start_Watch</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_WatchContracts" name="Watch Contracts">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bCw4Rb7Ns" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bCw6Fd2Yt" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"asOf":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"WatchContracts","solicitationId":"","asOf":"=vars.asOf"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="watchSummary" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Start_Watch</bpmn:incoming>
+      <bpmn:outgoing>F_Watch_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_Watched" name="Contracts watched">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="summary" type="string" var="out_summary" source="=vars.watchSummary" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Watch_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F_Start_Watch" sourceRef="Start_Watch" targetRef="Task_WatchContracts" />
+    <bpmn:sequenceFlow id="F_Watch_End" sourceRef="Task_WatchContracts" targetRef="End_Watched" />
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="ContractWatchProcess">
+      <bpmndi:BPMNShape id="S_End_Watched" bpmnElement="End_Watched"><dc:Bounds x="488" y="214" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Start_Watch" bpmnElement="Start_Watch"><dc:Bounds x="252" y="214" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_WatchContracts" bpmnElement="Task_WatchContracts"><dc:Bounds x="338" y="192" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="E_F_Start_Watch" bpmnElement="F_Start_Watch"><di:waypoint x="288" y="232" /><di:waypoint x="338" y="232" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Watch_End" bpmnElement="F_Watch_End"><di:waypoint x="438" y="232" /><di:waypoint x="488" y="232" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

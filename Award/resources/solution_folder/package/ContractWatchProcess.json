@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "ContractWatchProcess",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "1e462cb3-9d9d-43f1-b433-952ae296b632",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "ContractWatchProcess"
+    },
+    "locks": [],
+    "key": "23163edd-4cd9-4d4b-825c-e2feb8d54766",
+    "files": []
+  }
+}

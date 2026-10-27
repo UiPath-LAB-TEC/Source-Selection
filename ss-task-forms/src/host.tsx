@@ -47,7 +47,7 @@ function Problem({ message, onRetry }: { message: string; onRetry: () => void })
   )
 }
 
-function TaskHost({ backend, forms }: { backend: Backend; forms: FormMap }) {
+function TaskHost({ backend, forms, record }: { backend: Backend; forms: FormMap; record: string }) {
   const [task, setTask] = useState<LoadedTask>()
   const [data, setData] = useState<Dataset>()
   const [error, setError] = useState<string>()
@@ -66,7 +66,7 @@ function TaskHost({ backend, forms }: { backend: Backend; forms: FormMap }) {
         if (!live) return
         if (backend.mode === 'action-center') setDark(t.dark)
         setTask(t)
-        say('Loading the evaluation record…')
+        say(`Loading the ${record}…`)
         const d = await backend.load(t.data.solicitationId, say)
         if (live) setData(d)
       } catch (e) { if (live) setError((e as Error).message) }
@@ -100,7 +100,7 @@ function TaskHost({ backend, forms }: { backend: Backend; forms: FormMap }) {
 }
 
 /** Local-only harness: pick a form and persona, render it over a Data Fabric snapshot. */
-function PreviewHarness({ snapshot, forms, defaults }: { snapshot: Snapshot; forms: FormMap; defaults: HostDefaults }) {
+function PreviewHarness({ snapshot, forms, defaults, record }: { snapshot: Snapshot; forms: FormMap; defaults: HostDefaults; record: string }) {
   const sols = snapshot.solicitations.map((s) => s.SolicitationId as string)
   const [opts, setOpts] = useState<PreviewOptions>(() => {
     const q = new URLSearchParams(location.search)
@@ -156,24 +156,28 @@ function PreviewHarness({ snapshot, forms, defaults }: { snapshot: Snapshot; for
             : <p className="text-muted-foreground">Nothing saved yet. Complete the form to see the writes it would make.</p>}
         </div>
       )}
-      <TaskHost key={`${run}-${JSON.stringify(opts)}`} backend={backend} forms={forms} />
+      <TaskHost key={`${run}-${JSON.stringify(opts)}`} backend={backend} forms={forms} record={record} />
     </>
   )
 }
 
 /** Dev only: inside src/dev/ac-host.html, take the task over the real Action Center handshake and serve data from the snapshot. */
-function SimulatedTask({ snapshot, forms, defaults }: { snapshot: Snapshot; forms: FormMap; defaults: HostDefaults }) {
+function SimulatedTask({ snapshot, forms, defaults, record }: { snapshot: Snapshot; forms: FormMap; defaults: HostDefaults; record: string }) {
   const backend = useMemo(() => {
     const q = new URLSearchParams(location.search)
     const b = createBackend(snapshot, { actionType: q.get('form') ?? defaults.simulatedForm, solicitationId: q.get('sol') ?? defaults.solicitationId, slot: 1, fresh: true }) as PreviewBackend
     b.handshake = new CodedActionAppService()
     return b
   }, [snapshot, defaults])
-  return <TaskHost backend={backend} forms={forms} />
+  return <TaskHost backend={backend} forms={forms} record={record} />
 }
 
 /** An action app: its forms, the snapshot its local preview renders on (dev only), and where that preview opens. */
-export function TaskApp({ forms, loadSnapshot, defaults }: { forms: FormMap; loadSnapshot: () => Promise<{ default: unknown }>; defaults: HostDefaults }) {
+export function TaskApp({ forms, loadSnapshot, defaults, record = 'evaluation record' }: {
+  forms: FormMap; loadSnapshot: () => Promise<{ default: unknown }>; defaults: HostDefaults
+  /** What the loading screen calls the record: Source Selection's "evaluation record" by default. */
+  record?: string
+}) {
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null)
   const simulated = import.meta.env.DEV && inActionCenter() && new URLSearchParams(location.search).has('acsim')
   const preview = import.meta.env.DEV && (!inActionCenter() || simulated)
@@ -182,7 +186,7 @@ export function TaskApp({ forms, loadSnapshot, defaults }: { forms: FormMap; loa
   useEffect(() => {
     if (preview) loadSnapshot().then((m) => setSnapshot(m.default as Snapshot))
   }, [preview, loadSnapshot])
-  if (simulated) return snapshot ? <SimulatedTask snapshot={snapshot} forms={forms} defaults={defaults} /> : null
-  if (preview) return snapshot ? <PreviewHarness snapshot={snapshot} forms={forms} defaults={defaults} /> : null
-  return <FormBoundary onRetry={() => location.reload()}><TaskHost backend={backend!} forms={forms} /></FormBoundary>
+  if (simulated) return snapshot ? <SimulatedTask snapshot={snapshot} forms={forms} defaults={defaults} record={record} /> : null
+  if (preview) return snapshot ? <PreviewHarness snapshot={snapshot} forms={forms} defaults={defaults} record={record} /> : null
+  return <FormBoundary onRetry={() => location.reload()}><TaskHost backend={backend!} forms={forms} record={record} /></FormBoundary>
 }

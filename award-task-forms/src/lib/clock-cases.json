@@ -1,0 +1,129 @@
+{
+ "note": "Cases both clock engines must pass: award-task-forms/src/lib/clocks.ts (node src/lib/clocks.test.ts) and Award/AW_Robots/clocks.py (pytest). Days are agency-local (Eastern).",
+ "calendar": [
+  {
+   "from": "2026-11-23",
+   "n": 3,
+   "expect": "2026-11-27",
+   "why": "lands on Thanksgiving (Thu Nov 26), runs to Friday"
+  },
+  {
+   "from": "2026-10-22",
+   "n": 3,
+   "expect": "2026-10-26",
+   "why": "lands on Sunday, runs to Monday"
+  },
+  {
+   "from": "2026-10-13",
+   "n": 10,
+   "expect": "2026-10-23",
+   "why": "a Friday business day stays"
+  },
+  {
+   "from": "2026-12-22",
+   "n": 3,
+   "expect": "2026-12-28",
+   "why": "Christmas Friday, then the weekend"
+  },
+  {
+   "from": "2027-06-15",
+   "n": 3,
+   "expect": "2027-06-21",
+   "why": "Juneteenth on a Saturday is observed Friday Jun 18"
+  },
+  {
+   "from": "2027-12-28",
+   "n": 3,
+   "expect": "2028-01-03",
+   "why": "New Year's Day 2028 is a Saturday, observed Fri Dec 31 2027"
+  }
+ ],
+ "business": [
+  {
+   "from": "2026-10-22",
+   "n": 2,
+   "expect": "2026-10-26",
+   "why": "Thursday + 2 business days skips the weekend"
+  },
+  {
+   "from": "2026-11-24",
+   "n": 5,
+   "expect": "2026-12-02",
+   "why": "skips Thanksgiving and the weekend"
+  },
+  {
+   "from": "2026-10-09",
+   "n": 1,
+   "expect": "2026-10-13",
+   "why": "skips Columbus Day (Mon Oct 12)"
+  }
+ ],
+ "dayOf": [
+  {
+   "iso": "2026-10-23T02:30:00+00:00",
+   "expect": "2026-10-22",
+   "why": "10:30 p.m. Eastern is still the 22nd"
+  },
+  {
+   "iso": "2026-10-22T14:00:00Z",
+   "expect": "2026-10-22"
+  }
+ ],
+ "award": [
+  {
+   "awardedAt": "2026-10-22T15:00:00Z",
+   "notices": [
+    {
+     "offerorId": "S-IRONWOOD",
+     "kind": "UnsuccessfulNotice",
+     "deliveredAt": "2026-10-22T16:00:00Z"
+    },
+    {
+     "offerorId": "S-BLUESTEM",
+     "kind": "UnsuccessfulNotice",
+     "deliveredAt": "2026-10-23T13:00:00Z"
+    },
+    {
+     "offerorId": "S-KEYSTONE",
+     "kind": "AwardNotice",
+     "deliveredAt": "2026-10-22T16:00:00Z"
+    }
+   ],
+   "expect": {
+    "noticesDue": "2026-10-26",
+    "stayByAward": "2026-11-02",
+    "requestDue": {
+     "S-IRONWOOD": "2026-10-26",
+     "S-BLUESTEM": "2026-10-26"
+    }
+   }
+  }
+ ],
+ "priorBusiness": [
+  {
+   "day": "2026-11-01",
+   "expect": "2026-10-30",
+   "why": "a Sunday deadline moves back to Friday"
+  },
+  {
+   "day": "2026-11-26",
+   "expect": "2026-11-25",
+   "why": "Thanksgiving moves back to Wednesday"
+  },
+  {
+   "day": "2027-01-01",
+   "expect": "2026-12-31",
+   "why": "New Year's Day moves back into the year before"
+  },
+  {
+   "day": "2027-07-05",
+   "expect": "2027-07-02",
+   "why": "July 4 on a Sunday is observed Monday, so back to Friday"
+  },
+  {
+   "day": "2026-10-23",
+   "expect": "2026-10-23",
+   "why": "a business day stays"
+  }
+ ]
+}

@@ -202,7 +202,7 @@ async function pimsRuns(sdk: UiPath, inst: Pick<ProcessInstanceGetResponse, 'ins
 }
 
 /** The instance's element runs: the instance store first, traces as the fallback. */
-async function loadRuns(sdk: UiPath, inst: Pick<ProcessInstanceGetResponse, 'instanceId' | 'folderKey'>): Promise<ElementRun[]> {
+export async function loadRuns(sdk: UiPath, inst: Pick<ProcessInstanceGetResponse, 'instanceId' | 'folderKey'>): Promise<ElementRun[]> {
   try {
     const runs = await pimsRuns(sdk, inst)
     if (runs.length) return runs

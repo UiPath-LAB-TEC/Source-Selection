@@ -12,6 +12,7 @@ export default defineConfig({
     alias: {
       '@forms': fileURLToPath(new URL('../ss-task-forms/src', import.meta.url)),
       '@ss': fileURLToPath(new URL('../ss-workspace/src', import.meta.url)),
+      '@award': fileURLToPath(new URL('../award-task-forms/src', import.meta.url)),
     },
     dedupe: ['react', 'react-dom', 'react-router-dom', 'react-router', 'next-themes', 'lucide-react', 'sonner', '@uipath/apollo-wind', '@uipath/uipath-typescript'],
   },

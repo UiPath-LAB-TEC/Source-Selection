@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:uipath="http://uipath.org/schema/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_Award" targetNamespace="http://bpmn.io/schema/bpmn" exporter="UiPath Maestro (https://uipath.com)" exporterVersion="1.204.0">
   <bpmn:process id="AwardProcess" name="Award">
-    <bpmn:documentation>The Award phase after a signed source selection decision: contract award, notices to unsuccessful offerors, debriefings and any protest, all on the evaluation record Source Selection built. Slice 0 opens the phase; each later slice adds its steps.</bpmn:documentation>
+    <bpmn:documentation>The Award phase after a signed source selection decision: contract award, notices to unsuccessful offerors, debriefings and any protest, all on the evaluation record Source Selection built. Slice 1 runs through the notices; debriefings and protests follow.</bpmn:documentation>
     <bpmn:extensionElements>
       <uipath:variables version="v1">
         <uipath:input id="in_solicitationId" name="solicitationId" type="string" elementId="Start_Award" />
         <uipath:input id="in_contractingOfficer" name="contractingOfficer" type="string" elementId="Start_Award" />
         <uipath:input id="in_agencyCounsel" name="agencyCounsel" type="string" elementId="Start_Award" />
         <uipath:input id="in_sourceSelectionAuthority" name="sourceSelectionAuthority" type="string" elementId="Start_Award" />
-        <uipath:output id="out_awardStage" name="awardStage" type="string" elementId="End_AwardOpened" />
+        <uipath:output id="out_awardStage" name="awardStage" type="string" elementId="End_NoticesIssued" />
+        <uipath:output id="out_contractNumber" name="contractNumber" type="string" elementId="End_NoticesIssued" />
+        <uipath:output id="out_noticesUri" name="noticesUri" type="string" elementId="End_NoticesIssued" />
         <uipath:inputOutput id="solicitationId" name="solicitationId" type="string" elementId="AwardProcess" />
         <uipath:inputOutput id="contractingOfficer" name="contractingOfficer" type="string" elementId="AwardProcess" />
         <uipath:inputOutput id="agencyCounsel" name="agencyCounsel" type="string" elementId="AwardProcess" />
         <uipath:inputOutput id="sourceSelectionAuthority" name="sourceSelectionAuthority" type="string" elementId="AwardProcess" />
         <uipath:inputOutput id="awardStage" name="awardStage" type="string" elementId="AwardProcess" />
+        <uipath:inputOutput id="awardDraft" name="awardDraft" type="string" elementId="AwardProcess" />
+        <uipath:inputOutput id="contractDecision" name="contractDecision" type="string" elementId="AwardProcess" />
+        <uipath:inputOutput id="contractNumber" name="contractNumber" type="string" elementId="AwardProcess" />
+        <uipath:inputOutput id="noticesUri" name="noticesUri" type="string" elementId="AwardProcess" />
       </uipath:variables>
       <uipath:bindings version="v1">
         <uipath:binding id="bAr4Wb7Ns" name="name" type="string" default="AW_Robots" resource="process" resourceKey="solution_folder.AW_Robots" propertyAttribute="name" />
         <uipath:binding id="bAf6Kd2Yt" name="folderPath" type="string" default="" resource="process" resourceKey="solution_folder.AW_Robots" propertyAttribute="folderPath" />
+        <uipath:binding id="bAt3Fm8Qa" name="name" type="string" default="AwardTaskForms" resource="app" resourceKey="solution_folder.AwardTaskForms" propertyAttribute="name" />
+        <uipath:binding id="bAt7Pk2Wd" name="folderPath" type="string" default="" resource="app" resourceKey="solution_folder.AwardTaskForms" propertyAttribute="folderPath" />
       </uipath:bindings>
     </bpmn:extensionElements>
     <bpmn:startEvent id="Start_Award" name="Start award">
@@ -47,27 +55,92 @@
         </uipath:activity>
       </bpmn:extensionElements>
       <bpmn:incoming>F_Start_Open</bpmn:incoming>
-      <bpmn:outgoing>F_Open_End</bpmn:outgoing>
+      <bpmn:outgoing>F_Open_Prepare</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="End_AwardOpened" name="Award phase opened">
+    <bpmn:serviceTask id="Task_PrepareAwardDocument" name="Prepare Award Document">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bAr4Wb7Ns" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bAf6Kd2Yt" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"PrepareAwardDocument","solicitationId":"=vars.solicitationId"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="awardDraft" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Open_Prepare</bpmn:incoming>
+      <bpmn:outgoing>F_Prepare_Execute</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_ExecuteAward" name="Execute Contract Award">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bAt3Fm8Qa" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bAt7Pk2Wd" />
+            <uipath:input name="taskTitle" type="string" value="Sign the contract award and release the notices" />
+            <uipath:input name="priority" type="string" value="High" />
+            <uipath:input name="labels" type="string" value="award, contracting-officer" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.contractingOfficer"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"awardDraft":{"type":"string"},"noticesDraft":{"type":"string"},"debriefDrafts":{"type":"string"},"followUpDrafts":{"type":"string"},"protestAnalysis":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"executeAward","solicitationId":"=vars.solicitationId","awardDraft":"=vars.awardDraft","noticesDraft":"","debriefDrafts":"","followUpDrafts":"","protestAnalysis":""}]]></uipath:input>
+          <uipath:output name="decision" type="string" source="=decision" var="contractDecision" />
+          <uipath:output name="payload" type="string" source="=payload" var="contractNumber" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Prepare_Execute</bpmn:incoming>
+      <bpmn:outgoing>F_Execute_Issue</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_IssueNotices" name="Issue Notices">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bAr4Wb7Ns" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bAf6Kd2Yt" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"IssueNotices","solicitationId":"=vars.solicitationId"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="noticesUri" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Execute_Issue</bpmn:incoming>
+      <bpmn:outgoing>F_Issue_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_NoticesIssued" name="Notices issued">
       <bpmn:extensionElements>
         <uipath:mapping version="v1">
           <uipath:type value="BPMN.Variables" version="v1" />
           <uipath:output name="awardStage" type="string" var="out_awardStage" source="=vars.awardStage" />
+          <uipath:output name="contractNumber" type="string" var="out_contractNumber" source="=vars.contractNumber" />
+          <uipath:output name="noticesUri" type="string" var="out_noticesUri" source="=vars.noticesUri" />
         </uipath:mapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>F_Open_End</bpmn:incoming>
+      <bpmn:incoming>F_Issue_End</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="F_Start_Open" sourceRef="Start_Award" targetRef="Task_StartAward" />
-    <bpmn:sequenceFlow id="F_Open_End" sourceRef="Task_StartAward" targetRef="End_AwardOpened" />
+    <bpmn:sequenceFlow id="F_Open_Prepare" sourceRef="Task_StartAward" targetRef="Task_PrepareAwardDocument" />
+    <bpmn:sequenceFlow id="F_Prepare_Execute" sourceRef="Task_PrepareAwardDocument" targetRef="Task_ExecuteAward" />
+    <bpmn:sequenceFlow id="F_Execute_Issue" sourceRef="Task_ExecuteAward" targetRef="Task_IssueNotices" />
+    <bpmn:sequenceFlow id="F_Issue_End" sourceRef="Task_IssueNotices" targetRef="End_NoticesIssued" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="Diagram_1">
     <bpmndi:BPMNPlane id="Plane_1" bpmnElement="AwardProcess">
       <bpmndi:BPMNShape id="S_Start_Award" bpmnElement="Start_Award"><dc:Bounds x="60" y="182" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="38" y="222" width="80" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="S_Task_StartAward" bpmnElement="Task_StartAward"><dc:Bounds x="150" y="160" width="100" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="S_End_AwardOpened" bpmnElement="End_AwardOpened"><dc:Bounds x="310" y="182" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="278" y="222" width="100" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_PrepareAwardDocument" bpmnElement="Task_PrepareAwardDocument"><dc:Bounds x="300" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_ExecuteAward" bpmnElement="Task_ExecuteAward"><dc:Bounds x="450" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_IssueNotices" bpmnElement="Task_IssueNotices"><dc:Bounds x="600" y="160" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_End_NoticesIssued" bpmnElement="End_NoticesIssued"><dc:Bounds x="760" y="182" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="733" y="222" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="E_F_Start_Open" bpmnElement="F_Start_Open"><di:waypoint x="96" y="200" /><di:waypoint x="150" y="200" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="E_F_Open_End" bpmnElement="F_Open_End"><di:waypoint x="250" y="200" /><di:waypoint x="310" y="200" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Open_Prepare" bpmnElement="F_Open_Prepare"><di:waypoint x="250" y="200" /><di:waypoint x="300" y="200" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Prepare_Execute" bpmnElement="F_Prepare_Execute"><di:waypoint x="400" y="200" /><di:waypoint x="450" y="200" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Execute_Issue" bpmnElement="F_Execute_Issue"><di:waypoint x="550" y="200" /><di:waypoint x="600" y="200" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Issue_End" bpmnElement="F_Issue_End"><di:waypoint x="700" y="200" /><di:waypoint x="760" y="200" /></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

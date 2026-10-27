@@ -1,0 +1,57 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "ContractWatchProcess",
+    "kind": "process",
+    "type": "processOrchestration",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "1e462cb3-9d9d-43f1-b433-952ae296b632",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "ContractWatchProcess"
+      }
+    ],
+    "runtimeDependencies": [
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.AW_Robots",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "AW_Robots",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "Process"
+      }
+    ],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "ProcessOrchestration",
+      "name": "ContractWatchProcess",
+      "package": {
+        "key": "23163edd-4cd9-4d4b-825c-e2feb8d54766"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/ContractWatchProcess.bpmn#Start_Watch\",\n      \"uniqueId\": \"c25dac75-e53d-458a-9c69-56a6147b2e4b\",\n      \"type\": \"ProcessOrchestration\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"asOf\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"summary\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"displayName\": \"Start contract watch\"\n    }\n  ]\n}\n",
+      "entryPointName": "/content/ContractWatchProcess.bpmn#Start_Watch",
+      "entryPointUniqueId": "c25dac75-e53d-458a-9c69-56a6147b2e4b"
+    },
+    "locks": [],
+    "key": "b7ed998c-f4f1-4993-aa24-c62c60803601",
+    "files": []
+  }
+}
