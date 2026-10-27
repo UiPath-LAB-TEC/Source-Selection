@@ -33,6 +33,13 @@ export interface ScheduleRow {
   ClauseRef?: string
   ClauseText?: string
   Owner?: string
+  /** A deliverable on file: its PDF in SS-Records, the reviewer's check (JSON), the COR's decision and the review run. */
+  FilePath?: string
+  ReviewJson?: string
+  ReviewedBy?: string
+  ReviewedAt?: string
+  Reason?: string
+  ProcessInstanceId?: string
 }
 
 /** Money on a contract: an obligation or deobligation by modification, or one line of an invoice. */

@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AW_DeliverableReviewer",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "54595bba-ecce-4834-adc0-e15192a9779d",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "AW_DeliverableReviewer"
+    },
+    "locks": [],
+    "key": "d0df0884-9051-4883-aa2e-39def855d2b8",
+    "files": []
+  }
+}

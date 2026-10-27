@@ -1083,3 +1083,78 @@ user's to run. Committed as e80a2ad.**
   - "That's you" shows only to an item's owner.
 - **Checked in `?preview`** on a fresh export of the tenant (2026-10-27): Dana and Owen; desktop and phone widths, with
   no horizontal scroll on any page; light and dark themes.
+
+## 20. Deliverable review (2026-10-27): the work done in the app, started on its own
+
+**Why:** "I'm on it" only claimed an action item. The work happened elsewhere, and nothing in the app could record it as
+done, so a claimed item never cleared. The user also wanted alerts to run on their own.
+
+**Alerts already run on their own.**
+- The "Daily contract watch" trigger has run at 6:00 AM Eastern since Oct 24.
+- On Oct 27 it raised both October status reports by itself, once they came within 14 days.
+- **Not built: email or chat notices.** The tenant has no Outlook, Teams or Slack connection, only the user's
+  personal Google Drive, Sheets and Docs. Emailing a daily digest of new needs-action items would need a Microsoft
+  Outlook 365 connection, which the user creates by signing in.
+- Work that needs a person now arrives as an assigned Action Center task.
+
+**The flow** (Award 1.3.0, web 1.0.10):
+1. **Record receipt.** On a deliverable's action item, the COR or CO uploads the PDF the contractor sent.
+   - It's filed at SS-Records `<sol>/deliverables/<code>-<month>.pdf`, and the schedule row is marked Received.
+   - The item moves to In hand.
+   - DeliverableReviewProcess starts.
+2. **PrepareDeliverableReview** (AW_Robots):
+   - Reads the PDF with pypdf and strips the demo banner.
+   - Has **AW_DeliverableReviewer** (a low-code agent) check it against what the contract requires, one element at a
+     time, quoting the report.
+   - Recomputes today's labor-hour funds, so the agent can set reported hours against the ceilings.
+   - `admin.checked_review` drops any quote that isn't in the report's text and says so. If the agent fails twice, the
+     COR checks by hand.
+3. **Review the Deliverable** (an Action Center task, assigned to the COR by email, labels "award, cor").
+   - The reviewDeliverable form shows the report, the checklist with quotes, what to raise, and the agent's suggestion.
+   - The COR accepts, or rejects with reasons (pre-filled from the gaps). There's no source selection conflict gate:
+     FormShell has `certify={false}`.
+   - The item's "Review report" button opens the same form in the app.
+4. **RecordDeliverableReview** (AW_Robots):
+   - **Accepted:** the action item is resolved.
+   - **Rejected:** a notice to the contractor goes to SS-Records and SSCorrespondence (Kind DeliverableRejection). The
+     deliverable is due again 5 business days later, with the history kept in ReviewJson, so the watch raises it
+     again.
+5. **Backstop:** each morning the watch starts a review for any deliverable on file (Received, with a file) that has no
+   review run, if the contract has a CorEmail.
+
+**Requirements:** `admin.DELIVERABLE_REQUIREMENTS`.
+- A001, the monthly status report, needs six elements: work by task area; hours by labor category for each labor-hour
+  line item, for the month and cumulative; deliverables; risks with their mitigation; staffing changes; next month.
+- A002, the transition-out plan, needs five.
+- A contract's abstract can carry its own list.
+
+**Data:**
+- SSSchedule gained FilePath, ReviewJson, ReviewedBy, ReviewedAt, Reason and ProcessInstanceId.
+- Both live awards now have CorEmail.
+- ss-task-forms `ENTITY` now includes schedule and alerts.
+- `withContractHeader` gives a contract awarded elsewhere a header in both form hosts, so the incumbent's tasks open.
+
+**Demo files:**
+- `samples/<sol>/deliverables/`, from `tools/generate_status_reports.py`, with `samples/deliverables-README.md`.
+  - **Ostrander's October report:** hours as one total, the ceiling not mentioned, the transition-out plan put off.
+  - **Keystone's October report:** complete.
+- The agent's 5 eval cases come from `tools/build_award_evals.py`, which uses the exact inputs the robot sends.
+  `uip agent review` gives PASS, A+.
+
+**Tests:** 63 AW_Robots pytest, including `tests/test_review.py`. Checked in the preview: the item buttons (Record
+receipt, Review starting) and the review form on the incumbent's contract.
+
+**Deployed 2026-10-27:**
+- Award 1.3.0 is live. All five releases are at 1.3.0: AW_DeliverableReviewer 0D1AB775-DF15-42C4-91FB-DFA4BE4DBA5A and
+  DeliverableReviewProcess 45B40A68-006E-4FE4-92AC-B1BB3A0BEC83 are new.
+- The daily trigger survived the upgrade, because ContractWatchProcess kept the same release.
+- The next upgrade uses record key d8650c27-d397-4c67-a650-63f241912939.
+- **The live agent, run on both sample reports** (jobs 5db418c8, d9495069):
+  - **Ostrander:** hours partly met, and risks partly met because the report doesn't flag the ceiling. It raised line
+    item 0002 at 90% of its ceiling and the late transition-out plan, and recommended accept with comments, as the
+    README expects.
+  - **Keystone:** every element met, but it recommended accept with comments rather than accept, because it listed
+    two follow-ups (confirming acceptance of the transition-in plan, and the incumbent's plan).
+  - **To tighten in the next upgrade:** follow-ups and issues about other contracts or deliverables shouldn't downgrade
+    a deliverable whose every element is met.
+- Contract Management web 1.0.10 deployed 2026-10-27 (index-BE7cXQhg.js). The live UI wasn't re-checked, because the browser pane's sign-in had expired.

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/DeliverableReviewProcess.bpmn#Start_Review",
+      "uniqueId": "cc31f317-6f62-48da-b016-bb982017421d",
+      "type": "ProcessOrchestration",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "cor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string"
+          }
+        }
+      },
+      "displayName": "Deliverable received"
+    }
+  ]
+}

@@ -22,6 +22,16 @@
       "Type": "processOrchestration",
       "ProjectRelativePath": "ContractWatchProcess/project.uiproj",
       "Id": "1e462cb3-9d9d-43f1-b433-952ae296b632"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "AW_DeliverableReviewer/project.uiproj",
+      "Id": "54595bba-ecce-4834-adc0-e15192a9779d"
+    },
+    {
+      "Type": "processOrchestration",
+      "ProjectRelativePath": "DeliverableReviewProcess/project.uiproj",
+      "Id": "d56a68a7-5617-41cb-be92-ddebd5e991d8"
     }
   ]
 }

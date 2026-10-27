@@ -1,0 +1,327 @@
+{
+  "fileName": "evaluation-set-default.json",
+  "id": "c5b28c63-5efc-469e-9101-9ba2c9dfb35f",
+  "name": "Default Evaluation Set",
+  "batchSize": 10,
+  "evaluatorRefs": [
+    "9c552832-4160-4ae3-8732-815ab86fbc91",
+    "7992db59-6d47-46a8-9a00-11919e4d53e0"
+  ],
+  "evaluations": [
+    {
+      "id": "4920b9be-edfd-4093-8eeb-e1c70a644f73",
+      "name": "ostrander-october-hours-total-only",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-22-C-0011\", \"contractor\": \"Ostrander Analytics Group Inc\", \"period\": \"Option 4\", \"laborHourLines\": [{\"clin\": \"0002\", \"description\": \"Data engineering support\", \"ceiling\": 1150000.0, \"invoicedThisPeriod\": 905000.0, \"percentOfCeiling\": 90}]}",
+        "deliverable": "{\"code\": \"A001\", \"name\": \"Monthly status report, October\", \"dueDay\": \"2026-11-10\", \"receivedDay\": \"2026-11-06\"}",
+        "requirements": "[\"Work performed during the month, by task area\", \"Hours by labor category for each labor-hour line item, for the month and cumulative for the period\", \"Deliverables submitted during the month and their status\", \"Risks and issues, each with its mitigation\", \"Staffing changes, including any change to key personnel\", \"Work planned for the next month\"]",
+        "reportText": "Ostrander Analytics Group Inc | W52P1J-22-C-0011 | Army Logistics Data Analytics Support\nMonthly Status Report, October 2026\nContract\nContract W52P1J-22-C-0011, Army Logistics Data Analytics Support. Reporting period: October 1 to October 31, 2026\n(option year 4). Submitted by Ostrander Analytics Group Inc to the Contracting Officer's Representative.\n1. Work performed\nPlatform operations (line item 0001): the analytics platform ran at 99.7 percent availability; two patch releases were\ndeployed on October 8 and October 22.\nData engineering support (line item 0002): the supply-chain data pipeline was extended to two new depot feeds, and\nthe weekly readiness extract was rebuilt for the new schema.\nCybersecurity and RMF support (line item 0003): quarterly vulnerability scans completed with no high findings.\nProgram management (line item 0004): monthly program review held October 14.\n2. Hours\nLine item 0002 (labor-hour): 742 hours in October.\n3. Deliverables\nSeptember monthly status report delivered October 9 and accepted.\nTransition-out plan: in preparation; it will be delivered with the November report.\n4. Risks and issues\nNo new risks this month. The depot feed integration is on schedule.\n5. Staffing\nOne data engineer left the program on October 17. A replacement with the same labor category starts November 3.\nNo change to key personnel.\n6. Next month\nContinue platform operations and data engineering support, complete the November patch release, and begin\ntransition-out activities with the follow-on contractor.\nPage 1"
+      },
+      "expectedOutput": {
+        "requirements": [
+          {
+            "requirement": "Work performed during the month, by task area",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Hours by labor category for each labor-hour line item, for the month and cumulative for the period",
+            "status": "Partly met",
+            "evidence": "",
+            "note": "Hours on line item 0002 are one monthly total, with no labor categories and no cumulative figure for the period."
+          },
+          {
+            "requirement": "Deliverables submitted during the month and their status",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Risks and issues, each with its mitigation",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Staffing changes, including any change to key personnel",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Work planned for the next month",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          }
+        ],
+        "summary": "Every section is present, but hours on the labor-hour line item are a single total without labor categories or a cumulative figure.",
+        "recommendation": "Accept with comments",
+        "issues": [
+          "Line item 0002 is past 85 percent of its ceiling and the report doesn't flag it or give a revised estimate.",
+          "The transition-out plan, already overdue, is put off to the November report."
+        ]
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Marks hours partly met (no labor categories or cumulative hours), raises the line item 0002 ceiling and the late transition-out plan as issues, and quotes only text that is in the report.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "c5b28c63-5efc-469e-9101-9ba2c9dfb35f",
+      "createdAt": "2026-10-27T14:09:44.788Z",
+      "updatedAt": "2026-10-27T14:09:44.788Z",
+      "source": "manual"
+    },
+    {
+      "id": "60ac9c95-1af6-4ff6-84f7-5093ac2b2176",
+      "name": "keystone-october-complete",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"period\": \"Base\", \"laborHourLines\": [{\"clin\": \"0002\", \"description\": \"Data integration and engineering\", \"ceiling\": 970000.0, \"invoicedThisPeriod\": 0, \"percentOfCeiling\": 4}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"ceiling\": 690000.0, \"invoicedThisPeriod\": 0, \"percentOfCeiling\": 4}]}",
+        "deliverable": "{\"code\": \"A001\", \"name\": \"Monthly status report, October\", \"dueDay\": \"2026-11-10\", \"receivedDay\": \"2026-11-06\"}",
+        "requirements": "[\"Work performed during the month, by task area\", \"Hours by labor category for each labor-hour line item, for the month and cumulative for the period\", \"Deliverables submitted during the month and their status\", \"Risks and issues, each with its mitigation\", \"Staffing changes, including any change to key personnel\", \"Work planned for the next month\"]",
+        "reportText": "Keystone Ridge Analytics LLC | W52P1J-27-C-0023 | Army Logistics Data Analytics Platform\nMonthly Status Report, October 2026\nContract\nContract W52P1J-27-C-0023, Army Logistics Data Analytics Platform. Reporting period: October 23 (contract start) to\nOctober 31, 2026, base year. Submitted by Keystone Ridge Analytics LLC to the Contracting Officer's Representative.\n1. Work performed\nTransition-in (line item 0005): kickoff held October 23; the transition-in plan was delivered October 26; access requests\nsubmitted for all 14 staff; the inventory of the incumbent's open work orders is 40 percent complete.\nPlatform build (line item 0001): environment design started.\nData integration and engineering (line item 0002): source-system survey started.\nCybersecurity and RMF support (line item 0003): the system security plan outline was drafted.\nProgram management (line item 0004): integrated master schedule baselined.\n2. Hours by labor category\nLine item 0002 (labor-hour), October: Senior data engineer 64 hours; data engineer 120 hours; data analyst 48 hours;\ntotal 232 hours. Cumulative for the base year: 232 hours.\nLine item 0003 (labor-hour), October: Cybersecurity lead 40 hours; RMF analyst 56 hours; total 96 hours. Cumulative\nfor the base year: 96 hours.\n3. Deliverables\nTransition-in plan: delivered October 26, awaiting acceptance. Integrated master schedule: delivered October 30.\n4. Risks and issues\nRisk: the incumbent's transition-out plan has not been received, which could delay the hand-off of open work orders.\nMitigation: we have asked the COR to request it from the incumbent, and are building the inventory from the\nwork-order system directly in the meantime.\n5. Staffing\nAll key personnel are on board: program manager, lead data architect and cybersecurity lead. 11 of 14 planned staff\nstarted; the remaining three start November 4.\n6. Next month\nComplete the open work-order inventory, finish access provisioning, hold the first joint session with the incumbent, and\ncomplete transition-in by December 22.\nPage 1"
+      },
+      "expectedOutput": {
+        "requirements": [
+          {
+            "requirement": "Work performed during the month, by task area",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Hours by labor category for each labor-hour line item, for the month and cumulative for the period",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Deliverables submitted during the month and their status",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Risks and issues, each with its mitigation",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Staffing changes, including any change to key personnel",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Work planned for the next month",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          }
+        ],
+        "summary": "The report covers every required element for the contract's first nine days, including hours by labor category with cumulative totals.",
+        "recommendation": "Accept",
+        "issues": []
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Marks every element met and recommends Accept; may note the incumbent's missing transition-out plan, which the report itself raises as a risk.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "c5b28c63-5efc-469e-9101-9ba2c9dfb35f",
+      "createdAt": "2026-10-27T14:09:44.788Z",
+      "updatedAt": "2026-10-27T14:09:44.788Z",
+      "source": "manual"
+    },
+    {
+      "id": "4b64a28f-f0a4-455b-9fb0-a86ac5b00b8f",
+      "name": "ostrander-september-missing-sections",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-22-C-0011\", \"contractor\": \"Ostrander Analytics Group Inc\", \"period\": \"Option 4\", \"laborHourLines\": [{\"clin\": \"0002\", \"description\": \"Data engineering support\", \"ceiling\": 1150000.0, \"invoicedThisPeriod\": 905000.0, \"percentOfCeiling\": 90}]}",
+        "deliverable": "{\"code\": \"A001\", \"name\": \"Monthly status report, September\", \"dueDay\": \"2026-10-09\", \"receivedDay\": \"2026-11-06\"}",
+        "requirements": "[\"Work performed during the month, by task area\", \"Hours by labor category for each labor-hour line item, for the month and cumulative for the period\", \"Deliverables submitted during the month and their status\", \"Risks and issues, each with its mitigation\", \"Staffing changes, including any change to key personnel\", \"Work planned for the next month\"]",
+        "reportText": "Monthly Status Report, September 2026. Contract W52P1J-22-C-0011.\n1. Work performed: platform operations continued at 99.8 percent availability; data engineering extended the readiness extract.\n2. Hours: line item 0002, 735 hours in September: senior data engineer 210, data engineer 400, data analyst 125; cumulative for option year 4: 6,400 hours.\n3. Deliverables: August report accepted."
+      },
+      "expectedOutput": {
+        "requirements": [
+          {
+            "requirement": "Work performed during the month, by task area",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Hours by labor category for each labor-hour line item, for the month and cumulative for the period",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Deliverables submitted during the month and their status",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Risks and issues, each with its mitigation",
+            "status": "Missing",
+            "evidence": "",
+            "note": "No risks or issues section."
+          },
+          {
+            "requirement": "Staffing changes, including any change to key personnel",
+            "status": "Missing",
+            "evidence": "",
+            "note": "No staffing section."
+          },
+          {
+            "requirement": "Work planned for the next month",
+            "status": "Missing",
+            "evidence": "",
+            "note": "No plan for next month."
+          }
+        ],
+        "summary": "The report covers work, hours and deliverables but has no risks, staffing or next-month sections.",
+        "recommendation": "Reject",
+        "issues": [
+          "Line item 0002 is past 85 percent of its ceiling and the report doesn't flag it."
+        ]
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Marks risks, staffing and next month missing and recommends Reject, with evidence empty for the missing elements.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "c5b28c63-5efc-469e-9101-9ba2c9dfb35f",
+      "createdAt": "2026-10-27T14:09:44.788Z",
+      "updatedAt": "2026-10-27T14:09:44.788Z",
+      "source": "manual"
+    },
+    {
+      "id": "15878090-373a-46a4-a4a8-5f05d9db83b9",
+      "name": "ostrander-transition-out-plan-thin",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-22-C-0011\", \"contractor\": \"Ostrander Analytics Group Inc\", \"period\": \"Option 4\", \"laborHourLines\": [{\"clin\": \"0002\", \"description\": \"Data engineering support\", \"ceiling\": 1150000.0, \"invoicedThisPeriod\": 905000.0, \"percentOfCeiling\": 90}]}",
+        "deliverable": "{\"code\": \"A002\", \"name\": \"Transition-out plan\", \"dueDay\": \"2026-10-02\", \"receivedDay\": \"2026-11-06\"}",
+        "requirements": "[\"Inventory of the work, data and systems to hand over\", \"Schedule for the transition, ending before the contract expires\", \"Knowledge-transfer sessions with the follow-on contractor\", \"Staffing through the end of the contract\", \"Return of Government property, data and access\"]",
+        "reportText": "Transition-Out Plan, W52P1J-22-C-0011. 1. Inventory: 212 open work orders, 6 data pipelines, the analytics platform and its 3 environments will be handed over. 2. Schedule: hand-over runs from November 15 to December 18, 2026, before the contract expires on December 31."
+      },
+      "expectedOutput": {
+        "requirements": [
+          {
+            "requirement": "Inventory of the work, data and systems to hand over",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Schedule for the transition, ending before the contract expires",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Knowledge-transfer sessions with the follow-on contractor",
+            "status": "Missing",
+            "evidence": "",
+            "note": "No knowledge-transfer sessions with the follow-on contractor."
+          },
+          {
+            "requirement": "Staffing through the end of the contract",
+            "status": "Missing",
+            "evidence": "",
+            "note": "No staffing through the end of the contract."
+          },
+          {
+            "requirement": "Return of Government property, data and access",
+            "status": "Missing",
+            "evidence": "",
+            "note": "No return of Government property, data or access."
+          }
+        ],
+        "summary": "The plan inventories the work and sets a schedule, but leaves out knowledge transfer, staffing and the return of Government property.",
+        "recommendation": "Reject",
+        "issues": []
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Checks against the transition-out plan's own requirements (not the status report's), marks three missing and recommends Reject.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "c5b28c63-5efc-469e-9101-9ba2c9dfb35f",
+      "createdAt": "2026-10-27T14:09:44.788Z",
+      "updatedAt": "2026-10-27T14:09:44.788Z",
+      "source": "manual"
+    },
+    {
+      "id": "92207245-7dd2-4453-8422-a6c32fbb1c08",
+      "name": "ostrander-november-no-cumulative",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-22-C-0011\", \"contractor\": \"Ostrander Analytics Group Inc\", \"period\": \"Option 4\", \"laborHourLines\": [{\"clin\": \"0002\", \"description\": \"Data engineering support\", \"ceiling\": 1150000.0, \"invoicedThisPeriod\": 905000.0, \"percentOfCeiling\": 90}]}",
+        "deliverable": "{\"code\": \"A001\", \"name\": \"Monthly status report, November\", \"dueDay\": \"2026-12-10\", \"receivedDay\": \"2026-11-06\"}",
+        "requirements": "[\"Work performed during the month, by task area\", \"Hours by labor category for each labor-hour line item, for the month and cumulative for the period\", \"Deliverables submitted during the month and their status\", \"Risks and issues, each with its mitigation\", \"Staffing changes, including any change to key personnel\", \"Work planned for the next month\"]",
+        "reportText": "Monthly Status Report, November 2026. Contract W52P1J-22-C-0011.\n1. Work performed: platform operations continued; transition-out sessions held with the follow-on contractor.\n2. Hours by labor category, line item 0002: senior data engineer 180, data engineer 380, data analyst 120.\n3. Deliverables: October report accepted; transition-out plan delivered November 12.\n4. Risks and issues: line item 0002 is near its ceiling; a revised estimate was sent to the Contracting Officer on November 20.\n5. Staffing: no change to key personnel.\n6. Next month: complete the hand-over by December 18."
+      },
+      "expectedOutput": {
+        "requirements": [
+          {
+            "requirement": "Work performed during the month, by task area",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Hours by labor category for each labor-hour line item, for the month and cumulative for the period",
+            "status": "Partly met",
+            "evidence": "",
+            "note": "Hours by labor category are given for the month but with no cumulative figure."
+          },
+          {
+            "requirement": "Deliverables submitted during the month and their status",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Risks and issues, each with its mitigation",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Staffing changes, including any change to key personnel",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          },
+          {
+            "requirement": "Work planned for the next month",
+            "status": "Met",
+            "evidence": "",
+            "note": ""
+          }
+        ],
+        "summary": "Complete except that hours have no cumulative figure for the period.",
+        "recommendation": "Accept with comments",
+        "issues": []
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Marks hours partly met for the missing cumulative figure and recommends Accept with comments.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "c5b28c63-5efc-469e-9101-9ba2c9dfb35f",
+      "createdAt": "2026-10-27T14:09:44.788Z",
+      "updatedAt": "2026-10-27T14:09:44.788Z",
+      "source": "manual"
+    }
+  ],
+  "modelSettings": [],
+  "agentMemoryEnabled": false,
+  "agentMemorySettings": [],
+  "lineByLineEvaluation": false,
+  "createdAt": "2026-10-27T14:02:43.669Z",
+  "updatedAt": "2026-10-27T14:02:43.669Z"
+}

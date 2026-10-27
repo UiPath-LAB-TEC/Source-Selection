@@ -38,6 +38,29 @@ TRANSITION_OUT_DAYS = 90       # setting: transition-out plan before the contrac
 BURN_MONTHS = 3                # the spending rate is the average of the last three invoiced months
 MATERIALIZE_AHEAD = 45         # recurring deliverables get their next due rows this far ahead
 
+# What each deliverable must contain, by its code in the contract's deliverables list (the Section J exhibit). A
+# contract's abstract can carry its own list ("requirements"); these are the defaults for a services contract.
+DELIVERABLE_REQUIREMENTS = {
+    "A001": [
+        "Work performed during the month, by task area",
+        "Hours by labor category for each labor-hour line item, for the month and cumulative for the period",
+        "Deliverables submitted during the month and their status",
+        "Risks and issues, each with its mitigation",
+        "Staffing changes, including any change to key personnel",
+        "Work planned for the next month",
+    ],
+    "A002": [
+        "Inventory of the work, data and systems to hand over",
+        "Schedule for the transition, ending before the contract expires",
+        "Knowledge-transfer sessions with the follow-on contractor",
+        "Staffing through the end of the contract",
+        "Return of Government property, data and access",
+    ],
+}
+RESUBMIT_BUSINESS_DAYS = 5     # setting: a rejected deliverable is due again 5 business days later
+REVIEWER = "AW_DeliverableReviewer"
+REPORT_TEXT_CHARS = 6000       # keeps the reviewer's whole input under Orchestrator's 10,000-character cap
+
 RULE = {
     "option": "52.217-9(a); FAR 17.204-1(b)",
     "extension": "52.217-8",
@@ -424,9 +447,13 @@ def alerts(contract: dict, schedule: list[dict], funding: list[dict], correspond
             accept_by = deadline(add_days(r["ReceivedDay"], ACCEPT_WITHIN))
             sev = severity(as_of, accept_by, LEAD["acceptance"])
             if sev:
-                out.append(_alert(sol, "deliverable", subject, sev, f"{r['Name']}: accept or reject by {show_day(accept_by, as_of)}",
-                                  f"{who} delivered it {show_day(r['ReceivedDay'], as_of)}. Review it against the contract's requirements and record "
-                                  f"acceptance or the reasons for rejection.", accept_by, r.get("Owner") or COR, {"scheduleId": r["ScheduleId"]}))
+                cor = contract.get("CorName") or "the COR"
+                out.append(_alert(sol, "deliverable", subject, sev, f"{r['Name']}: review by {show_day(accept_by, as_of)}",
+                                  f"{who} delivered it {show_day(r['ReceivedDay'], as_of)}. "
+                                  + (f"The review is with {cor}: the agent has checked it against the contract's requirements, and {cor} accepts it "
+                                     f"or rejects it with the reasons." if r.get("ProcessInstanceId") else
+                                     f"A review starts with {cor}, who accepts it or rejects it with the reasons."),
+                                  accept_by, r.get("Owner") or COR, {"scheduleId": r["ScheduleId"], "received": r["ReceivedDay"]}))
             continue
         lead = LEAD["deliverable" if kind == "Deliverable" else kind.lower()]
         sev = severity(as_of, r["DueDay"], lead)
@@ -463,6 +490,63 @@ def alerts(contract: dict, schedule: list[dict], funding: list[dict], correspond
     summary = {"asOf": as_of, "period": period["Period"] if period else None, "periodStart": period["StartDay"] if period else None,
                "periodEnd": period["EndDay"] if period else None, "lines": list(funds.values())}
     return out, summary
+
+
+# ── Deliverable review ──────────────────────────────────────────────────────
+
+def requirements_for(abstract: dict, code: str | None) -> list[str]:
+    own = next((d.get("requirements") for d in abstract.get("deliverables") or [] if d.get("code") == code and d.get("requirements")), None)
+    return list(own or DELIVERABLE_REQUIREMENTS.get(code or "", []))
+
+
+def review_inputs(contract: dict, row: dict, report_text: str, funds: dict | None) -> dict:
+    """What the deliverable reviewer sees: the contract's facts, what the deliverable must contain, and the report's text.
+    Labor-hour lines come with their ceiling and spending, so the reviewer can check reported hours against them."""
+    abstract = json.loads(contract.get("AbstractJson") or "{}")
+    labor = [{"clin": f["clin"], "description": f.get("description"), "ceiling": f["price"], "invoicedThisPeriod": f["invoiced"],
+              "percentOfCeiling": round(100 * f["accrued"] / f["price"]) if f.get("price") else None}
+             for f in (funds or {}).get("lines", []) if f.get("type") == "Labor-hour"]
+    facts = {"contractNumber": contract.get("ContractNumber"), "contractor": (abstract.get("contractor") or {}).get("name") or contract.get("AwardeeName"),
+             "period": (funds or {}).get("period") or contract.get("CurrentPeriod"), "laborHourLines": labor}
+    return {"contractFacts": json.dumps(facts), "deliverable": json.dumps({"code": row.get("Code"), "name": row.get("Name"), "dueDay": row.get("DueDay"),
+                                                                                "receivedDay": row.get("ReceivedDay")}),
+            "requirements": json.dumps(requirements_for(abstract, row.get("Code"))), "reportText": report_text[:REPORT_TEXT_CHARS]}
+
+
+def _norm(s: str) -> str:
+    return " ".join(re.sub(r"[^\w$%.,-]+", " ", (s or "").lower()).split())
+
+
+def checked_review(output: dict | None, requirements: list[str], report_text: str) -> dict:
+    """The reviewer's output, held to the report: each requirement keeps its status and note, but a quote that isn't in
+    the report's text is dropped (and said so), so the COR never reads evidence the report doesn't contain."""
+    low = lambda d: {k[:1].lower() + k[1:]: v for k, v in d.items()} if isinstance(d, dict) else {}  # noqa: E731
+    out = low(output or {})
+    given = [low(x) for x in out.get("requirements") or [] if isinstance(x, dict)]
+    by_requirement = {_norm(x.get("requirement", "")): x for x in given}
+    text = _norm(report_text)
+    items = []
+    for i, req in enumerate(requirements):
+        # Matched by the requirement's wording, else by position (the reviewer is asked to keep the order).
+        got = by_requirement.get(_norm(req)) or (given[i] if i < len(given) else {})
+        status = got.get("status") if got.get("status") in ("Met", "Partly met", "Missing") else "Not checked"
+        quote = str(got.get("evidence") or "").strip()
+        note = str(got.get("note") or "").strip()
+        if quote and _norm(quote) not in text:
+            quote, note = "", (note + " " if note else "") + "(The quote given wasn't found in the report, so it was left out.)"
+        items.append({"requirement": req, "status": status, "evidence": quote[:300], "note": note[:500]})
+    rec = out.get("recommendation") if out.get("recommendation") in ("Accept", "Accept with comments", "Reject") else None
+    return {"requirements": items, "summary": str(out.get("summary") or "")[:1200], "recommendation": rec,
+            "issues": [str(x)[:400] for x in out.get("issues") or []][:6], "agent": bool(output)}
+
+
+def rejection_letter(contract: dict, row: dict, reason: str, resubmit_by: str, as_of: str) -> str:
+    abstract = json.loads(contract.get("AbstractJson") or "{}")
+    who = (abstract.get("contractor") or {}).get("name") or contract.get("AwardeeName") or "Contractor"
+    return (f"{show_day(as_of)}\n\nTo: {who}\nContract: {contract.get('ContractNumber')}\nSubject: {row.get('Code') or ''} {row.get('Name')} not accepted\n\n"
+            f"The Government has reviewed the {row.get('Name')} received {show_day(row.get('ReceivedDay'), as_of)} and does not accept it, "
+            f"for these reasons:\n\n{reason.strip()}\n\nPlease submit a corrected deliverable by {show_day(resubmit_by)}.\n\n"
+            f"Contracting Officer's Representative\n{contract.get('CorName') or ''}")
 
 
 def reconcile(existing: list[dict], fresh: list[dict], now: str) -> list[dict]:

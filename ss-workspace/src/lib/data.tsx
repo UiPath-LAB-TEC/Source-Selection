@@ -76,7 +76,7 @@ export async function loadTasks(sdk: UiPath): Promise<TaskGetResponse[]> {
  * Evaluation review for each evaluatorN that is set and skips the empty ones.
  */
 /** What a task is about, which the task list leaves out: its solicitation and, for evaluators, the evaluator slot. */
-interface TaskContext { solicitationId?: string; evaluatorSlot?: number }
+interface TaskContext { solicitationId?: string; evaluatorSlot?: number; scheduleId?: string }
 const TASK_CONTEXT = 'ss.taskctx'
 
 /**
@@ -95,6 +95,8 @@ export async function withTaskContext(sdk: UiPath, tasks: TaskGetResponse[]): Pr
         cache[t.id] = {
           ...(typeof d.solicitationId === 'string' && d.solicitationId ? { solicitationId: d.solicitationId } : {}),
           ...(typeof d.evaluatorSlot === 'number' ? { evaluatorSlot: d.evaluatorSlot } : {}),
+          // Contract Management: the schedule row a task is about (a deliverable under review).
+          ...(typeof d.scheduleId === 'string' && d.scheduleId ? { scheduleId: d.scheduleId } : {}),
         }
       } catch { /* unreadable now; try again on the next load */ }
     }))

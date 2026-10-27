@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AW_DeliverableReviewer",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "54595bba-ecce-4834-adc0-e15192a9779d",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "AW_DeliverableReviewer"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "AW_DeliverableReviewer",
+      "package": {
+        "key": "d0df0884-9051-4883-aa2e-39def855d2b8"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"43817de6-0262-4b6c-80ae-9ab1af8cb6f4\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"contractFacts\": {\n            \"type\": \"string\",\n            \"description\": \"JSON: contract number, contractor, the period running now, and each labor-hour line item with its ceiling, invoiced amount and percent of ceiling\"\n          },\n          \"deliverable\": {\n            \"type\": \"string\",\n            \"description\": \"JSON: the deliverable's code, name, due day and the day it was received\"\n          },\n          \"requirements\": {\n            \"type\": \"string\",\n            \"description\": \"JSON array of what the contract requires this deliverable to contain, in order\"\n          },\n          \"reportText\": {\n            \"type\": \"string\",\n            \"description\": \"Text of the deliverable as the contractor submitted it\"\n          }\n        },\n        \"required\": [\n          \"contractFacts\",\n          \"deliverable\",\n          \"requirements\",\n          \"reportText\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"requirements\": {\n            \"type\": \"array\",\n            \"description\": \"One entry per required element, in the order given\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"requirement\": {\n                  \"type\": \"string\",\n                  \"description\": \"The required element, copied exactly as given\"\n                },\n                \"status\": {\n                  \"type\": \"string\",\n                  \"description\": \"One of: Met, Partly met, Missing\"\n                },\n                \"evidence\": {\n                  \"type\": \"string\",\n                  \"description\": \"A short verbatim quote from the report that shows the element, or '' when it is missing\"\n                },\n                \"note\": {\n                  \"type\": \"string\",\n                  \"description\": \"One sentence on what is incomplete or missing, or ''\"\n                }\n              },\n              \"required\": [\n                \"requirement\",\n                \"status\",\n                \"evidence\",\n                \"note\"\n              ]\n            }\n          },\n          \"summary\": {\n            \"type\": \"string\",\n            \"description\": \"Two or three sentences on whether the deliverable meets the contract's requirements\"\n          },\n          \"recommendation\": {\n            \"type\": \"string\",\n            \"description\": \"One of: Accept, Accept with comments, Reject\"\n          },\n          \"issues\": {\n            \"type\": \"array\",\n            \"description\": \"Things the COR should raise with the contractor or the Contracting Officer, such as reported hours set against a labor-hour ceiling, or work the report says is late. Empty when there are none.\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"required\": [\n          \"requirements\",\n          \"summary\",\n          \"recommendation\",\n          \"issues\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "43817de6-0262-4b6c-80ae-9ab1af8cb6f4"
+    },
+    "locks": [],
+    "key": "7d64da4a-7a45-4e5c-8ab0-5b7d84e297c7",
+    "files": []
+  }
+}

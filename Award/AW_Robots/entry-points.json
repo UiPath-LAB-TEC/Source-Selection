@@ -23,6 +23,11 @@
                         "default": "",
                         "title": "Asof",
                         "type": "string"
+                    },
+                    "scheduleId": {
+                        "default": "",
+                        "title": "Scheduleid",
+                        "type": "string"
                     }
                 },
                 "required": [],
@@ -68,7 +73,7 @@
             "graph": {
                 "nodes": [
                     {
-                        "id": "main.py:357",
+                        "id": "main.py:496",
                         "name": "run",
                         "type": "function",
                         "metadata": {

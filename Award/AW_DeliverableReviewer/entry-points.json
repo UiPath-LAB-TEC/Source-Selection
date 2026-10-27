@@ -1,0 +1,95 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "43817de6-0262-4b6c-80ae-9ab1af8cb6f4",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "contractFacts": {
+            "type": "string",
+            "description": "JSON: contract number, contractor, the period running now, and each labor-hour line item with its ceiling, invoiced amount and percent of ceiling"
+          },
+          "deliverable": {
+            "type": "string",
+            "description": "JSON: the deliverable's code, name, due day and the day it was received"
+          },
+          "requirements": {
+            "type": "string",
+            "description": "JSON array of what the contract requires this deliverable to contain, in order"
+          },
+          "reportText": {
+            "type": "string",
+            "description": "Text of the deliverable as the contractor submitted it"
+          }
+        },
+        "required": [
+          "contractFacts",
+          "deliverable",
+          "requirements",
+          "reportText"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "requirements": {
+            "type": "array",
+            "description": "One entry per required element, in the order given",
+            "items": {
+              "type": "object",
+              "properties": {
+                "requirement": {
+                  "type": "string",
+                  "description": "The required element, copied exactly as given"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "One of: Met, Partly met, Missing"
+                },
+                "evidence": {
+                  "type": "string",
+                  "description": "A short verbatim quote from the report that shows the element, or '' when it is missing"
+                },
+                "note": {
+                  "type": "string",
+                  "description": "One sentence on what is incomplete or missing, or ''"
+                }
+              },
+              "required": [
+                "requirement",
+                "status",
+                "evidence",
+                "note"
+              ]
+            }
+          },
+          "summary": {
+            "type": "string",
+            "description": "Two or three sentences on whether the deliverable meets the contract's requirements"
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "One of: Accept, Accept with comments, Reject"
+          },
+          "issues": {
+            "type": "array",
+            "description": "Things the COR should raise with the contractor or the Contracting Officer, such as reported hours set against a labor-hour ceiling, or work the report says is late. Empty when there are none.",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "requirements",
+          "summary",
+          "recommendation",
+          "issues"
+        ]
+      }
+    }
+  ]
+}

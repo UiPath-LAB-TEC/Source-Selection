@@ -1,0 +1,72 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "DeliverableReviewProcess",
+    "kind": "process",
+    "type": "processOrchestration",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "d56a68a7-5617-41cb-be92-ddebd5e991d8",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "DeliverableReviewProcess"
+      }
+    ],
+    "runtimeDependencies": [
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.AW_Robots",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "AW_Robots",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "Process"
+      },
+      {
+        "bindingType": "app",
+        "bindingKey": "solution_folder.AwardTaskForms",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "AwardTaskForms",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "App"
+      }
+    ],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "ProcessOrchestration",
+      "name": "DeliverableReviewProcess",
+      "package": {
+        "key": "b64b745c-cfcf-48b0-8d3f-8a28be19a686"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/DeliverableReviewProcess.bpmn#Start_Review\",\n      \"uniqueId\": \"cc31f317-6f62-48da-b016-bb982017421d\",\n      \"type\": \"ProcessOrchestration\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\"\n          },\n          \"scheduleId\": {\n            \"type\": \"string\"\n          },\n          \"cor\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"decision\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"displayName\": \"Deliverable received\"\n    }\n  ]\n}\n",
+      "entryPointName": "/content/DeliverableReviewProcess.bpmn#Start_Review",
+      "entryPointUniqueId": "cc31f317-6f62-48da-b016-bb982017421d"
+    },
+    "locks": [],
+    "key": "79fa549e-8a3b-408c-808d-fd413990f3e2",
+    "files": []
+  }
+}

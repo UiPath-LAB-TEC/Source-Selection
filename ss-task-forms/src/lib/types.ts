@@ -156,11 +156,13 @@ export interface Dataset {
   awards?: Record<string, unknown>[]
   correspondence?: Record<string, unknown>[]
   protests?: Record<string, unknown>[]
+  schedule?: Record<string, unknown>[]
+  alerts?: Record<string, unknown>[]
 }
 
 export const STAGES = ['Proposal Intake', 'Individual Evaluation', 'Consensus', 'Price Evaluation', 'Award Decision'] as const
 
-export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa'
+export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'cor'
 
 export interface Persona {
   id: PersonaId
@@ -183,7 +185,15 @@ export const PERSONAS: Persona[] = [
   { id: 'ssa', name: 'James Thornton', label: 'Source Selection Authority', role: 'Makes and signs the award decision', short: 'JT', taskLabel: 'ssa' },
 ]
 
-export const persona = (id: PersonaId) => PERSONAS.find((p) => p.id === id)!
+/**
+ * The Contracting Officer's Representative, who works a contract after award (Contract Management's forms). Not on the
+ * source selection panel, so kept out of PERSONAS. Fictional.
+ */
+export const COR: Persona = {
+  id: 'cor', name: 'Owen Mercer', label: "Contracting Officer's Representative", role: 'Monitors performance, deliverables and invoices', short: 'OM', taskLabel: 'cor',
+}
+
+export const persona = (id: PersonaId) => (id === 'cor' ? COR : PERSONAS.find((p) => p.id === id)!)
 export const evaluatorBySlot = (slot?: number) => PERSONAS.find((p) => p.slot === slot)
 
 /**

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:uipath="http://uipath.org/schema/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_DeliverableReview" targetNamespace="http://bpmn.io/schema/bpmn" exporter="UiPath Maestro (https://uipath.com)" exporterVersion="1.204.0">
+  <bpmn:process id="DeliverableReviewProcess" name="Deliverable review">
+    <bpmn:documentation>A contract deliverable the contractor submitted, such as a monthly status report: the reviewer agent checks it against what the contract requires (through AW_Robots, which holds every quote to the report), the COR accepts it or rejects it with the reasons in Action Center, and AW_Robots files the result. An accepted deliverable clears its action item; a rejected one goes back to the contractor with a notice and a new due day. Started by Record receipt in Contract Management, or by the daily contract watch for a deliverable on file with no review.</bpmn:documentation>
+    <bpmn:extensionElements>
+      <uipath:variables version="v1">
+        <uipath:input id="in_solicitationId" name="solicitationId" type="string" elementId="Start_Review" />
+        <uipath:input id="in_scheduleId" name="scheduleId" type="string" elementId="Start_Review" />
+        <uipath:input id="in_cor" name="cor" type="string" elementId="Start_Review" />
+        <uipath:output id="out_decision" name="decision" type="string" elementId="End_Reviewed" />
+        <uipath:inputOutput id="solicitationId" name="solicitationId" type="string" elementId="DeliverableReviewProcess" />
+        <uipath:inputOutput id="scheduleId" name="scheduleId" type="string" elementId="DeliverableReviewProcess" />
+        <uipath:inputOutput id="cor" name="cor" type="string" elementId="DeliverableReviewProcess" />
+        <uipath:inputOutput id="reviewDraft" name="reviewDraft" type="string" elementId="DeliverableReviewProcess" />
+        <uipath:inputOutput id="reviewDecision" name="reviewDecision" type="string" elementId="DeliverableReviewProcess" />
+        <uipath:inputOutput id="recorded" name="recorded" type="string" elementId="DeliverableReviewProcess" />
+      </uipath:variables>
+      <uipath:bindings version="v1">
+        <uipath:binding id="bDr4Wb7Ns" name="name" type="string" default="AW_Robots" resource="process" resourceKey="solution_folder.AW_Robots" propertyAttribute="name" />
+        <uipath:binding id="bDr6Fd2Yt" name="folderPath" type="string" default="" resource="process" resourceKey="solution_folder.AW_Robots" propertyAttribute="folderPath" />
+        <uipath:binding id="bDa3Fm8Qa" name="name" type="string" default="AwardTaskForms" resource="app" resourceKey="solution_folder.AwardTaskForms" propertyAttribute="name" />
+        <uipath:binding id="bDa7Pk2Wd" name="folderPath" type="string" default="" resource="app" resourceKey="solution_folder.AwardTaskForms" propertyAttribute="folderPath" />
+      </uipath:bindings>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Start_Review" name="Deliverable received">
+      <bpmn:extensionElements>
+        <uipath:entryPointId value="cc31f317-6f62-48da-b016-bb982017421d" />
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="solicitationId" type="string" var="solicitationId" source="=vars.in_solicitationId" />
+          <uipath:output name="scheduleId" type="string" var="scheduleId" source="=vars.in_scheduleId" />
+          <uipath:output name="cor" type="string" var="cor" source="=vars.in_cor" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>F_Start_Prepare</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_PrepareReview" name="Check Against the Contract">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bDr4Wb7Ns" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bDr6Fd2Yt" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"PrepareDeliverableReview","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="reviewDraft" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Start_Prepare</bpmn:incoming>
+      <bpmn:outgoing>F_Prepare_Review</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_ReviewDeliverable" name="Review the Deliverable">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bDa3Fm8Qa" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bDa7Pk2Wd" />
+            <uipath:input name="taskTitle" type="string" value="Review a contract deliverable" />
+            <uipath:input name="priority" type="string" value="Medium" />
+            <uipath:input name="labels" type="string" value="award, cor" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.cor"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"},"reviewDraft":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"reviewDeliverable","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId","reviewDraft":"=vars.reviewDraft"}]]></uipath:input>
+          <uipath:output name="decision" type="string" source="=decision" var="reviewDecision" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Prepare_Review</bpmn:incoming>
+      <bpmn:outgoing>F_Review_Record</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_RecordReview" name="File the Review">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bDr4Wb7Ns" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bDr6Fd2Yt" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"RecordDeliverableReview","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="recorded" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Review_Record</bpmn:incoming>
+      <bpmn:outgoing>F_Record_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_Reviewed" name="Review filed">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="decision" type="string" var="out_decision" source="=vars.recorded" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Record_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F_Start_Prepare" sourceRef="Start_Review" targetRef="Task_PrepareReview" />
+    <bpmn:sequenceFlow id="F_Prepare_Review" sourceRef="Task_PrepareReview" targetRef="Task_ReviewDeliverable" />
+    <bpmn:sequenceFlow id="F_Review_Record" sourceRef="Task_ReviewDeliverable" targetRef="Task_RecordReview" />
+    <bpmn:sequenceFlow id="F_Record_End" sourceRef="Task_RecordReview" targetRef="End_Reviewed" />
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="DeliverableReviewProcess">
+      <bpmndi:BPMNShape id="S_End_Reviewed" bpmnElement="End_Reviewed"><dc:Bounds x="788" y="214" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Start_Review" bpmnElement="Start_Review"><dc:Bounds x="252" y="214" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_PrepareReview" bpmnElement="Task_PrepareReview"><dc:Bounds x="338" y="192" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_RecordReview" bpmnElement="Task_RecordReview"><dc:Bounds x="638" y="192" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_ReviewDeliverable" bpmnElement="Task_ReviewDeliverable"><dc:Bounds x="488" y="192" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="E_F_Prepare_Review" bpmnElement="F_Prepare_Review"><di:waypoint x="438" y="232" /><di:waypoint x="488" y="232" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Record_End" bpmnElement="F_Record_End"><di:waypoint x="738" y="232" /><di:waypoint x="788" y="232" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Review_Record" bpmnElement="F_Review_Record"><di:waypoint x="588" y="232" /><di:waypoint x="638" y="232" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Start_Prepare" bpmnElement="F_Start_Prepare"><di:waypoint x="288" y="232" /><di:waypoint x="338" y="232" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

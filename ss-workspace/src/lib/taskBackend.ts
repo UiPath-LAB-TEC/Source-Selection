@@ -3,7 +3,7 @@ import type { UiPath } from '@uipath/uipath-typescript/core'
 import { Buckets } from '@uipath/uipath-typescript/buckets'
 import { Entities } from '@uipath/uipath-typescript/entities'
 import { Tasks, TaskType } from '@uipath/uipath-typescript/tasks'
-import { ENTITY, PROPOSALS, keepLocalDraft, proposalPath, withLocalDraft } from '@forms/lib/backend'
+import { ENTITY, PROPOSALS, RECORDS, keepLocalDraft, proposalPath, withContractHeader, withLocalDraft } from '@forms/lib/backend'
 import type { Backend, EntityKey, LoadedTask, Status, TaskData } from '@forms/lib/backend'
 import type { Dataset } from '@forms/lib/types'
 
@@ -70,6 +70,11 @@ export class WorkspaceBackend implements Backend {
     return r.uri
   }
 
+  async recordUrl(path: string) {
+    const r = await new Buckets(this.sdk).getReadUri({ name: RECORDS.bucket }, path.replace(/^SS-Records\//, ''), { folderKey: RECORDS.folderKey, expiryInMinutes: 30 })
+    return r.uri
+  }
+
   async complete(outcome: string, d: TaskData) {
     const res = await new Tasks(this.sdk).complete({ type: TaskType.App, taskId: this.taskId, data: d, action: outcome }, this.folderId)
     if (!res.success) throw new Error(`Action Center did not accept the ${outcome} outcome.`)
@@ -93,7 +98,7 @@ export class WorkspaceBackend implements Backend {
     status?.(`Loading the ${this.record}…`)
     const keys = Object.keys(ENTITY) as EntityKey[]
     const all = await Promise.all(keys.map((k) => this.all(k)))
-    return Object.fromEntries(keys.map((k, i) => [k, all[i].filter((r) => r.SolicitationId === id)])) as unknown as Dataset
+    return withContractHeader(Object.fromEntries(keys.map((k, i) => [k, all[i].filter((r) => r.SolicitationId === id)])) as unknown as Dataset)
   }
 
   async upsert(k: EntityKey, key: string, rows: Row[]) {

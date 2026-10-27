@@ -1,4 +1,5 @@
 import type { Framework } from '@forms/lib/terms'
+import { COR } from '@forms/lib/types'
 import { PERSONAS } from '@ss/lib/types'
 import type { Dataset, Persona, Solicitation } from '@ss/lib/types'
 import type { AwardRow, Correspondence, Protest } from '@award/lib/record'
@@ -51,9 +52,7 @@ export const COUNSEL: Persona = {
 }
 
 /** The Contracting Officer's Representative: watches performance day to day, approves invoices, drafts evaluations. Fictional. */
-export const COR_PERSONA: Persona = {
-  id: 'cor', name: 'Owen Mercer', label: "Contracting Officer's Representative", role: 'Monitors performance, deliverables and invoices', short: 'OM', taskLabel: 'cor',
-}
+export const COR_PERSONA: Persona = COR
 
 /** The Resource Manager: certifies funds and keeps each line item's obligations ahead of its spending. Fictional. */
 export const RM_PERSONA: Persona = {

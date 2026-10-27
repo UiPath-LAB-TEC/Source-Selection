@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { AlarmClock, CalendarClock, Check, ChevronDown, CircleAlert, RotateCcw, UserCheck } from 'lucide-react'
+import { AlarmClock, CalendarClock, Check, ChevronDown, CircleAlert, FileUp, Loader2, RotateCcw, UserCheck } from 'lucide-react'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@uipath/apollo-wind/components/ui/dialog'
 import { Textarea } from '@uipath/apollo-wind/components/ui/textarea'
@@ -14,6 +14,9 @@ import { groupOf, useAlertActions } from '../lib/alerts'
 import type { ActionGroup } from '../lib/alerts'
 import { useAwardData } from '../lib/data'
 import { fmtDay } from '../lib/status'
+import { useRecordReceipt } from '../lib/receipt'
+import type { ScheduleRow } from '../lib/award'
+import { OpenAwardTask } from './AwardTask'
 
 /** An item's title without a trailing "due Nov 10": the due chip beside it already carries the date. */
 export const itemTitle = (a: AlertRow) => (a.DueDay ? a.Title.replace(/\s+due [A-Z][a-z]{2} \d{1,2}(, \d{4})?$/, '') : a.Title)
@@ -60,16 +63,52 @@ function DismissDialog({ item, open, onOpenChange }: { item: AlertRow; open: boo
   )
 }
 
+/** Record receipt of a deliverable: pick the PDF the contractor sent, file it with the record, and start the review. */
+function RecordReceipt({ row, item }: { row: ScheduleRow; item: AlertRow }) {
+  const { record, busy } = useRecordReceipt()
+  const [open, setOpen] = useState(false)
+  const [file, setFile] = useState<File>()
+  return (
+    <>
+      <Button size="sm" onClick={() => setOpen(true)}><FileUp className="mr-1.5 h-3.5 w-3.5" />Record receipt</Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Record receipt: {row.Name}</DialogTitle>
+            <DialogDescription>Add the PDF the contractor sent. It's filed with the contract record, the reviewer agent checks it against what the contract requires, and the review task comes to you.</DialogDescription>
+          </DialogHeader>
+          <label className="block space-y-1.5 text-sm font-medium">
+            <span>Deliverable (PDF)</span>
+            <input type="file" accept="application/pdf" onChange={(e) => setFile(e.target.files?.[0])}
+              className="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-md file:border-0 file:bg-muted file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-foreground" />
+          </label>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button disabled={!file || busy === row.ScheduleId} onClick={async () => { if (file && await record(row, file, item)) setOpen(false) }}>
+              {busy === row.ScheduleId && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}File it and start the review
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
+
 /**
  * One action item on one line: when it's due, what it is, which contract, who owns it, and what to do. The numbers and
  * the rule behind it open under Details.
  */
 function ActionItem({ item: a, contract }: { item: AlertRow; contract?: { id: string; title: string; number?: string } }) {
   const { persona } = useAwardPersona()
+  const { data, tasks } = useAwardData()
   const { acknowledge, reopen, busy } = useAlertActions()
   const [open, setOpen] = useState(false)
   const [dismissing, setDismissing] = useState(false)
   const g = groupOf(a)
+  // A deliverable's item does its own work: record the receipt, then open the review task once the agent has checked it.
+  const scheduleId = a.Kind === 'deliverable' ? (() => { try { return (JSON.parse(a.EvidenceJson ?? '{}') as { scheduleId?: string }).scheduleId } catch { return undefined } })() : undefined
+  const row = scheduleId ? data?.schedule.find((r) => r.ScheduleId === scheduleId) : undefined
+  const review = row ? tasks.find((t) => !t.isCompleted && (t.data as { scheduleId?: string } | null)?.scheduleId === row.ScheduleId) : undefined
   const owners = AWARD_PERSONAS.filter((p) => alertOwners(a).includes(p.taskLabel))
   const mine = persona.id === 'co' || owners.some((p) => p.id === persona.id)
   const quiet = g !== 'needs'
@@ -90,8 +129,11 @@ function ActionItem({ item: a, contract }: { item: AlertRow; contract?: { id: st
           {owners.map((p) => <PersonaAvatar key={p.id} id={p.id} short={p.short} size={24} title={`${p.name} · ${p.label}`} />)}
         </span>
         <div className="flex shrink-0 items-center gap-1">
-          {mine && g === 'needs' && <Button size="sm" variant="outline" disabled={busy === a.AlertId} onClick={() => acknowledge(a)}><Check className="mr-1.5 h-3.5 w-3.5" />I'm on it</Button>}
-          {mine && g === 'inHand' && <Button size="sm" variant="ghost" disabled={busy === a.AlertId} onClick={() => reopen(a)}><RotateCcw className="mr-1.5 h-3.5 w-3.5" />Reopen</Button>}
+          {row && mine && !row.ReceivedDay && <RecordReceipt row={row} item={a} />}
+          {row && row.ReceivedDay && review && (mine || persona.id === 'cor') && <OpenAwardTask task={review} label="Review report" size="sm" />}
+          {row && row.ReceivedDay && !review && <Button size="sm" variant="ghost" disabled><Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />Review starting</Button>}
+          {!row && mine && g === 'needs' && <Button size="sm" variant="outline" disabled={busy === a.AlertId} onClick={() => acknowledge(a)}><Check className="mr-1.5 h-3.5 w-3.5" />I'm on it</Button>}
+          {!row && mine && g === 'inHand' && <Button size="sm" variant="ghost" disabled={busy === a.AlertId} onClick={() => reopen(a)}><RotateCcw className="mr-1.5 h-3.5 w-3.5" />Reopen</Button>}
           <Button size="sm" variant="ghost" onClick={() => setOpen(!open)} aria-expanded={open}>Details<ChevronDown className={`ml-1 h-3.5 w-3.5 transition ${open ? 'rotate-180' : ''}`} /></Button>
         </div>
       </div>
@@ -99,7 +141,13 @@ function ActionItem({ item: a, contract }: { item: AlertRow; contract?: { id: st
         <div className="mt-2 space-y-2 rounded-lg bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
           {a.Detail && <p>{a.Detail}</p>}
           <p className="text-xs">{a.Rule} · found by the daily contract watch {when(a.RaisedAt)}{a.ActedBy && g === 'inHand' ? ` · picked up by ${a.ActedBy} ${when(a.ActedAt)}` : ''}</p>
-          {mine && g !== 'inHand' && <Button size="sm" variant="ghost" className="-ml-2" onClick={() => setDismissing(true)}>Dismiss with a reason</Button>}
+          {mine && g !== 'inHand' && (
+            <div className="-ml-2 flex flex-wrap gap-1">
+              {row && g === 'needs' && <Button size="sm" variant="ghost" disabled={busy === a.AlertId} onClick={() => acknowledge(a)}><Check className="mr-1.5 h-3.5 w-3.5" />I'm on it</Button>}
+              <Button size="sm" variant="ghost" onClick={() => setDismissing(true)}>Dismiss with a reason</Button>
+            </div>
+          )}
+          {row?.ReviewedBy && <p className="text-xs">Last reviewed by {row.ReviewedBy}{row.Reason ? `: ${row.Reason}` : ''}</p>}
         </div>
       )}
       <DismissDialog item={a} open={dismissing} onOpenChange={setDismissing} />

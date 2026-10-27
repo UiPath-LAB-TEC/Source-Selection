@@ -9,9 +9,13 @@ same way.
 from __future__ import annotations
 
 import json
+import re
+import tempfile
 from datetime import date, datetime, time
+from pathlib import Path
 
 from pydantic import BaseModel
+from pypdf import PdfReader
 from uipath.tracing import traced
 
 import admin
@@ -23,6 +27,7 @@ import repo
 AWARD = "SSAward"
 LETTERS = "SSCorrespondence"
 SCHEDULE, FUNDING, ALERTS = "SSSchedule", "SSFunding", "SSAlert"
+REVIEW_PROCESS = "DeliverableReviewProcess"
 AWARD_NOTICE, NOTICE = "AwardNotice", "UnsuccessfulNotice"
 
 # The Award phase's steps, as the Award app's tracker names them (award-task-forms/src/lib/record.ts). A district's
@@ -251,7 +256,132 @@ def open_administration(input: SolicitationInput) -> AdminOutput:
     return out
 
 
-# ── 5. WatchContracts ───────────────────────────────────────────────────────
+# ── 5. Deliverable review: PrepareDeliverableReview, RecordDeliverableReview ─
+
+class ReviewInput(BaseModel):
+    solicitationId: str = ""
+    scheduleId: str = ""
+
+
+class ReviewOutput(Result):
+    review: str = ""
+
+
+def _schedule_row(sol: str, schedule_id: str) -> dict:
+    row = next((r for r in repo.rows(SCHEDULE, sol) if r.get("ScheduleId") == schedule_id), None)
+    if row is None:
+        raise LookupError(f"{schedule_id} is not on {sol}'s schedule")
+    return row
+
+
+def _report_text(path: str) -> str:
+    """The text of a filed deliverable, without the synthetic-demo banner each page carries."""
+    with tempfile.TemporaryDirectory() as d:
+        local = str(Path(d) / "report.pdf")
+        repo.download(repo.RECORDS_BUCKET, path.removeprefix(f"{repo.RECORDS_BUCKET}/"), local)
+        pages = [p.extract_text() or "" for p in PdfReader(local).pages]
+    text = "\n".join(pages)
+    return re.sub(r"SYNTHETIC DEMO[^\n]*NOT A[N]? (ACTUAL|REAL)[^\n]*", "", text).strip()
+
+
+def _alert_id(sol: str, schedule_id: str) -> str:
+    return f"{sol}-deliverable-{schedule_id.removeprefix(f'{sol}-')}"
+
+
+@traced(name="PrepareDeliverableReview", run_type="uipath")
+def prepare_deliverable_review(input: ReviewInput) -> ReviewOutput:
+    """Read a deliverable the contractor filed and have the reviewer agent check it against what the contract requires,
+    one requirement at a time, quoting the report. Quotes the report doesn't contain are dropped. If the agent fails
+    twice, the COR gets the requirements to check by hand. The COR decides; this only prepares."""
+    out = ReviewOutput()
+    try:
+        sol, sid = input.solicitationId, input.scheduleId
+        row = _schedule_row(sol, sid)
+        if not row.get("FilePath"):
+            raise ValueError(f"No file is on record for {row.get('Name')}; record its receipt first")
+        contract = next(iter(repo.rows(AWARD, sol)), {})
+        text = _report_text(row["FilePath"])
+        # Today's funds, so the reviewer can set reported hours against the labor-hour ceilings as they stand now.
+        today = clocks.day_of(repo.now())
+        period = admin.current_period(repo.rows(SCHEDULE, sol), today)
+        lines = admin.forecast(json.loads(contract.get("AbstractJson") or "{}"), repo.rows(FUNDING, sol), period, today) if period else {}
+        inputs = admin.review_inputs(contract, row, text, {"period": period and period["Period"], "lines": list(lines.values())})
+        output = None
+        for _ in range(2):  # one retry, as the evaluation agents get (SE-02)
+            key = repo.start_agent(admin.REVIEWER, inputs)
+            state, result = repo.wait_jobs([key], timeout_s=600)[key]
+            if state == "Successful" and result:
+                output = result
+                break
+        review = admin.checked_review(output, json.loads(inputs["requirements"]), text) | {"file": row["FilePath"], "preparedAt": repo.now()}
+        history = json.loads(row.get("ReviewJson") or "{}").get("history") or []
+        review["history"] = history
+        repo.upsert(SCHEDULE, "ScheduleId", [{"ScheduleId": sid, "SolicitationId": sol, "Status": "Under review", "ReviewJson": json.dumps(review)}])
+        met = sum(1 for x in review["requirements"] if x["status"] == "Met")
+        repo.audit(sol, sid, "DeliverableReviewPrepared",
+                   f"{row['Name']}: {met} of {len(review['requirements'])} requirements met"
+                   + (f"; the reviewer recommends: {review['recommendation']}" if review.get("recommendation") else "")
+                   + ("" if review["agent"] else "; the reviewer agent was unavailable, so it's checked by hand"), actor=admin.REVIEWER)
+        out.review = json.dumps(review)[:9000]
+    except Exception as exc:
+        return _fail(out, exc)
+    return out
+
+
+class RecordOutput(Result):
+    decision: str = ""
+
+
+@traced(name="RecordDeliverableReview", run_type="uipath")
+def record_deliverable_review(input: ReviewInput) -> RecordOutput:
+    """After the COR decides: an accepted deliverable clears its action item. A rejected one gets a notice to the
+    contractor (filed with the record) and is due again in 5 business days, so the watch raises it again until a
+    corrected copy is accepted."""
+    out = RecordOutput()
+    try:
+        sol, sid = input.solicitationId, input.scheduleId
+        row = _schedule_row(sol, sid)
+        contract = next(iter(repo.rows(AWARD, sol)), {})
+        now = repo.now()
+        resolve = [{"AlertId": a["AlertId"], "SolicitationId": sol, "Status": "Resolved", "ResolvedAt": now}
+                   for a in repo.rows(ALERTS, sol) if a.get("AlertId") == _alert_id(sol, sid) and a.get("Status") != "Resolved"]
+        if row.get("Status") == "Accepted":
+            repo.upsert(ALERTS, "AlertId", resolve)
+            out.decision = "Accepted"
+            return out
+        if row.get("Status") != "Rejected":
+            raise ValueError(f"{row.get('Name')} hasn't been accepted or rejected yet (status {row.get('Status')})")
+        today = clocks.day_of(now)
+        resubmit = clocks.add_business_days(today, admin.RESUBMIT_BUSINESS_DAYS)
+        letter = admin.rejection_letter(contract, row, row.get("Reason") or "", resubmit, today)
+        review = json.loads(row.get("ReviewJson") or "{}")
+        n = len(review.get("history") or []) + 1
+        path = f"{sol}/deliverables/{sid.removeprefix(f'{sol}-')}-Rejection-{n}.pdf"
+        header = f"{contract.get('Agency') or ''} | {contract.get('ContractNumber') or sol} | {contract.get('Title') or ''}"
+        repo.upload(repo.RECORDS_BUCKET, path, records.render("Deliverable not accepted", header, [("", letter)], banner=records.RELEASED_BANNER))
+        repo.upsert(LETTERS, "CorrespondenceId", [{"CorrespondenceId": f"{sid}-Rejection-{n}", "SolicitationId": sol, "OfferorId": f"{sol}-CONTRACTOR",
+                                                    "Kind": "DeliverableRejection", "Status": "Delivered", "Text": letter, "AgentText": letter,
+                                                    "DeliveredAt": now, "FilePath": f"{repo.RECORDS_BUCKET}/{path}", "Author": row.get("ReviewedBy") or repo.ACTOR}])
+        review["history"] = (review.get("history") or []) + [{"file": row.get("FilePath"), "decision": "Rejected", "reason": row.get("Reason"),
+                                                              "by": row.get("ReviewedBy"), "at": row.get("ReviewedAt")}]
+        repo.upsert(SCHEDULE, "ScheduleId", [{"ScheduleId": sid, "SolicitationId": sol, "Status": "Due", "DueDay": resubmit, "ReceivedDay": None,
+                                              "AcceptedDay": None, "FilePath": None, "ProcessInstanceId": None, "ReviewJson": json.dumps(review)}])
+        repo.upsert(ALERTS, "AlertId", resolve)
+        repo.audit(sol, f"{sid}-{n}", "RejectionNoticeSent", f"{row.get('Name')} returned to the contractor; a corrected copy is due {admin.show_day(resubmit)}")
+        out.decision = "Rejected"
+    except Exception as exc:
+        return _fail(out, exc)
+    return out
+
+
+def _start_review(sol: str, row: dict, cor: str) -> str:
+    """Start the review process for a deliverable on record: the reviewer agent, then the COR's task."""
+    job = repo.retry(lambda: repo.sdk().processes.invoke(REVIEW_PROCESS, {"solicitationId": sol, "scheduleId": row["ScheduleId"], "cor": cor},
+                                                          **repo.run_folder()))
+    return job.key
+
+
+# ── 6. WatchContracts ───────────────────────────────────────────────────────
 
 class WatchInput(BaseModel):
     asOf: str = ""
@@ -298,6 +428,14 @@ def watch_contracts(input: WatchInput) -> WatchOutput:
                 if more:
                     repo.upsert(SCHEDULE, "ScheduleId", more)
                     sched += more
+                # A deliverable on file with no review yet (it came in some other way than Record receipt) gets one.
+                reviews = []
+                for r in sched:
+                    if (r.get("Kind") == "Deliverable" and r.get("ReceivedDay") and r.get("FilePath") and not r.get("AcceptedDay")
+                            and r.get("Status") == "Received" and not r.get("ProcessInstanceId") and a.get("CorEmail")):
+                        r["ProcessInstanceId"] = _start_review(sol, r, a["CorEmail"])
+                        repo.upsert(SCHEDULE, "ScheduleId", [{"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "ProcessInstanceId": r["ProcessInstanceId"]}])
+                        reviews.append(r["Name"])
                 money_ = [r for r in funding if r.get("SolicitationId") == sol]
                 fresh, funds = admin.alerts(a, sched, money_, [c for c in letters_ if c.get("SolicitationId") == sol], as_of, by_id.get(a.get("SuccessorId") or ""))
                 existing = {x["AlertId"]: x for x in alerts_ if x.get("SolicitationId") == sol}
@@ -309,11 +447,12 @@ def watch_contracts(input: WatchInput) -> WatchOutput:
                                                 "ObligatedValue": round(net(("Obligation", "Deobligation")), 2), "InvoicedValue": round(net(("Invoice",)), 2),
                                                 "FundsJson": json.dumps(funds), "WatchedAt": now}])
                 new, worse, resolved = _counts(writes, existing)
-                if new or worse or resolved:
+                if new or worse or resolved or reviews:
                     titles = "; ".join(w["Title"] for w in writes if w.get("Title") and w.get("Status") == "Open")[:3000]
                     repo.audit(sol, f"watch-{as_of}", "ContractWatched",
-                               f"{new} new, {worse} more urgent, {resolved} resolved" + (f": {titles}" if titles else ""))
-                report.append({"solicitationId": sol, "open": sum(1 for x in fresh), "new": new, "worse": worse, "resolved": resolved})
+                               f"{new} new, {worse} more urgent, {resolved} resolved" + (f": {titles}" if titles else "")
+                               + (f". Reviews started: {', '.join(reviews)}" if reviews else ""))
+                report.append({"solicitationId": sol, "open": sum(1 for x in fresh), "new": new, "worse": worse, "resolved": resolved, "reviewsStarted": reviews})
             except Exception as exc:  # one contract failing doesn't stop the others
                 failed.append(f"{sol}: {type(exc).__name__}: {exc}")
         out.summary = json.dumps({"asOf": as_of, "opened": opened, "contracts": report})
@@ -332,6 +471,7 @@ class RobotInput(BaseModel):
     step: str = ""
     solicitationId: str = ""
     asOf: str = ""
+    scheduleId: str = ""
 
 
 class RobotOutput(Result):
@@ -350,6 +490,8 @@ STEPS = {
     "IssueNotices": (issue_notices, SolicitationInput, "recordUri"),
     "OpenAdministration": (open_administration, SolicitationInput, "phase"),
     "WatchContracts": (watch_contracts, WatchInput, "summary"),
+    "PrepareDeliverableReview": (prepare_deliverable_review, ReviewInput, "review"),
+    "RecordDeliverableReview": (record_deliverable_review, ReviewInput, "decision"),
 }
 
 

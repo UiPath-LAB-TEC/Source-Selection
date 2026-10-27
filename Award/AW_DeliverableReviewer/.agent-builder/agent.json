@@ -1,0 +1,161 @@
+{
+  "version": "1.2.0",
+  "settings": {
+    "model": "anthropic.claude-sonnet-5",
+    "maxTokens": 6000,
+    "temperature": 0,
+    "engine": "basic-v2",
+    "maxIterations": 3,
+    "mode": "standard"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "contractFacts": {
+        "type": "string",
+        "description": "JSON: contract number, contractor, the period running now, and each labor-hour line item with its ceiling, invoiced amount and percent of ceiling"
+      },
+      "deliverable": {
+        "type": "string",
+        "description": "JSON: the deliverable's code, name, due day and the day it was received"
+      },
+      "requirements": {
+        "type": "string",
+        "description": "JSON array of what the contract requires this deliverable to contain, in order"
+      },
+      "reportText": {
+        "type": "string",
+        "description": "Text of the deliverable as the contractor submitted it"
+      }
+    },
+    "required": [
+      "contractFacts",
+      "deliverable",
+      "requirements",
+      "reportText"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "requirements": {
+        "type": "array",
+        "description": "One entry per required element, in the order given",
+        "items": {
+          "type": "object",
+          "properties": {
+            "requirement": {
+              "type": "string",
+              "description": "The required element, copied exactly as given"
+            },
+            "status": {
+              "type": "string",
+              "description": "One of: Met, Partly met, Missing"
+            },
+            "evidence": {
+              "type": "string",
+              "description": "A short verbatim quote from the report that shows the element, or '' when it is missing"
+            },
+            "note": {
+              "type": "string",
+              "description": "One sentence on what is incomplete or missing, or ''"
+            }
+          },
+          "required": [
+            "requirement",
+            "status",
+            "evidence",
+            "note"
+          ]
+        }
+      },
+      "summary": {
+        "type": "string",
+        "description": "Two or three sentences on whether the deliverable meets the contract's requirements"
+      },
+      "recommendation": {
+        "type": "string",
+        "description": "One of: Accept, Accept with comments, Reject"
+      },
+      "issues": {
+        "type": "array",
+        "description": "Things the COR should raise with the contractor or the Contracting Officer, such as reported hours set against a labor-hour ceiling, or work the report says is late. Empty when there are none.",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "requirements",
+      "summary",
+      "recommendation",
+      "issues"
+    ]
+  },
+  "metadata": {
+    "storageVersion": "50.0.0",
+    "isConversational": false,
+    "showProjectCreationExperience": false,
+    "targetRuntime": "pythonAgent"
+  },
+  "type": "lowCode",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You assist a Contracting Officer's Representative (COR) reviewing a contract deliverable, such as a monthly status report, against what the contract requires it to contain. The COR decides whether to accept it; you prepare the review.\n\nMethod:\n- For each required element, in the order given, decide whether the report meets it (Met), meets it in part (Partly met), or doesn't address it (Missing).\n- Support each Met or Partly met with a short quote copied exactly from the report. Never paraphrase inside the quote and never quote text the report doesn't contain; leave evidence '' when an element is missing.\n- In note, say plainly what is incomplete, for example \"Hours are given as one total, with no labor categories and no cumulative figure.\"\n- Check the report against the contract facts. If a labor-hour line item is at or past 85 percent of its ceiling and the report doesn't flag it, list that in issues, with the figures. If the report says other work is late or not yet delivered, list that too.\n\nRecommendation:\n- Accept: every element is Met.\n- Accept with comments: every element is at least partly met and the gaps can be raised without rejecting it.\n- Reject: one or more elements are Missing, or the gaps would leave the Government without information the contract requires.\n\nRules:\n- Judge only against the requirements given and the contract facts. Don't invent requirements.\n- Be specific and brief. No pleasantries.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "You assist a Contracting Officer's Representative (COR) reviewing a contract deliverable, such as a monthly status report, against what the contract requires it to contain. The COR decides whether to accept it; you prepare the review.\n\nMethod:\n- For each required element, in the order given, decide whether the report meets it (Met), meets it in part (Partly met), or doesn't address it (Missing).\n- Support each Met or Partly met with a short quote copied exactly from the report. Never paraphrase inside the quote and never quote text the report doesn't contain; leave evidence '' when an element is missing.\n- In note, say plainly what is incomplete, for example \"Hours are given as one total, with no labor categories and no cumulative figure.\"\n- Check the report against the contract facts. If a labor-hour line item is at or past 85 percent of its ceiling and the report doesn't flag it, list that in issues, with the figures. If the report says other work is late or not yet delivered, list that too.\n\nRecommendation:\n- Accept: every element is Met.\n- Accept with comments: every element is at least partly met and the gaps can be raised without rejecting it.\n- Reject: one or more elements are Missing, or the gaps would leave the Government without information the contract requires.\n\nRules:\n- Judge only against the requirements given and the contract facts. Don't invent requirements.\n- Be specific and brief. No pleasantries.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Review this deliverable.\n\nContract:\n{{input.contractFacts}}\n\nDeliverable:\n{{input.deliverable}}\n\nWhat the contract requires it to contain:\n{{input.requirements}}\n\nThe deliverable as submitted:\n{{input.reportText}}\n\nReturn each requirement with its status, evidence and note, then the summary, recommendation and issues.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "Review this deliverable.\n\nContract:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.contractFacts"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nDeliverable:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.deliverable"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nWhat the contract requires it to contain:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.requirements"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nThe deliverable as submitted:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.reportText"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nReturn each requirement with its status, evidence and note, then the summary, recommendation and issues."
+        }
+      ]
+    }
+  ],
+  "projectId": "129886ff-a560-4ca1-8246-1471c6b937ef",
+  "id": "129886ff-a560-4ca1-8246-1471c6b937ef",
+  "name": "AW_DeliverableReviewer",
+  "resources": [],
+  "features": []
+}

@@ -13,9 +13,23 @@ import type { Dataset } from './types'
 export const ENTITY = {
   solicitations: 'SSSolicitation', offerors: 'SSOfferor', pages: 'SSProposalPage', findings: 'SSFinding',
   ratings: 'SSRating', decisions: 'SSDecision', audit: 'SSAuditEvent',
-  // The Award phase's own rows: Contract Award's forms read and write them, Source Selection's forms ignore them.
-  awards: 'SSAward', correspondence: 'SSCorrespondence', protests: 'SSProtest',
+  // The Award app's own rows (the award phase, then the contract's administration): its forms read and write them,
+  // Source Selection's forms ignore them.
+  awards: 'SSAward', correspondence: 'SSCorrespondence', protests: 'SSProtest', schedule: 'SSSchedule', alerts: 'SSAlert',
 } as const
+
+/**
+ * A contract awarded outside Source Selection has no SSSolicitation row, so the record it loads gets a header built from
+ * its SSAward row (Origin Imported): its own title, agency and terms, in the shape the forms read a solicitation in.
+ */
+export function withContractHeader(d: Dataset): Dataset {
+  if (d.solicitations.length) return d
+  const a = (d.awards ?? []).find((x) => x.Origin === 'Imported') as Record<string, string | undefined> | undefined
+  if (!a) return d
+  const plan = { solicitationId: a.SolicitationId, title: a.Title, agency: a.Agency, office: a.Office, contractType: a.ContractType, framework: a.Framework ?? 'federal' }
+  return { ...d, solicitations: [{ Id: `contract-${a.AwardId}`, SolicitationId: a.SolicitationId!, Title: a.Title ?? a.SolicitationId!, Agency: a.Agency ?? '',
+    Status: 'Awarded', Stage: 'Awarded', AwardeeName: a.AwardeeName, AwardedAt: a.AwardedAt, PlanJson: JSON.stringify(plan) } as unknown as Dataset['solicitations'][number]] }
+}
 export type EntityKey = keyof typeof ENTITY
 
 /** Union of the action schema's inputs and outputs. */
@@ -36,6 +50,9 @@ export interface TaskData {
   awardee?: string
   /** Work in progress the person saved without submitting (JSON, shape owned by the form). */
   draft?: string
+  /** Contract Management: the schedule row a task is about (a deliverable to review) and the robot's prepared review. */
+  scheduleId?: string
+  reviewDraft?: string
 }
 
 export interface LoadedTask { data: TaskData; isReadOnly: boolean; dark: boolean; actor: string }
@@ -51,6 +68,8 @@ export interface Backend {
   saveDraft(d: TaskData): Promise<void>
   /** A short-lived link to an offeror's original proposal volume (PDF), when the host can reach the proposals bucket. */
   documentUrl?(solicitationId: string, offerorCode: string, volume: string): Promise<string>
+  /** A short-lived link to a file filed with the record in SS-Records, such as a contractor's deliverable. */
+  recordUrl?(path: string): Promise<string>
   complete(outcome: string, d: TaskData): Promise<void>
   load(solicitationId: string, status?: Status): Promise<Dataset>
   /** Insert rows whose key is new, update rows whose key exists. */
@@ -99,6 +118,7 @@ function loadApp(ms: number) {
  * by key so it keeps working when the folder is moved or renamed.
  */
 export const PROPOSALS = { bucket: 'SS-Proposals', folderKey: '08605f4c-2b90-4971-81b7-2f4310a2b81a' }
+export const RECORDS = { bucket: 'SS-Records', folderKey: PROPOSALS.folderKey }
 export const proposalPath = (solicitationId: string, offerorCode: string, volume: string) => `${solicitationId}/${offerorCode}/${volume}.pdf`
 
 /** A browser copy of each draft, so work survives even where the host can't store it on the task. */
@@ -197,6 +217,12 @@ class ActionCenterBackend implements Backend {
     keepLocalDraft(d)
   }
 
+  /** A short-lived link to a file the robots filed with the record (SS-Records), such as a contractor's deliverable. */
+  async recordUrl(path: string) {
+    const r = await new Buckets(new UiPath()).getReadUri({ name: RECORDS.bucket }, path.replace(/^SS-Records\//, ''), { folderKey: RECORDS.folderKey, expiryInMinutes: 30 })
+    return r.uri
+  }
+
   async documentUrl(solicitationId: string, offerorCode: string, volume: string) {
     const r = await new Buckets(new UiPath()).getReadUri({ name: PROPOSALS.bucket }, proposalPath(solicitationId, offerorCode, volume),
       { folderKey: PROPOSALS.folderKey, expiryInMinutes: 30 })
@@ -224,7 +250,7 @@ class ActionCenterBackend implements Backend {
     await withRetry('Connecting to Data Fabric', () => this.entities(status), status)
     const all = await withRetry('Loading from Data Fabric', () => Promise.all(keys.map((k) => this.all(k))), status)
     log(`Data Fabric loaded in ${Math.round(performance.now() - started)} ms`)
-    return Object.fromEntries(keys.map((k, i) => [k, all[i].filter((r) => r.SolicitationId === id)])) as unknown as Dataset
+    return withContractHeader(Object.fromEntries(keys.map((k, i) => [k, all[i].filter((r) => r.SolicitationId === id)])) as unknown as Dataset)
   }
 
   async upsert(k: EntityKey, key: string, rows: Row[]) {
@@ -310,7 +336,7 @@ class PreviewBackend implements Backend {
 
   async load(id: string): Promise<Dataset> {
     // A snapshot from before the Award entities has no rows for them.
-    return Object.fromEntries((Object.keys(ENTITY) as EntityKey[]).map((k) => [k, (this.data[k] ?? []).filter((r) => r.SolicitationId === id)])) as unknown as Dataset
+    return withContractHeader(Object.fromEntries((Object.keys(ENTITY) as EntityKey[]).map((k) => [k, (this.data[k] ?? []).filter((r) => r.SolicitationId === id)])) as unknown as Dataset)
   }
 
   async upsert(k: EntityKey, key: string, rows: Row[]) {
@@ -362,6 +388,11 @@ export function sampleInputs(o: PreviewOptions, d: Record<EntityKey, Row[]>): Pa
   const sol = d.solicitations.find((s) => s.SolicitationId === o.solicitationId)
   const plan = sol ? JSON.parse(sol.PlanJson as string) : null
   switch (o.actionType) {
+    case 'reviewDeliverable': {
+      // Contract Management: the contract's first deliverable on file (received, with the reviewer's check if it ran).
+      const row = (d.schedule ?? []).find((r) => r.SolicitationId === o.solicitationId && r.Kind === 'Deliverable' && !!r.FilePath)
+      return { scheduleId: (row?.ScheduleId as string) ?? '', reviewDraft: (row?.ReviewJson as string) ?? '' }
+    }
     case 'releaseToEvaluation':
       return { complianceSummary: JSON.stringify(offerors.map((x) => ({ offerorId: x.OfferorId, name: x.Name, status: x.ComplianceStatus, notes: x.ComplianceNotes }))) }
     case 'consensus':

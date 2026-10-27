@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "DeliverableReviewProcess",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "d56a68a7-5617-41cb-be92-ddebd5e991d8",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "DeliverableReviewProcess"
+    },
+    "locks": [],
+    "key": "b64b745c-cfcf-48b0-8d3f-8a28be19a686",
+    "files": []
+  }
+}

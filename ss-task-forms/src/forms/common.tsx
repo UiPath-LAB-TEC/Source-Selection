@@ -98,8 +98,10 @@ function ConflictGate({ who, onCertified }: { who: Persona; onCertified: () => v
 }
 
 /** Gradient header with who the task is for, scrollable body, sticky outcome footer. */
-export function FormShell({ eyebrow, title, subtitle, who: person, children, footer, readOnly }: {
+export function FormShell({ eyebrow, title, subtitle, who: person, children, footer, readOnly, certify = true }: {
   eyebrow: string; title: string; subtitle: string; who: Persona; children: ReactNode; footer: ReactNode; readOnly?: boolean
+  /** Ask for the source selection conflict certification first (FAR 3.104). Contract administration tasks don't. */
+  certify?: boolean
 }) {
   const { data, sol } = useForm()
   const t = useTerms()
@@ -107,7 +109,7 @@ export function FormShell({ eyebrow, title, subtitle, who: person, children, foo
   const [certified, setCertified] = useState(false)
   const onFile = data.audit.some((e) => e.SolicitationId === sol.SolicitationId && e.Action === 'ConflictCertified' && e.Actor === actorOf(who, t.id))
   // Completed (read-only) tasks never ask; open ones ask once per person per solicitation.
-  const gated = !readOnly && !onFile && !certified
+  const gated = certify && !readOnly && !onFile && !certified
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="ss-hero sheen px-6 py-5">

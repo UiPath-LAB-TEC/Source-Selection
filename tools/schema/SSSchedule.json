@@ -80,6 +80,32 @@
   {
    "name": "Owner",
    "type": "STRING"
+  },
+  {
+   "name": "FilePath",
+   "type": "STRING"
+  },
+  {
+   "name": "ReviewJson",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "ReviewedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "ReviewedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "Reason",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "ProcessInstanceId",
+   "type": "STRING"
   }
  ]
 }

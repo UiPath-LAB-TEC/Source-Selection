@@ -5,7 +5,7 @@
       "actionType": {
         "type": "string",
         "required": true,
-        "description": "Which form to render: executeAward, recordDebriefRequests, deliverDebriefings, followUpQuestions, protestWindow, agencyPosition, recordDecision"
+        "description": "Which form to render: executeAward, recordDebriefRequests, deliverDebriefings, followUpQuestions, protestWindow, agencyPosition, recordDecision, reviewDeliverable"
       },
       "solicitationId": {
         "type": "string",
@@ -36,6 +36,16 @@
         "type": "string",
         "required": false,
         "description": "Protest grounds mapped to the record (JSON)"
+      },
+      "scheduleId": {
+        "type": "string",
+        "required": false,
+        "description": "The schedule row a task is about, such as a deliverable to review (SSSchedule.ScheduleId)"
+      },
+      "reviewDraft": {
+        "type": "string",
+        "required": false,
+        "description": "The reviewer agent's check of a deliverable against the contract's requirements, held to the report by the robot (JSON)"
       }
     }
   },
