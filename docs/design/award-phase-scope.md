@@ -2,8 +2,9 @@
 
 **Status:**
 - Slice 0 (foundation) is deployed and committed (4202358). See §15.
-- Slice 1 (contract award and notices) is deployed but not committed. See §16.
-- §17 adds the administration phase: managing the contract after award. Slice A is built and packed (2026-10-23). See §18.
+- Slice 1 (contract award and notices) is deployed and committed (e80a2ad). See §16.
+- §17 adds the administration phase: managing the contract after award. Slice A is deployed (2026-10-23; §18), and §19 is
+  the clarity redesign (2026-10-27). Both are committed (e80a2ad).
 
 **Sales play phase:** 4 of 4, Award. It moves the play page from "Decision built" to "Demo ready".
 
@@ -409,7 +410,7 @@ Sources for §6:
 
 ## 16. Slice 1 status (2026-10-22): contract award and notices
 
-**Deployed 2026-10-22: Award 1.1.0 (with the AwardTaskForms action app) and Contract Award web 1.0.3. Not committed yet.**
+**Deployed 2026-10-22: Award 1.1.0 (with the AwardTaskForms action app) and Contract Award web 1.0.3. Committed as e80a2ad.**
 
 - **Process:** Start → Open Award Phase → Prepare Award Document → Execute Contract Award (CO, Action Center) →
   Issue Notices → End "Notices issued".
@@ -971,7 +972,7 @@ Sources for §17:
 ## 18. Slice A status (2026-10-23): watch and alerts
 
 **Built and packed as Award 1.2.0, Contract Management web 1.0.8 and Source Selection web 1.0.73. The deploy is the
-user's to run. Not committed yet.**
+user's to run. Committed as e80a2ad.**
 
 **Data Fabric (live):**
 - SSSchedule e41ad3eb-04cf-f111-bf5b-000d3a66d571, SSFunding 2a6be5f1-04cf-f111-bf5b-000d3a66d571 and SSAlert
