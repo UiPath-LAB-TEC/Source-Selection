@@ -66,6 +66,27 @@ export interface FundingRow {
   FundsExpireDay?: string
 }
 
+/** A modification the system wrote: an option exercise or an extension of services, signed by the CO and issued. */
+export interface ModificationRow {
+  Id: string
+  ModificationId: string
+  SolicitationId: string
+  Number: string
+  /** Option exercise · Extension of services */
+  Kind: string
+  Authority?: string
+  Bilateral?: boolean
+  ScheduleId?: string
+  EffectiveDay?: string
+  Amount?: number
+  /** Signed · Issued */
+  Status?: string
+  Text?: string
+  FilePath?: string
+  SignedBy?: string
+  SignedAt?: string
+}
+
 /** What the watch found coming due or running short on one contract, with the rule behind it. */
 export interface AlertRow {
   Id: string
@@ -165,3 +186,10 @@ export const isImported = (a?: AwardRow) => a?.Origin === 'Imported'
 /** The base period and options, in order. */
 export const periodsOf = (schedule: ScheduleRow[]) =>
   schedule.filter((r) => r.Kind === 'Period' || r.Kind === 'Option').sort((a, b) => (a.StartDay ?? '').localeCompare(b.StartDay ?? ''))
+
+/** The 52.217-8 clause's own row (what remains of it); the periods exercised under it are Extension 1, 2, ... */
+export const isExtensionClause = (r: ScheduleRow) => r.Kind === 'Extension' && r.ScheduleId.endsWith('-extension-EXT')
+
+/** The extension periods exercised, in order. */
+export const extensionsOf = (schedule: ScheduleRow[]) =>
+  schedule.filter((r) => r.Kind === 'Extension' && !isExtensionClause(r) && r.Status === 'Exercised').sort((a, b) => (a.StartDay ?? '').localeCompare(b.StartDay ?? ''))

@@ -8,6 +8,10 @@ finds an extension decision due soon, the labor-hour ceiling past 85% with no co
 running out before the period ends, an invoice due, a late transition-out plan, the final evaluation coming up, and
 the contractor's SAM registration lapsing inside a possible extension.
 
+It also seeds what the extension package checks (slice B, scope §21): Ostrander's SAM and CPARS row in SSRefVendor
+(active, no exclusion, ratings on this contract of Very Good, Very Good, Satisfactory, Satisfactory), its SPRS
+assessment, and the contract's record that its options and the 52.217-8 extension were evaluated at award.
+
 Usage (from the repo root, signed in with `uip login`):
   .venv/bin/python tools/generate_incumbent.py                 # write the rows to Data Fabric and the contract PDF to SS-Records
   .venv/bin/python tools/generate_incumbent.py --snapshot      # add them to the Contract Award preview snapshot instead
@@ -62,8 +66,10 @@ SNAPSHOT = ROOT / "award-workspace" / "src" / "dev" / "snapshot.json"
 IDS = json.loads((ROOT / "tools" / "schema" / "entity-ids.json").read_text())
 BUCKETS = json.loads((ROOT / "tools" / "schema" / "bucket-keys.json").read_text())
 BUCKET_FOLDER = "08605f4c-2b90-4971-81b7-2f4310a2b81a"   # the Source Selection folder, where SS-Records lives
-KEYS = {"SSAward": "AwardId", "SSSchedule": "ScheduleId", "SSFunding": "FundingId", "SSAuditEvent": "EventId"}
-SNAP_KEYS = {"SSAward": "awards", "SSSchedule": "schedule", "SSFunding": "funding", "SSAuditEvent": "audit", "SSAlert": "alerts"}
+KEYS = {"SSAward": "AwardId", "SSSchedule": "ScheduleId", "SSFunding": "FundingId", "SSAuditEvent": "EventId", "SSRefVendor": "UEI"}
+SNAP_KEYS = {"SSAward": "awards", "SSSchedule": "schedule", "SSFunding": "funding", "SSAuditEvent": "audit", "SSAlert": "alerts", "SSRefVendor": "vendors"}
+# CPARS ratings on this contract, by period (the last, option 4, comes with the final evaluation).
+RATINGS = ["Very Good", "Very Good", "Satisfactory", "Satisfactory"]
 
 
 def stamp(day: str, hour: int = 15) -> str:
@@ -155,11 +161,13 @@ def build(today: str) -> dict[str, list[dict]]:
     abstract = {
         "source": f"The conformed contract, {CONTRACT} through modification P00011 (seeded for the demo)",
         "contractNumber": CONTRACT, "title": TITLE, "agency": AGENCY, "office": OFFICE, "contractType": CONTRACT_TYPE,
-        "contractor": {**CONTRACTOR, "samExpires": sam_expires},
+        "contractor": {**CONTRACTOR, "samExpires": sam_expires,
+                       "sprs": {"assessed": add_days(end, -1020), "score": 104, "type": "Basic (contractor self-assessment)"}},
+        "synopsized": True, "cmmc": {"required": False},
         "periods": [{"name": n, "start": s, "end": e} for n, s, e in zip(NAMES, starts, ends)],
         "clins": [{"clin": c["clin"], "description": c["description"], "type": c["type"], "byPeriod": {n: c["annual"] for n in NAMES}} for c in CLINS],
-        "clauses": [{"ref": "52.217-9", "fill": {"preliminaryNoticeDays": 60, "maxDurationMonths": 66}},
-                    {"ref": "52.217-8", "fill": {"noticeDaysBeforeExpiry": EXTENSION_NOTICE_DAYS, "months": 6}},
+        "clauses": [{"ref": "52.217-9", "fill": {"preliminaryNoticeDays": 60, "maxDurationMonths": 66}, "evaluated": True},
+                    {"ref": "52.217-8", "fill": {"noticeDaysBeforeExpiry": EXTENSION_NOTICE_DAYS, "months": 6}, "evaluated": True},
                     {"ref": "52.232-7"}],
         "deliverables": [{"code": "A001", "name": "Monthly status report", "due": "10th of each month"},
                          {"code": "A002", "name": "Transition-out plan", "due": "90 days before the contract expires"}],
@@ -180,7 +188,10 @@ def build(today: str) -> dict[str, list[dict]]:
          "Actor": ACTOR, "OccurredAt": stamp(today, 13), "Detail": f"{CONTRACT} loaded from its conformed copy for the demo: {len(schedule)} schedule rows, "
                                                                   f"{len(funding)} funding rows. It is the contract {SUCCESSOR_SOL} replaces."},
     ]
-    return {"SSAward": [award], "SSSchedule": schedule, "SSFunding": funding, "SSAuditEvent": audit}
+    vendor = {"UEI": CONTRACTOR["uei"], "LegalName": CONTRACTOR["name"], "SamStatus": "Active", "RegistrationExpiry": sam_expires, "Exclusion": False,
+              "FapiisRecords": "None", "CparsSummaryJson": json.dumps([{"contract": CONTRACT, "period": n, "rating": r, "year": int(ends[i][:4])}
+                                                                       for i, (n, r) in enumerate(zip(NAMES, RATINGS))])}
+    return {"SSAward": [award], "SSSchedule": schedule, "SSFunding": funding, "SSAuditEvent": audit, "SSRefVendor": [vendor]}
 
 
 def contract_pdf(rows: dict[str, list[dict]]) -> bytes:
@@ -264,8 +275,11 @@ def upload(pdf: bytes) -> None:
 
 
 def reset() -> None:
-    """Delete the incumbent's rows (and its alerts) and unlink the follow-on. Permanent."""
-    for entity in ("SSAlert", "SSSchedule", "SSFunding", "SSAuditEvent", "SSAward"):
+    """Delete the incumbent's rows (its alerts, decisions, letters and modifications too) and unlink the follow-on. Permanent."""
+    vendor = [r["Id"] for r in live_rows("SSRefVendor") if r.get("UEI") == CONTRACTOR["uei"]]
+    if vendor:
+        uip("df", "records", "delete", IDS["SSRefVendor"], *vendor, "-y")
+    for entity in ("SSAlert", "SSModification", "SSDecision", "SSCorrespondence", "SSSchedule", "SSFunding", "SSAuditEvent", "SSAward"):
         ids = [r["Id"] for r in live_rows(entity) if r.get("SolicitationId") == SOL]
         for i in range(0, len(ids), 50):
             uip("df", "records", "delete", IDS[entity], *ids[i:i + 50], "-y")

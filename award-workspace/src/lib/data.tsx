@@ -8,7 +8,7 @@ import { all, loadDataset, withTaskContext } from '@ss/lib/data'
 import { AWARD_ENTITY } from '@ss/lib/apps'
 import { frameworkOfSolicitation, useFrameworkMode } from '@ss/hooks/useFramework'
 import { importedHeader, isImported } from './award'
-import type { AlertRow, AwardDataset, AwardRow, Correspondence, FundingRow, Protest, ScheduleRow } from './award'
+import type { AlertRow, AwardDataset, AwardRow, Correspondence, FundingRow, ModificationRow, Protest, ScheduleRow } from './award'
 
 /**
  * The Award process's Action Center tasks, tagged "award", land in the Award solution's folder (Source Selection/Award),
@@ -23,13 +23,13 @@ export const AWARD_TASK_FOLDER_ID = 2214981
 export function withContractHeaders(d: AwardDataset): AwardDataset {
   const known = new Set(d.solicitations.map((s) => s.SolicitationId))
   const imported = d.awards.filter((a) => isImported(a) && !known.has(a.SolicitationId)).map(importedHeader)
-  return { ...d, schedule: d.schedule ?? [], funding: d.funding ?? [], alerts: d.alerts ?? [], solicitations: [...d.solicitations, ...imported] }
+  return { ...d, schedule: d.schedule ?? [], funding: d.funding ?? [], alerts: d.alerts ?? [], modifications: d.modifications ?? [], solicitations: [...d.solicitations, ...imported] }
 }
 
 /** One load: every Source Selection entity (the record the award stands on), the award phase's own, and the administration's. */
 export async function loadAwardDataset(sdk: UiPath): Promise<AwardDataset> {
   const e = new Entities(sdk)
-  const [base, awards, correspondence, protests, schedule, funding, alerts] = await Promise.all([
+  const [base, awards, correspondence, protests, schedule, funding, alerts, modifications] = await Promise.all([
     loadDataset(sdk),
     all<AwardRow>(e, AWARD_ENTITY.awards),
     all<Correspondence>(e, AWARD_ENTITY.correspondence),
@@ -37,8 +37,9 @@ export async function loadAwardDataset(sdk: UiPath): Promise<AwardDataset> {
     all<ScheduleRow>(e, AWARD_ENTITY.schedule),
     all<FundingRow>(e, AWARD_ENTITY.funding),
     all<AlertRow>(e, AWARD_ENTITY.alerts),
+    all<ModificationRow>(e, AWARD_ENTITY.modifications).catch(() => []),
   ])
-  return withContractHeaders({ ...base, awards, correspondence, protests, schedule, funding, alerts })
+  return withContractHeaders({ ...base, awards, correspondence, protests, schedule, funding, alerts, modifications })
 }
 
 async function loadAwardTasks(sdk: UiPath): Promise<TaskGetResponse[]> {

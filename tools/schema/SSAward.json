@@ -138,6 +138,14 @@
   {
    "name": "WatchedAt",
    "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "CoEmail",
+   "type": "STRING"
+  },
+  {
+   "name": "RmEmail",
+   "type": "STRING"
   }
  ]
 }

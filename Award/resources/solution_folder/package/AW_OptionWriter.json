@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AW_OptionWriter",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "b32355d4-3b6f-4038-9eeb-250e3572bd45",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "AW_OptionWriter"
+    },
+    "locks": [],
+    "key": "3b23654f-addd-499e-b295-b5713e1521a1",
+    "files": []
+  }
+}

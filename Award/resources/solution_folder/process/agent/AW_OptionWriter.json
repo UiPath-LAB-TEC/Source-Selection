@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "AW_OptionWriter",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "b32355d4-3b6f-4038-9eeb-250e3572bd45",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "AW_OptionWriter"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "AW_OptionWriter",
+      "package": {
+        "key": "3b23654f-addd-499e-b295-b5713e1521a1"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"52495100-cad4-47a0-8a93-0014bcbd9555\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"contractFacts\": {\n            \"type\": \"string\",\n            \"description\": \"JSON: contract number, contractor, the period running now, when the contract ends, whether it's a DoD contract, and each line item with its monthly rate\"\n          },\n          \"decision\": {\n            \"type\": \"string\",\n            \"description\": \"JSON: what's being decided (an extension of services, or an option's preliminary notice or exercise), the clause, the notice deadline and days left, whether the window has closed, the allowed actions, the proposal with the robot's reason, the months that remain and the follow-on contract's status\"\n          },\n          \"checks\": {\n            \"type\": \"string\",\n            \"description\": \"JSON array: every check FAR 17.204-1(b) and DFARS 217.207(c) ask for, each with id, label, rule, status (Met, Not met, To confirm, Not required), the robot's one-line finding and the facts behind it\"\n          }\n        },\n        \"required\": [\n          \"contractFacts\",\n          \"decision\",\n          \"checks\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"findings\": {\n            \"type\": \"array\",\n            \"description\": \"The three findings that need judgment: requirement, performance and price\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"element\": {\n                  \"type\": \"string\",\n                  \"description\": \"One of: requirement, performance, price\"\n                },\n                \"text\": {\n                  \"type\": \"string\",\n                  \"description\": \"The finding, 2 to 4 sentences, using only facts from the checks\"\n                },\n                \"sources\": {\n                  \"type\": \"array\",\n                  \"description\": \"Ids of the checks the finding rests on\",\n                  \"items\": {\n                    \"type\": \"string\"\n                  }\n                }\n              },\n              \"required\": [\n                \"element\",\n                \"text\",\n                \"sources\"\n              ]\n            }\n          },\n          \"recommendation\": {\n            \"type\": \"string\",\n            \"description\": \"One of the decision's allowedActions\"\n          },\n          \"recommendedMonths\": {\n            \"type\": \"number\",\n            \"description\": \"For an extension you recommend: its length in months, 1 to monthsRemaining. Otherwise 0.\"\n          },\n          \"reason\": {\n            \"type\": \"string\",\n            \"description\": \"One or two sentences on why\"\n          },\n          \"summary\": {\n            \"type\": \"string\",\n            \"description\": \"Two or three sentences the Contracting Officer reads first\"\n          },\n          \"risks\": {\n            \"type\": \"array\",\n            \"description\": \"Up to three short items the Contracting Officer should weigh. Empty when there are none.\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"required\": [\n          \"findings\",\n          \"recommendation\",\n          \"recommendedMonths\",\n          \"reason\",\n          \"summary\",\n          \"risks\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "52495100-cad4-47a0-8a93-0014bcbd9555"
+    },
+    "locks": [],
+    "key": "60c18726-f1b3-4d3d-b3c8-cde359f78a30",
+    "files": []
+  }
+}

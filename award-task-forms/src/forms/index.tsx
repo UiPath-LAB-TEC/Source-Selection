@@ -1,5 +1,7 @@
 import type { FormMap } from '@forms/host'
+import { CertifyFunds } from './CertifyFunds'
 import { ExecuteAward } from './ExecuteAward'
+import { OptionDecision } from './OptionDecision'
 import { ReviewDeliverable } from './ReviewDeliverable'
 
 /**
@@ -8,9 +10,12 @@ import { ReviewDeliverable } from './ReviewDeliverable'
  *  - slice 1: executeAward (CO)
  *  - slice 2: recordDebriefRequests, deliverDebriefings, followUpQuestions (CO)
  *  - slice 3: protestWindow (CO), agencyPosition (Agency Counsel), recordDecision (CO)
- *  - administration: reviewDeliverable (COR), from DeliverableReviewProcess
+ *  - administration: reviewDeliverable (COR), from DeliverableReviewProcess; certifyFunds (Resource Manager) and
+ *    optionDecision (CO), from OptionExerciseProcess
  */
 export const AWARD_FORMS: FormMap = {
   executeAward: { label: 'Contract award and notices (CO)', render: () => <ExecuteAward /> },
   reviewDeliverable: { label: 'Deliverable review (COR)', render: () => <ReviewDeliverable /> },
+  certifyFunds: { label: 'Funds for an option or extension (Resource Manager)', render: () => <CertifyFunds /> },
+  optionDecision: { label: 'Option or extension decision (CO)', render: () => <OptionDecision /> },
 }

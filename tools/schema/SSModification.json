@@ -1,0 +1,65 @@
+{
+ "displayName": "SS Modification",
+ "description": "A contract modification the system writes: an option exercise or an extension of services, as signed and issued",
+ "fields": [
+  {
+   "name": "ModificationId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "Number",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "Authority",
+   "type": "STRING"
+  },
+  {
+   "name": "Bilateral",
+   "type": "BOOLEAN"
+  },
+  {
+   "name": "ScheduleId",
+   "type": "STRING"
+  },
+  {
+   "name": "EffectiveDay",
+   "type": "STRING"
+  },
+  {
+   "name": "Amount",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "Text",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "FilePath",
+   "type": "STRING"
+  },
+  {
+   "name": "SignedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "SignedAt",
+   "type": "DATETIME_WITH_TZ"
+  }
+ ]
+}

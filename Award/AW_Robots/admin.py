@@ -15,6 +15,7 @@ import re
 from datetime import date, timedelta
 
 import clocks
+import letters
 
 # Who an alert goes to, by the persona's task label (the Award app's switcher).
 CO, COR, RM = "contracting-officer", "cor", "resource-manager"
@@ -222,7 +223,10 @@ def build_schedule(sol: str, plan: dict, summary: dict, signed_day: str) -> tupl
         "periods": [{"name": n, "start": r["StartDay"], "end": r["EndDay"]} for n, r in zip(names, rows)],
         "clins": [{"clin": line["clin"], "description": line.get("description"), "type": "Labor-hour" if line["clin"] in labor_hour else "Firm-fixed-price",
                    "byPeriod": dict(zip(names, prices[line["clin"]]))} for line in summary.get("clins", [])],
-        "clauses": [{"ref": "52.217-9", "fill": {"preliminaryNoticeDays": PRELIMINARY_NOTICE_DAYS}},
+        # The options were in the solicitation posted on SAM.gov and priced in the total evaluated price; whether the
+        # 52.217-8 extension was evaluated isn't on the record, so its package asks the CO to confirm.
+        "synopsized": True,
+        "clauses": [{"ref": "52.217-9", "fill": {"preliminaryNoticeDays": PRELIMINARY_NOTICE_DAYS}, "evaluated": True},
                     {"ref": "52.217-8", "fill": {"noticeDaysBeforeExpiry": EXTENSION_NOTICE_DAYS, "months": EXTENSION_MONTHS}}]
                    + ([{"ref": "52.232-7"}] if labor_hour else []),
     }
@@ -319,13 +323,11 @@ def _successor_note(successor: dict | None, as_of: str) -> str:
     who = f"The follow-on, {successor.get('ContractNumber') or successor.get('SolicitationId')} with {successor.get('AwardeeName') or 'the new contractor'},"
     if successor.get("PerformanceStatus") == "Suspended":
         return f"{who} is stayed by a protest, so an extension keeps the work going."
-    if successor.get("Stage") in ("Contract award", "Notices", "Debriefings", "Protest window") and not successor.get("ClosedAt"):
-        clocks_ = json.loads(successor.get("ClocksJson") or "{}")
-        by = clocks_.get("stayByAward")
-        when = (f" (a GAO protest filed by {show_day(by, as_of)} would stay its performance)" if by and by >= as_of
-                else " (a protest after its debriefings could still stay its performance)")
-        return (f"{who} is still in its protest window{when}"
-                + ". If it's stayed, this contract needs the extension in hand.")
+    # The same reading as the extension package's (successor_state): in its protest window until the stay deadline.
+    by = json.loads(successor.get("ClocksJson") or "{}").get("stayByAward")
+    if by and by >= as_of and not successor.get("ClosedAt"):
+        return (f"{who} is still in its protest window (a GAO protest filed by {show_day(by, as_of)} would stay its performance). "
+                f"If it's stayed, this contract needs the extension in hand.")
     return f"{who} is under way."
 
 
@@ -338,7 +340,8 @@ def alerts(contract: dict, schedule: list[dict], funding: list[dict], correspond
     out: list[dict] = []
     period = current_period(schedule, as_of)
     periods = sorted((r for r in schedule if r.get("Kind") in ("Period", "Option")), key=lambda r: r["StartDay"])
-    final_end = periods[-1]["EndDay"] if periods else None
+    final_end = term_end(schedule)
+    under_way = " The option package is under way: the Resource Manager certifies the funds, then the Contracting Officer decides."
 
     # Options: the preliminary notice, then the exercise itself (52.217-9(a); FAR 17.204-1(b)).
     for r in (r for r in periods if r.get("Kind") == "Option" and r.get("Status") in ("Planned", "Notice sent")):
@@ -359,20 +362,25 @@ def alerts(contract: dict, schedule: list[dict], funding: list[dict], correspond
                       f"{show_day(r['NoticeDay'], as_of)}, at least {PRELIMINARY_NOTICE_DAYS} days before the current period ends (52.217-9(a)). "
                       f"Start the option package now: funds, the continuing need, performance and price (FAR 17.204-1(b)).")
         title = f"{r['Name']}: {'exercise' if noticed else 'preliminary notice'} due {show_day(target, as_of)}"
-        out.append(_alert(sol, "option", period_code(r["Name"]), sev, title, detail, target, CO,
-                          {"period": r["Name"], "start": r["StartDay"], "noticeDay": r.get("NoticeDay"), "exerciseBy": r["DueDay"], "price": r.get("Amount")}))
+        out.append(_alert(sol, "option", period_code(r["Name"]), sev, title, detail + (under_way if r.get("ProcessInstanceId") else ""), target, CO,
+                          {"scheduleId": r["ScheduleId"], "period": r["Name"], "start": r["StartDay"], "noticeDay": r.get("NoticeDay"),
+                           "exerciseBy": r["DueDay"], "price": r.get("Amount")}))
 
     # Extension of services once no options remain (52.217-8).
     planned_options = [r for r in periods if r.get("Kind") == "Option" and r.get("Status") in ("Planned", "Notice sent")]
-    for r in (r for r in schedule if r.get("Kind") == "Extension" and r.get("Status") == "Planned"):
+    for r in (r for r in schedule if is_extension_clause(r) and r.get("Status") == "Planned"):
         if planned_options or not final_end or days_between(as_of, final_end) > LEAD["extension"] or as_of > final_end:
             continue
         sev = severity(as_of, r["DueDay"], LEAD["extension"]) or "Upcoming"
-        detail = (f"No options remain and the contract ends {show_day(final_end, as_of)}. 52.217-8 allows up to {EXTENSION_MONTHS} more months at the "
-                  f"contract's rates, by written notice by {show_day(r['DueDay'], as_of)}. {_successor_note(successor, as_of)}")
-        out.append(_alert(sol, "extension", "EXT", sev, f"Extension of services: decide by {show_day(r['DueDay'], as_of)}", detail, r["DueDay"], CO,
-                          {"contractEnds": final_end, "exerciseBy": r["DueDay"], "extensionEnds": r.get("EndDay"),
-                           "successor": (successor or {}).get("AwardId")}))
+        left = months_between(r["StartDay"], r["EndDay"])
+        used = len(extensions_exercised(schedule))
+        detail = (f"No options remain and the contract ends {show_day(final_end, as_of)}. 52.217-8 allows up to {left} more month{'s' if left != 1 else ''} "
+                  f"at the contract's rates, by written notice by {show_day(r['DueDay'], as_of)}. {_successor_note(successor, as_of)}"
+                  + (under_way if r.get("ProcessInstanceId") else ""))
+        title = f"{'Further extension' if used else 'Extension of services'}: decide by {show_day(r['DueDay'], as_of)}"
+        out.append(_alert(sol, "extension", "EXT", sev, title, detail, r["DueDay"], CO,
+                          {"scheduleId": r["ScheduleId"], "contractEnds": final_end, "exerciseBy": r["DueDay"], "extensionEnds": r.get("EndDay"),
+                           "monthsLeft": left, "successor": (successor or {}).get("AwardId")}))
 
     # Money in the current period: labor-hour ceilings (52.232-7(d)-(e)) and obligated funds.
     funds = forecast(abstract, funding, period, as_of) if period else {}
@@ -477,7 +485,7 @@ def alerts(contract: dict, schedule: list[dict], funding: list[dict], correspond
 
     # The contractor's SAM registration, which must be active when an option or extension is exercised.
     expires = (abstract.get("contractor") or {}).get("samExpires")
-    nxt = next((r for r in planned_options), None) or next((r for r in schedule if r.get("Kind") == "Extension" and r.get("Status") == "Planned"), None)
+    nxt = next((r for r in planned_options), None) or next((r for r in schedule if is_extension_clause(r) and r.get("Status") == "Planned"), None)
     if expires and nxt and expires <= nxt["EndDay"]:
         sev = severity(as_of, expires, LEAD["registration"])
         if sev:
@@ -572,3 +580,469 @@ def reconcile(existing: list[dict], fresh: list[dict], now: str) -> list[dict]:
         if a["AlertId"] not in seen and a.get("Status") in ("Open", "Acknowledged"):
             writes.append({"AlertId": a["AlertId"], "SolicitationId": a["SolicitationId"], "Status": "Resolved", "ResolvedAt": now})
     return writes
+
+
+# ── Options and the extension of services (slice B, scope §21) ─────────────
+# Before exercising an option the CO gives written notice within the contract's period, confirms funds, and determines
+# the elements of FAR 17.204-1(b)(3) (RFO); DoD adds DFARS 217.207(c). The package gathers each as a check with its
+# facts and source. The writer agent drafts the three findings that need judgment; the CO decides and signs.
+
+WRITER = "AW_OptionWriter"
+GAO_DECISION_DAYS = 100        # 31 U.S.C. 3554(a)(1): GAO decides a protest within 100 days of filing
+SPRS_YEARS = 3                 # DFARS 217.207(c)(2): the SPRS assessment is no more than 3 years old
+RATINGS = ["Unsatisfactory", "Marginal", "Satisfactory", "Very Good", "Exceptional"]
+CHECK_STATUSES = ("Met", "Not met", "To confirm", "Not required")
+AGENT_ELEMENTS = ("requirement", "performance", "price")   # drafted by the writer; the robot writes the rest
+ACTIONS = {"extension": ("Extend", "Do not extend"), "preliminary": ("Send preliminary notice", "Do not exercise"),
+           "exercise": ("Exercise", "Do not exercise")}
+WRITER_INPUT_CHARS = 9500      # Orchestrator's 10,000-character cap on a job's input
+
+
+def is_extension_clause(r: dict) -> bool:
+    """The 52.217-8 clause's own row (what remains of it); the periods exercised under it are Extension 1, 2, ..."""
+    return r.get("Kind") == "Extension" and str(r.get("ScheduleId", "")).endswith("-extension-EXT")
+
+
+def extensions_exercised(schedule: list[dict]) -> list[dict]:
+    return sorted((r for r in schedule if r.get("Kind") == "Extension" and not is_extension_clause(r) and r.get("Status") == "Exercised"),
+                  key=lambda r: r["StartDay"])
+
+
+def term_end(schedule: list[dict]) -> str | None:
+    """The day the contract ends as it stands: its last period not let go, or the last extension exercised."""
+    ends = [r["EndDay"] for r in schedule if r.get("EndDay") and (
+        (r.get("Kind") in ("Period", "Option") and r.get("Status") != "Not exercised") or r in extensions_exercised(schedule))]
+    return max(ends) if ends else None
+
+
+def months_between(start: str, end: str) -> int:
+    """Whole months from `start` through `end` (Jan 1 to Jun 30 is 6)."""
+    n = 0
+    while add_months(start, n + 1) <= add_days(end, 1):
+        n += 1
+    return n
+
+
+def clause_of(abstract: dict, ref: str) -> dict:
+    return next((c for c in abstract.get("clauses") or [] if c.get("ref") == ref), {})
+
+
+def next_modification(funding: list[dict], modifications: list[dict]) -> str:
+    """The next modification number: one past the highest P-number on the contract's money and modifications."""
+    nums = [int(m.group(1)) for x in [*(f.get("Reference") or "" for f in funding), *(m.get("Number") or "" for m in modifications)]
+            for m in [re.fullmatch(r"P(\d{5})", x)] if m]
+    return f"P{(max(nums) + 1) if nums else 1:05d}"
+
+
+def successor_state(successor: dict | None, successor_schedule: list[dict], as_of: str) -> dict | None:
+    """Where the follow-on contract stands: stayed by a protest, in its protest window, or under way."""
+    if not successor:
+        return None
+    stay_by = json.loads(successor.get("ClocksJson") or "{}").get("stayByAward")
+    ti = next((r.get("DueDay") for r in successor_schedule if r.get("Code") == "TI"), None)
+    state = ("stayed" if successor.get("PerformanceStatus") == "Suspended"
+             else "protest window" if stay_by and stay_by >= as_of else "under way")
+    return {"contract": successor.get("ContractNumber") or successor.get("SolicitationId"), "contractor": successor.get("AwardeeName"),
+            "state": state, "stayBy": stay_by, "transitionInDone": ti, "start": successor.get("PeriodStart")}
+
+
+def extension_proposal(clause: dict, end: str, notice_days: int, succ: dict | None, as_of: str) -> tuple[int, str]:
+    """How long to extend, and why: the shortest extension that covers the risk the follow-on carries."""
+    remaining = months_between(clause["StartDay"], clause["EndDay"])
+    if remaining <= 0:
+        return 0, "The extension's months are used up."
+    inc_end = lambda n: add_days(add_months(clause["StartDay"], n), -1)  # noqa: E731
+    next_notice = lambda n: deadline(add_days(inc_end(n), -notice_days))  # noqa: E731
+    cover = lambda day: next((n for n in range(1, remaining + 1) if inc_end(n) >= day), remaining)  # noqa: E731
+    plural = lambda n: f"{n} month{'s' if n != 1 else ''}"  # noqa: E731
+    if not succ:
+        return remaining, f"No follow-on contract is linked, so the proposal is the whole remaining extension, {plural(remaining)}."
+    who = f"The follow-on, {succ['contract']}"
+    if succ["state"] == "stayed":
+        through = add_days(as_of, GAO_DECISION_DAYS + TRANSITION_IN_DAYS)
+        n = cover(through)
+        return n, (f"{who}, is stayed by a protest. GAO decides within {GAO_DECISION_DAYS} days and the follow-on then needs its "
+                   f"{TRANSITION_IN_DAYS}-day transition-in, so {plural(n)} runs to {show_day(inc_end(n), as_of)}.")
+    if succ["state"] == "protest window":
+        n = next((n for n in range(1, remaining + 1) if next_notice(n) > succ["stayBy"]), remaining)
+        return n, (f"{who}, is in its protest window until {show_day(succ['stayBy'], as_of)}. {plural(n).capitalize()}, to "
+                   f"{show_day(inc_end(n), as_of)}, keeps the work going if it's protested and stayed, and the next notice day, "
+                   f"{show_day(next_notice(n), as_of)}, comes after the window closes, so the rest can be decided then (52.217-8 may be "
+                   f"exercised more than once).")
+    ti = succ.get("transitionInDone")
+    if not ti or ti <= end:
+        return 0, (f"{who}, is under way" + (f" and its transition-in completes {show_day(ti, as_of)}" if ti else "")
+                   + f", before this contract ends {show_day(end, as_of)}. No extension is needed.")
+    n = cover(ti)
+    return n, f"{who}'s transition-in completes {show_day(ti, as_of)}, after this contract ends {show_day(end, as_of)}; {plural(n)} covers it."
+
+
+def period_lines(abstract: dict, period_name: str) -> list[dict]:
+    return [{"clin": c["clin"], "description": c.get("description"), "type": c.get("type"),
+             "amount": round(float((c.get("byPeriod") or {}).get(period_name) or 0), 2)}
+            for c in abstract.get("clins") or [] if (c.get("byPeriod") or {}).get(period_name)]
+
+
+def _rating_ok(r: str | None) -> bool:
+    return r in RATINGS and RATINGS.index(r) >= RATINGS.index("Satisfactory")
+
+
+# Each check's heading in the determination and findings, in the order the memo takes them.
+SHORT = {"notice": "Notice", "funds": "Funds", "requirement": "Existing need", "synopsis": "Synopsis", "exclusion": "Exclusion",
+         "performance": "Performance", "price": "Price and best interest", "competition": "Competition", "duration": "Duration",
+         "registration": "SAM registration", "sprs": "SPRS", "cmmc": "CMMC"}
+FUNDS_FILL = "[Funds certification]"        # the CO's form fills these two from the Resource Manager's step and the decision
+DETERMINATION_FILL = "[Determination]"
+
+
+def _check(cid: str, label: str, rule: str, status: str, finding: str, source: str, facts: dict | None = None) -> dict:
+    return {"id": cid, "label": label, "rule": rule, "status": status, "finding": finding, "source": source, "facts": facts or {}}
+
+
+def option_package(contract: dict, row: dict, schedule: list[dict], funding: list[dict], modifications: list[dict], vendor: dict | None,
+                   successor: dict | None, successor_schedule: list[dict], live_alerts: list[dict], as_of: str, igce: dict | None = None) -> dict:
+    """What the CO decides on an option or the 52.217-8 extension, and every check FAR 17.204-1(b) and DFARS 217.207(c)
+    ask for before exercising, each with its facts and source. Pure: the robot loads the rows, the agent drafts from this."""
+    abstract = json.loads(contract.get("AbstractJson") or "{}")
+    party = abstract.get("contractor") or {}
+    who = party.get("name") or contract.get("AwardeeName") or "The contractor"
+    agency = contract.get("Agency") or abstract.get("agency") or ""
+    dod = bool(re.search(r"\b(Army|Navy|Air Force|Marine Corps|Space Force|Defense)\b", agency))
+    end = term_end(schedule) or contract.get("PeriodEnd")
+    period = current_period(schedule, as_of)
+    succ = successor_state(successor, successor_schedule, as_of)
+    number = contract.get("ContractNumber") or contract["SolicitationId"]
+    first_start = min((r["StartDay"] for r in schedule if r.get("Kind") in ("Period", "Option") and r.get("StartDay")), default=None)
+    out: dict = {"scheduleId": row["ScheduleId"], "asOf": as_of}
+
+    if is_extension_clause(row):
+        if row.get("Status") != "Planned":
+            raise ValueError(f"The extension of services on {number} is {str(row.get('Status')).lower()}, so there's nothing to decide")
+        fill = clause_of(abstract, "52.217-8")
+        notice_days = int((fill.get("fill") or {}).get("noticeDaysBeforeExpiry") or EXTENSION_NOTICE_DAYS)
+        cap = int((fill.get("fill") or {}).get("months") or EXTENSION_MONTHS)
+        done = extensions_exercised(schedule)
+        used = sum(months_between(r["StartDay"], r["EndDay"]) for r in done)
+        remaining = months_between(row["StartDay"], row["EndDay"])
+        months, reason = extension_proposal(row, end, notice_days, succ, as_of)
+        base = period or {"Period": "", "StartDay": as_of, "EndDay": as_of}
+        per = max(1, months_between(base["StartDay"], base["EndDay"]))
+        lines = [{**x, "monthly": round(x["amount"] / per, 2)} for x in period_lines(abstract, base["Period"])]
+        lines = [{**x, "amount": round(x["monthly"] * months, 2)} for x in lines]
+        out |= {"kind": "extension", "stage": "extension", "title": "Extension of services", "name": f"Extension {len(done) + 1}",
+                "clause": "52.217-8", "clauseText": row.get("ClauseText"), "noticeBy": row["DueDay"], "noticeDays": notice_days,
+                "extension": {"remaining": remaining, "used": used, "cap": cap, "ratesFrom": base["Period"]},
+                "proposal": {"months": months, "start": row["StartDay"], "end": add_days(add_months(row["StartDay"], months), -1) if months else None,
+                             "amount": round(sum(x["amount"] for x in lines), 2), "reason": reason, "lines": lines}}
+        what = "the extension"
+    elif row.get("Kind") == "Option" and row.get("Status") in ("Planned", "Notice sent"):
+        stage = "exercise" if row.get("Status") == "Notice sent" else "preliminary"
+        lines = period_lines(abstract, row["Period"])
+        months = months_between(row["StartDay"], row["EndDay"])
+        lines = [{**x, "monthly": round(x["amount"] / max(months, 1), 2)} for x in lines]
+        out |= {"kind": "option", "stage": stage, "title": row["Name"], "name": row["Name"], "clause": "52.217-9", "clauseText": row.get("ClauseText"),
+                "noticeBy": row["DueDay"] if stage == "exercise" else row["NoticeDay"], "exerciseBy": row["DueDay"],
+                "proposal": {"months": months, "start": row["StartDay"], "end": row["EndDay"], "amount": round(float(row.get("Amount") or 0), 2),
+                             "reason": f"{row['Name']} runs {show_day(row['StartDay'], as_of)} to {show_day(row['EndDay'], as_of)} at the prices in the contract.",
+                             "lines": lines}}
+        what = row["Name"].lower()
+    else:
+        raise ValueError(f"{row.get('Name') or row.get('ScheduleId')} isn't an option or extension waiting for a decision (status {row.get('Status')})")
+
+    prop = out["proposal"]
+    late = as_of > out["noticeBy"]
+    out |= {"daysLeft": days_between(as_of, out["noticeBy"]), "late": late, "modification": next_modification(funding, modifications),
+            "appropriation": f"Operation and maintenance, {'Army, ' if 'Army' in agency else ''}FY{fiscal_year(prop['start'])}",
+            "successor": succ,
+            "contract": {"number": number, "contractor": who, "address": party.get("address"), "uei": party.get("uei"), "cage": party.get("cage"),
+                         "title": contract.get("Title") or abstract.get("title"), "agency": agency, "office": contract.get("Office") or abstract.get("office"),
+                         "end": end, "currentPeriod": period["Period"] if period else None, "dod": dod}}
+    checks: list[dict] = []
+
+    # (b)(1) Written notice within the contract's period.
+    if out["stage"] == "preliminary":
+        window = f"at least {(clause_of(abstract, '52.217-9').get('fill') or {}).get('preliminaryNoticeDays') or PRELIMINARY_NOTICE_DAYS} days before the contract expires (52.217-9(a))"
+    elif out["stage"] == "exercise":
+        window = "before the current period ends (52.217-9(a))"
+    else:
+        window = f"at least {out['noticeDays']} days before the contract expires (52.217-8, as filled in)"
+    if late:
+        checks.append(_check("notice", "Written notice within the contract's period", "FAR 17.204-1(b)(1)", "Not met",
+                             f"The notice window closed {show_day(out['noticeBy'], as_of)}. A unilateral exercise is no longer available: it needs "
+                             f"{who}'s agreement in a bilateral modification, and counsel should check whether part 6 then applies.",
+                             f"{out['clause']} in {number}", {"window": window, "noticeBy": out["noticeBy"]}))
+    else:
+        checks.append(_check("notice", "Written notice within the contract's period", "FAR 17.204-1(b)(1)", "Met",
+                             f"The contract's period for written notice runs to {show_day(out['noticeBy'])}: {window}.", f"{out['clause']} in {number}",
+                             {"window": window, "noticeBy": out["noticeBy"], "daysLeft": out["daysLeft"]}))
+
+    # (b)(2) Funds: the Resource Manager's step comes next.
+    checks.append(_check("funds", "Funds are available", "FAR 17.204-1(b)(2)", "To confirm",
+                         (f"A preliminary notice doesn't commit funds, but they should be planned: {money(prop['amount'])} for {out['name'].lower()}. "
+                          if out["stage"] == "preliminary" else
+                          f"{money(prop['amount'])} for {out['name'].lower()}" + (f", {show_day(prop['start'], as_of)} to {show_day(prop['end'], as_of)}. " if prop.get("end") else ". "))
+                         + "The Resource Manager certifies them next.", "The Resource Manager's certification", {"amount": prop["amount"]}))
+
+    # (b)(3)(i) An existing need.
+    invoiced = sorted((f.get("ServiceEnd") or "" for f in funding if f.get("Kind") == "Invoice"), reverse=True)
+    # Why the work still needs doing, stated plainly, so the writer argues from the record rather than from a date.
+    in_place = None
+    if succ:
+        ti = succ.get("transitionInDone")
+        in_place = bool(ti and end and ti <= end and succ["state"] != "stayed")
+        if succ["state"] == "stayed":
+            why = (f"The follow-on is stayed by a protest, so it can't take over until GAO decides and its transition-in is done. The work has to "
+                   f"continue past {show_day(end, as_of)}, when this contract ends.")
+        elif succ["state"] == "protest window":
+            why = ((f"The follow-on is set to take over on time: its transition-in completes {show_day(ti, as_of)}, before this contract ends "
+                    f"{show_day(end, as_of)}. " if in_place else "")
+                   + f"The need is the risk that a GAO protest filed by {show_day(succ['stayBy'], as_of)} stays the follow-on's performance; this "
+                   f"contract's notice deadline, {show_day(out['noticeBy'], as_of)}, comes before that window closes. Without an extension the work "
+                   f"would stop after {show_day(end, as_of)} if that happens.")
+        elif in_place:
+            why = (f"The follow-on is under way and its transition-in completes {show_day(ti, as_of)}, before this contract ends {show_day(end, as_of)}, "
+                   f"so it takes over on time and no work is left for an extension.")
+        else:
+            why = (f"The follow-on's transition-in completes {show_day(ti, as_of) if ti else 'on a day not on the record'}, after this contract ends "
+                   f"{show_day(end, as_of)}, so the work has to continue until then.")
+        req = f"The work continues until the follow-on, {succ['contract']} with {succ['contractor']}, takes over. {why}"
+    else:
+        why = (f"The requirement runs through {number}'s option years" + (f"; the work is invoiced monthly, most recently through {show_day(invoiced[0], as_of)}" if invoiced else "") + ".")
+        req = why
+    checks.append(_check("requirement", "The option fulfills an existing need", "FAR 17.204-1(b)(3)(i)", "To confirm", req,
+                         "The follow-on contract's record; this contract's invoices" if succ else "The contract's schedule and invoices",
+                         {"whyNeeded": why, "followOnInPlaceBeforeEnd": in_place, "successor": succ,
+                          "lastInvoicedThrough": invoiced[0] if invoiced else None, "contractEnds": end}))
+
+    # (b)(3)(ii) Synopsis.
+    checks.append(_check("synopsis", "Synopsized, or exempt", "FAR 17.204-1(b)(3)(ii)", "Met" if abstract.get("synopsized") else "To confirm",
+                         "The options were in the original solicitation, posted on SAM.gov, so exercising one needs no new synopsis (part 5)."
+                         if abstract.get("synopsized") else "The record doesn't show the options in a synopsized solicitation. Check part 5 before exercising.",
+                         "The contract as awarded"))
+
+    # (b)(3)(iii) No active exclusion in SAM.
+    src = f"SAM.gov entity record (demo data), as of {show_day(as_of)}"
+    if not vendor:
+        checks.append(_check("exclusion", "No active exclusion in SAM", "FAR 17.204-1(b)(3)(iii)", "To confirm",
+                             f"No SAM record for {who} is on file. Check SAM.gov for an active exclusion.", src))
+    else:
+        bad = bool(vendor.get("Exclusion"))
+        checks.append(_check("exclusion", "No active exclusion in SAM", "FAR 17.204-1(b)(3)(iii)", "Not met" if bad else "Met",
+                             f"SAM {'shows an active exclusion' if bad else 'shows no active exclusion'} for {who} (UEI {vendor.get('UEI')}).", src))
+
+    # (b)(3)(iv) Acceptable performance on this contract.
+    cpars = [x for x in json.loads((vendor or {}).get("CparsSummaryJson") or "[]") if x.get("contract") == number]
+    pstart = (period or {}).get("StartDay") or as_of
+    mine = [r for r in schedule if r.get("Kind") == "Deliverable" and r.get("DueDay") and pstart <= r["DueDay"] <= as_of]
+    accepted = [r for r in mine if r.get("Status") == "Accepted"]
+    late_items = [r for r in mine if not r.get("ReceivedDay") and r.get("Status") == "Due" and r["DueDay"] < as_of]
+    returned = [r for r in schedule if r.get("Kind") == "Deliverable" and json.loads(r.get("ReviewJson") or "{}").get("history")]
+    # Only what counts against performance: a ceiling passed without notice, and deliverables or milestones overdue. A
+    # deliverable not yet due isn't late.
+    live = [a for a in live_alerts if a.get("Status") in ("Open", "Acknowledged")]
+    issues = [{"item": a["Title"], "severity": a.get("Severity")} for a in live
+              if a.get("Kind") == "ceiling" or (a.get("Kind") in ("deliverable", "milestone") and a.get("Severity") == "Overdue")]
+    # Each labor-hour line against its ceiling, as plain facts: past 85% is 52.232-7's notice point, not the ceiling itself.
+    ceilings = []
+    for f in (forecast(abstract, funding, period, as_of) if period else {}).values():
+        if f.get("type") != "Labor-hour" or not f.get("price"):
+            continue
+        pct = round(100 * f["accrued"] / f["price"])
+        alert = next((a for a in live if a.get("Kind") == "ceiling" and str(a.get("Subject") or "").startswith(f"{f['clin']}-")), None)
+        notice = None if not alert else "no notice" not in alert.get("Title", "")
+        ceilings.append({"clin": f["clin"], "percentOfCeiling": pct, "past85": pct >= 85, "overCeiling": pct > 100, "contractorNoticeOnFile": notice})
+    ratings = ", ".join(f"{x['rating']} ({period_phrase(x.get('period')).removeprefix('the ')})" for x in cpars)
+    if not cpars:
+        pstatus = "To confirm"
+    else:
+        pstatus = "Met" if all(_rating_ok(x.get("rating")) for x in cpars[-2:]) else "Not met"
+    perf = (f"CPARS ratings on this contract: {ratings}." if cpars else "No CPARS ratings for this contract are on file.") + ((
+        f" This period: {len(accepted)} deliverable{'s' if len(accepted) != 1 else ''} accepted"
+        + (f"; {', '.join(r['Name'].lower() + ' (due ' + show_day(r['DueDay'], as_of) + ')' for r in late_items)} not yet received" if late_items else "")
+        + (f"; {len(returned)} returned for correction" if returned else "") + ".") if mine else " No deliverables have come due this period.") + "".join(
+        f" Line item {c['clin']} has accrued about {c['percentOfCeiling']}% of its labor-hour ceiling ("
+        + ("over it" if c["overCeiling"] else "past the 85% notice point, not over the ceiling") + ")"
+        + (f" with no notice from {who} (52.232-7(d))." if c["contractorNoticeOnFile"] is False else ".") for c in ceilings if c["past85"])
+    checks.append(_check("performance", "Performance on this contract has been acceptable", "FAR 17.204-1(b)(3)(iv)", pstatus, perf,
+                         "CPARS (demo data); this contract's deliverables and open action items",
+                         {"cpars": cpars, "accepted": len(accepted), "late": [{"name": r["Name"], "due": r["DueDay"]} for r in late_items],
+                          "returned": [r["Name"] for r in returned], "openItems": issues[:6], "laborHourCeilings": ceilings}))
+
+    # (b)(3)(v) Price fair and reasonable on current market conditions; exercise in the Government's best interest.
+    monthly = round(sum(x["monthly"] for x in prop["lines"]), 2)
+    compare: list[dict] = []
+    basis = None
+    s_abs = json.loads((successor or {}).get("AbstractJson") or "{}")
+    if s_abs.get("clins"):
+        first = (s_abs.get("periods") or [None])[0]
+        s_period, s_months = (first["name"], max(1, months_between(first["start"], first["end"]))) if first else ("Base", 12)
+        theirs = {c["clin"]: float((c.get("byPeriod") or {}).get(s_period) or 0) / s_months for c in s_abs["clins"]}
+        basis = f"the follow-on's competed prices ({succ['contract'] if succ else 'the follow-on'}, awarded {show_day((successor or {}).get('PeriodStart'), as_of)})"
+        compare = [{"clin": x["clin"], "description": x["description"], "monthly": x["monthly"], "market": round(theirs[x["clin"]], 2)}
+                   for x in prop["lines"] if theirs.get(x["clin"])]
+    elif igce and igce.get("lines"):
+        periods_n = max(1, sum(1 for r in schedule if r.get("Kind") in ("Period", "Option")))
+        basis = "the independent Government cost estimate, by period"
+        compare = [{"clin": x["clin"], "description": x["description"], "monthly": x["monthly"],
+                    "market": round(float(igce["lines"].get(x["clin"]) or 0) / periods_n / 12, 2)} for x in prop["lines"] if igce["lines"].get(x["clin"])]
+    # Each line's difference, with its direction, so no comparison is left to the writer's arithmetic.
+    for c in compare:
+        d = c["monthly"] - c["market"]
+        c |= {"differencePerMonth": round(d, 2), "percent": round(100 * d / c["market"]) if c["market"] else None,
+              "direction": "below" if d < -0.005 else "above" if d > 0.005 else "the same as"}
+    notable = sorted((c for c in compare if c["percent"] is not None and abs(c["percent"]) >= 10), key=lambda c: -abs(c["percent"]))
+    ours, market = sum(c["monthly"] for c in compare), sum(c["market"] for c in compare)
+    if compare and market:
+        diff = (ours - market) / market
+        price = (f"At the contract's rates {what} costs {money(monthly)} a month" + (f" ({money(prop['amount'])} for {prop['months']} months). " if prop["months"] > 1 else ". ")
+                 + f"For the same line items, {basis}: {money(market)} a month. These rates are {abs(diff):.0%} {'below' if diff < 0 else 'above'} that."
+                 + (" By line item: " + "; ".join(f"{c['clin']} ({c['description']}) is {abs(c['percent'])}% {c['direction']} it" for c in notable) + "." if notable else ""))
+    else:
+        price = f"At the contract's rates {what} costs {money(monthly)} a month ({money(prop['amount'])} in all). No current market comparison is on the record."
+    checks.append(_check("price", "Price fair and reasonable; exercise in the Government's best interest", "FAR 17.204-1(b)(3)(v)", "To confirm", price,
+                         f"The contract's prices; {basis}" if basis else "The contract's prices",
+                         {"monthly": monthly, "market": round(market, 2) if compare else None, "comparison": compare, "basis": basis,
+                          "notable": [c["clin"] for c in notable]}))
+
+    # (b)(3)(vi) Part 6: evaluated in the initial competition, at a price the contract sets.
+    evaluated = clause_of(abstract, out["clause"]).get("evaluated")
+    checks.append(_check("competition", "Evaluated at award, at a price the contract sets", "FAR 17.204-1(b)(3)(vi)", "Met" if evaluated else "To confirm",
+                         (f"The {'extension' if out['kind'] == 'extension' else 'option'} was evaluated in the initial competition, and its price is set by the "
+                          f"contract: {'the rates of ' + period_phrase(out['extension']['ratesFrom']) if out['kind'] == 'extension' else 'the prices for ' + out['name'].lower()}.")
+                         if evaluated else ("The record doesn't show that the extension was evaluated at award. If it wasn't, exercising it needs a justification "
+                                            "under part 6."), "The contract as awarded"))
+
+    # The clauses' own limits: 6 months under 52.217-8, and any total duration in 52.217-9(c).
+    cap_months = (clause_of(abstract, "52.217-9").get("fill") or {}).get("maxDurationMonths")
+    total = months_between(first_start, prop["end"]) if first_start and prop.get("end") else None
+    if out["kind"] == "extension":
+        within = out["extension"]["used"] + prop["months"] <= out["extension"]["cap"] and (not cap_months or not total or total <= cap_months)
+        ext = out["extension"]
+        text = (f"{ext['used']} of the {ext['cap']} months 52.217-8 allows {'is' if ext['used'] == 1 else 'are'} used, so up to {ext['remaining']} more stay within it"
+                + (f" and within the {cap_months}-month total in 52.217-9(c)" if cap_months else "") + ".")
+    else:
+        within = not cap_months or not total or total <= cap_months
+        text = f"With {out['name'].lower()} the contract runs {total} months" + (f", within the {cap_months}-month limit in 52.217-9(c)." if cap_months else ".")
+    checks.append(_check("duration", "Within the clauses' limits", "52.217-8; 52.217-9(c)", "Met" if within else "Not met", text, f"{number}, Section I"))
+
+    # DoD: DFARS 217.207(c). The SAM registration matches and is active; SPRS is current; CMMC, if the contract needs it.
+    if dod:
+        if not vendor:
+            checks.append(_check("registration", "SAM registration active and matching the contract", "DFARS 217.207(c)(1)", "To confirm",
+                                 f"No SAM record for {who} is on file. Check that its registration is active and matches the contract.", src))
+        else:
+            active = vendor.get("SamStatus") == "Active" and (vendor.get("RegistrationExpiry") or "") >= as_of
+            match = vendor.get("UEI") == party.get("uei") and _norm(vendor.get("LegalName") or "") == _norm(who)
+            exp = vendor.get("RegistrationExpiry")
+            lapse = exp and prop.get("end") and exp < prop["end"]
+            checks.append(_check("registration", "SAM registration active and matching the contract", "DFARS 217.207(c)(1)",
+                                 "Met" if active and match else "Not met",
+                                 (f"Active through {show_day(exp, as_of)}; the UEI and name match the contract." if active else f"The registration isn't active (expired {show_day(exp, as_of)}).")
+                                 + ("" if match else " The UEI or name doesn't match the contract.")
+                                 + (f" It expires before {out['name'].lower()} would end ({show_day(prop['end'], as_of)}), so ask {who} to renew it." if active and lapse else ""),
+                                 src, {"expires": exp}))
+        sprs = party.get("sprs") or {}
+        if sprs.get("assessed"):
+            good_to = add_months(sprs["assessed"], 12 * SPRS_YEARS)
+            checks.append(_check("sprs", "SPRS assessment current (3 years or less)", "DFARS 217.207(c)(2)", "Met" if good_to >= as_of else "Not met",
+                                 f"{sprs.get('type') or 'Assessment'} of {show_day(sprs['assessed'], as_of)}, score {sprs.get('score')}: current until {show_day(good_to, as_of)}"
+                                 + (f", before {out['name'].lower()} would end, so a new assessment is due during it." if prop.get("end") and good_to < prop["end"] else "."),
+                                 "SPRS (demo data in the contract record)", {"assessed": sprs["assessed"], "currentUntil": good_to}))
+        else:
+            checks.append(_check("sprs", "SPRS assessment current (3 years or less)", "DFARS 217.207(c)(2)", "To confirm",
+                                 "No SPRS assessment is on the record. Check SPRS before exercising.", "SPRS"))
+        cmmc = abstract.get("cmmc")
+        if cmmc and cmmc.get("required") is False:
+            checks.append(_check("cmmc", "CMMC status current, if required", "DFARS 217.207(c)(2)", "Not required", "The contract has no CMMC requirement.", "The contract as awarded"))
+        elif cmmc and cmmc.get("status"):
+            checks.append(_check("cmmc", "CMMC status current, if required", "DFARS 217.207(c)(2)", "Met" if cmmc.get("status") == "Current" else "Not met",
+                                 f"{cmmc.get('required')}: {cmmc.get('status')}.", "SPRS"))
+        else:
+            checks.append(_check("cmmc", "CMMC status current, if required", "DFARS 217.207(c)(2)", "To confirm",
+                                 "The record doesn't say whether the contract requires a CMMC level. If it does, check the status in SPRS.", "SPRS"))
+    out["checks"] = checks
+    return out
+
+
+def writer_inputs(pkg: dict) -> dict:
+    """What the writer agent sees: the contract, the decision and the checks with their facts, as JSON strings."""
+    c = pkg["contract"]
+    facts = {"contractNumber": c["number"], "contractor": c["contractor"], "currentPeriod": c["currentPeriod"], "contractEnds": c["end"], "dod": c["dod"],
+             "lines": [{k: x.get(k) for k in ("clin", "description", "type", "monthly")} for x in pkg["proposal"]["lines"]]}
+    decision = {"stage": pkg["stage"], "what": pkg["title"], "clause": pkg["clause"], "noticeBy": pkg["noticeBy"], "daysLeft": pkg["daysLeft"],
+                "late": pkg["late"], "allowedActions": list(ACTIONS[pkg["stage"]]),
+                "proposal": {k: pkg["proposal"].get(k) for k in ("months", "start", "end", "amount", "reason")},
+                "monthsRemaining": (pkg.get("extension") or {}).get("remaining"), "successor": pkg.get("successor")}
+    checks = [{k: x[k] for k in ("id", "label", "rule", "status", "finding", "facts")} for x in pkg["checks"]]
+    out = {"contractFacts": json.dumps(facts), "decision": json.dumps(decision), "checks": json.dumps(checks)}
+    if sum(len(v) for v in out.values()) > WRITER_INPUT_CHARS:  # facts are the first to go; findings carry the gist
+        out["checks"] = json.dumps([{k: x[k] for k in ("id", "label", "rule", "status", "finding")} for x in pkg["checks"]])
+    return out
+
+
+def checked_writing(output: dict | None, pkg: dict) -> tuple[dict, dict]:
+    """The writer's drafts, held to the checks: (its finding texts by check, the writer summary kept on the package). Only
+    the three judgment findings are taken; each keeps only citations of checks that exist (the rest are dropped, and said
+    so). An action outside the stage's choices is left out, and an extension's length outside what remains falls back to
+    the proposal's."""
+    low = lambda d: {k[:1].lower() + k[1:]: v for k, v in d.items()} if isinstance(d, dict) else {}  # noqa: E731
+    out = low(output or {})
+    ids = {x["id"] for x in pkg["checks"]}
+    given = {str(f.get("element") or "").strip().lower(): f for f in (low(x) for x in out.get("findings") or [])}
+    texts, drafted = {}, {}
+    for e in AGENT_ELEMENTS:
+        g = given.get(e) or {}
+        text = str(g.get("text") or "").strip()
+        if not text:
+            continue
+        cited = [str(s) for s in g.get("sources") or []]
+        kept = [s for s in cited if s in ids]
+        texts[e] = text[:900]
+        drafted[e] = {"sources": kept or [e], **({"note": "A citation of a check that isn't in the package was left out."} if len(kept) < len(cited) else {})}
+    action = out.get("recommendation") if out.get("recommendation") in ACTIONS[pkg["stage"]] else None
+    months = None
+    if pkg["stage"] == "extension" and action == "Extend":
+        try:
+            months = int(out.get("recommendedMonths") or 0)
+        except (TypeError, ValueError):
+            months = 0
+        if not 1 <= months <= pkg["extension"]["remaining"]:
+            months = pkg["proposal"]["months"] or 1
+    writer = {"recommendation": action, "recommendedMonths": months, "reason": str(out.get("reason") or "")[:300],
+              "summary": str(out.get("summary") or "")[:450], "risks": [str(r)[:160] for r in out.get("risks") or []][:3],
+              "drafted": drafted, "agent": bool(output)}
+    return texts, writer
+
+
+def determination_draft(pkg: dict, texts: dict) -> str:
+    """The determination and findings the CO signs: one finding per check, the writer's text for the three that need
+    judgment and the check's own for the rest. The funds finding and the determination are filled in by the CO's form."""
+    c = pkg["contract"]
+    what = {"extension": "Exercise of the option to extend services (FAR 52.217-8)",
+            "preliminary": f"{pkg['name']}: preliminary notice of intent to extend (FAR 52.217-9(a))",
+            "exercise": f"Exercise of {pkg['name'].lower()} (FAR 52.217-9)"}[pkg["stage"]]
+    findings = []
+    for i, x in enumerate(pkg["checks"], 1):
+        text = FUNDS_FILL if x["id"] == "funds" else texts.get(x["id"]) or x["finding"]
+        findings.append(f"{i}. {SHORT.get(x['id'], x['label'])} ({x['rule']}). {text}")
+    rules = "FAR 17.204-1(b)" + ("; DFARS 217.207(c)" if c.get("dod") else "")
+    return "\n\n".join([
+        "DETERMINATION AND FINDINGS", what, f"Contract {c['number']}, {c['contractor']}\n{c.get('title') or ''}, {c.get('office') or ''}",
+        f"Findings ({rules})", *findings, "Determination", DETERMINATION_FILL,
+        f"{letters.DATE}\n{letters.SIGNATURE}\nContracting Officer, {c.get('office') or ''}"])
+
+
+def stored_package(pkg: dict) -> dict:
+    """The package as kept on the schedule row (ReviewJson, 10,000 characters, with room for the Resource Manager's
+    certification and the CO's decision): the checks without the agent's facts, and without the clause's wording, which
+    the row itself carries (ClauseText)."""
+    return {**{k: v for k, v in pkg.items() if k != "clauseText"},
+            "checks": [{k: (v[:700] if k == "finding" else v) for k, v in x.items() if k != "facts"} for x in pkg["checks"]]}
+
+
+def decided_lines(pkg: dict, dec: dict) -> list[dict]:
+    """Each line item's amount for what the CO decided: an option at its prices, an extension at the monthly rates times
+    the months chosen (the CO's form shows the same figures, award-task-forms src/lib/options.ts)."""
+    if pkg.get("kind") == "extension":
+        return [{**x, "amount": round(x["monthly"] * int(dec.get("months") or 0), 2)} for x in pkg["proposal"]["lines"]]
+    return [dict(x) for x in pkg["proposal"]["lines"]]

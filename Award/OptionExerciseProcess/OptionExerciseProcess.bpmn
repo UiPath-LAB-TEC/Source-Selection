@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:uipath="http://uipath.org/schema/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_OptionExercise" targetNamespace="http://bpmn.io/schema/bpmn" exporter="UiPath Maestro (https://uipath.com)" exporterVersion="1.204.0">
+  <bpmn:process id="OptionExerciseProcess" name="Option exercise">
+    <bpmn:documentation>An option or the 52.217-8 extension of services, from the checks to the signed modification. AW_Robots gathers every check FAR 17.204-1(b) and DFARS 217.207(c) ask for and has the writer agent draft the findings that need judgment; the Resource Manager certifies the funds; the Contracting Officer decides and signs in Action Center; AW_Robots files the result: the notice and modification with the new period and its obligations, a preliminary notice of intent (52.217-9(a)), or the decision not to exercise. Started by Start package in Contract Management, or by the daily contract watch once the item needs action.</bpmn:documentation>
+    <bpmn:extensionElements>
+      <uipath:variables version="v1">
+        <uipath:input id="in_solicitationId" name="solicitationId" type="string" elementId="Start_Package" />
+        <uipath:input id="in_scheduleId" name="scheduleId" type="string" elementId="Start_Package" />
+        <uipath:input id="in_contractingOfficer" name="contractingOfficer" type="string" elementId="Start_Package" />
+        <uipath:input id="in_resourceManager" name="resourceManager" type="string" elementId="Start_Package" />
+        <uipath:output id="out_decision" name="decision" type="string" elementId="End_Filed" />
+        <uipath:inputOutput id="solicitationId" name="solicitationId" type="string" elementId="OptionExerciseProcess" />
+        <uipath:inputOutput id="scheduleId" name="scheduleId" type="string" elementId="OptionExerciseProcess" />
+        <uipath:inputOutput id="contractingOfficer" name="contractingOfficer" type="string" elementId="OptionExerciseProcess" />
+        <uipath:inputOutput id="resourceManager" name="resourceManager" type="string" elementId="OptionExerciseProcess" />
+        <uipath:inputOutput id="packageDraft" name="packageDraft" type="string" elementId="OptionExerciseProcess" />
+        <uipath:inputOutput id="fundsStatus" name="fundsStatus" type="string" elementId="OptionExerciseProcess" />
+        <uipath:inputOutput id="optionDecision" name="optionDecision" type="string" elementId="OptionExerciseProcess" />
+        <uipath:inputOutput id="recorded" name="recorded" type="string" elementId="OptionExerciseProcess" />
+      </uipath:variables>
+      <uipath:bindings version="v1">
+        <uipath:binding id="bOx4Rb7Nm" name="name" type="string" default="AW_Robots" resource="process" resourceKey="solution_folder.AW_Robots" propertyAttribute="name" />
+        <uipath:binding id="bOx6Fd2Yq" name="folderPath" type="string" default="" resource="process" resourceKey="solution_folder.AW_Robots" propertyAttribute="folderPath" />
+        <uipath:binding id="bOa3Fm8Qc" name="name" type="string" default="AwardTaskForms" resource="app" resourceKey="solution_folder.AwardTaskForms" propertyAttribute="name" />
+        <uipath:binding id="bOa7Pk2Wf" name="folderPath" type="string" default="" resource="app" resourceKey="solution_folder.AwardTaskForms" propertyAttribute="folderPath" />
+      </uipath:bindings>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="Start_Package" name="Option or extension due">
+      <bpmn:extensionElements>
+        <uipath:entryPointId value="9c0b0bb2-ad8b-420e-b3e9-3f7fa519b3ba" />
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="solicitationId" type="string" var="solicitationId" source="=vars.in_solicitationId" />
+          <uipath:output name="scheduleId" type="string" var="scheduleId" source="=vars.in_scheduleId" />
+          <uipath:output name="contractingOfficer" type="string" var="contractingOfficer" source="=vars.in_contractingOfficer" />
+          <uipath:output name="resourceManager" type="string" var="resourceManager" source="=vars.in_resourceManager" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>F_Start_Prepare</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_PreparePackage" name="Prepare the Option Package">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bOx4Rb7Nm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bOx6Fd2Yq" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"PrepareOptionPackage","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="packageDraft" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Start_Prepare</bpmn:incoming>
+      <bpmn:outgoing>F_Prepare_Funds</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Task_CertifyFunds" name="Certify Funds">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bOa3Fm8Qc" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bOa7Pk2Wf" />
+            <uipath:input name="taskTitle" type="string" value="Certify funds for an option or extension" />
+            <uipath:input name="priority" type="string" value="High" />
+            <uipath:input name="labels" type="string" value="award, resource-manager" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.resourceManager"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"},"packageDraft":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"certifyFunds","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId","packageDraft":"=vars.packageDraft"}]]></uipath:input>
+          <uipath:output name="decision" type="string" source="=decision" var="fundsStatus" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Prepare_Funds</bpmn:incoming>
+      <bpmn:outgoing>F_Funds_Decide</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_OptionDecision" name="Decide the Option">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Actions.HITL" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bOa3Fm8Qc" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bOa7Pk2Wf" />
+            <uipath:input name="taskTitle" type="string" value="Decide an option or extension of services" />
+            <uipath:input name="priority" type="string" value="High" />
+            <uipath:input name="labels" type="string" value="award, contracting-officer" />
+            <uipath:input name="actionCatalogName" type="string" />
+            <uipath:input name="recipient" type="json"><![CDATA[{"Type":3,"Value":"=vars.contractingOfficer"}]]></uipath:input>
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"actionType":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"},"packageDraft":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="HitlTaskArguments" type="json" target="bodyField"><![CDATA[{"actionType":"optionDecision","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId","packageDraft":"=vars.packageDraft"}]]></uipath:input>
+          <uipath:output name="decision" type="string" source="=decision" var="optionDecision" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Funds_Decide</bpmn:incoming>
+      <bpmn:outgoing>F_Decide_Gateway</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_Decision" name="Decision?" default="F_Decision_Not">
+      <bpmn:incoming>F_Decide_Gateway</bpmn:incoming>
+      <bpmn:outgoing>F_Decision_Exercise</bpmn:outgoing>
+      <bpmn:outgoing>F_Decision_Notice</bpmn:outgoing>
+      <bpmn:outgoing>F_Decision_Not</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_IssueExercise" name="Issue the Notice and Modification">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bOx4Rb7Nm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bOx6Fd2Yq" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"IssueOptionExercise","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="recorded" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Decision_Exercise</bpmn:incoming>
+      <bpmn:outgoing>F_Exercise_Join</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_IssueNotice" name="Send the Preliminary Notice">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bOx4Rb7Nm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bOx6Fd2Yq" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"IssuePreliminaryNotice","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="recorded" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Decision_Notice</bpmn:incoming>
+      <bpmn:outgoing>F_Notice_Join</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_RecordNotExercised" name="Record the Decision Not to Exercise">
+      <bpmn:extensionElements>
+        <uipath:activity version="v1">
+          <uipath:type value="Orchestrator.StartJob" version="v2" />
+          <uipath:context>
+            <uipath:input name="name" type="string" value="=bindings.bOx4Rb7Nm" />
+            <uipath:input name="folderPath" type="string" value="=bindings.bOx6Fd2Yq" />
+            <uipath:inputSchema type="jsonSchema"><![CDATA[{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","properties":{"step":{"type":"string"},"solicitationId":{"type":"string"},"scheduleId":{"type":"string"}},"required":[]}]]></uipath:inputSchema>
+          </uipath:context>
+          <uipath:input name="JobArguments" type="json" target="bodyField"><![CDATA[{"step":"RecordNotExercised","solicitationId":"=vars.solicitationId","scheduleId":"=vars.scheduleId"}]]></uipath:input>
+          <uipath:output name="content" type="string" source="=content" var="recorded" />
+        </uipath:activity>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Decision_Not</bpmn:incoming>
+      <bpmn:outgoing>F_Not_Join</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_Join" name="Filed">
+      <bpmn:incoming>F_Exercise_Join</bpmn:incoming>
+      <bpmn:incoming>F_Notice_Join</bpmn:incoming>
+      <bpmn:incoming>F_Not_Join</bpmn:incoming>
+      <bpmn:outgoing>F_Join_End</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End_Filed" name="Decision filed">
+      <bpmn:extensionElements>
+        <uipath:mapping version="v1">
+          <uipath:type value="BPMN.Variables" version="v1" />
+          <uipath:output name="decision" type="string" var="out_decision" source="=vars.recorded" />
+        </uipath:mapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>F_Join_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="F_Start_Prepare" sourceRef="Start_Package" targetRef="Task_PreparePackage" />
+    <bpmn:sequenceFlow id="F_Prepare_Funds" sourceRef="Task_PreparePackage" targetRef="Task_CertifyFunds" />
+    <bpmn:sequenceFlow id="F_Funds_Decide" sourceRef="Task_CertifyFunds" targetRef="Task_OptionDecision" />
+    <bpmn:sequenceFlow id="F_Decide_Gateway" sourceRef="Task_OptionDecision" targetRef="Gateway_Decision" />
+    <bpmn:sequenceFlow id="F_Decision_Exercise" name="Exercised" sourceRef="Gateway_Decision" targetRef="Task_IssueExercise">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=vars.optionDecision == "Exercised"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_Decision_Notice" name="Preliminary notice" sourceRef="Gateway_Decision" targetRef="Task_IssueNotice">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=vars.optionDecision == "Notice sent"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="F_Decision_Not" name="Not exercised" sourceRef="Gateway_Decision" targetRef="Task_RecordNotExercised" />
+    <bpmn:sequenceFlow id="F_Exercise_Join" sourceRef="Task_IssueExercise" targetRef="Gateway_Join" />
+    <bpmn:sequenceFlow id="F_Notice_Join" sourceRef="Task_IssueNotice" targetRef="Gateway_Join" />
+    <bpmn:sequenceFlow id="F_Not_Join" sourceRef="Task_RecordNotExercised" targetRef="Gateway_Join" />
+    <bpmn:sequenceFlow id="F_Join_End" sourceRef="Gateway_Join" targetRef="End_Filed" />
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="Diagram_1">
+    <bpmndi:BPMNPlane id="Plane_1" bpmnElement="OptionExerciseProcess">
+      <bpmndi:BPMNShape id="S_End_Filed" bpmnElement="End_Filed"><dc:Bounds x="1152" y="344" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gateway_Decision" bpmnElement="Gateway_Decision"><dc:Bounds x="788" y="219.5" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Gateway_Join" bpmnElement="Gateway_Join"><dc:Bounds x="1052" y="337" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Start_Package" bpmnElement="Start_Package"><dc:Bounds x="252" y="226.5" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_CertifyFunds" bpmnElement="Task_CertifyFunds"><dc:Bounds x="488" y="204.5" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_IssueExercise" bpmnElement="Task_IssueExercise"><dc:Bounds x="902" y="452" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_IssueNotice" bpmnElement="Task_IssueNotice"><dc:Bounds x="902" y="322" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_OptionDecision" bpmnElement="Task_OptionDecision"><dc:Bounds x="638" y="204.5" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_PreparePackage" bpmnElement="Task_PreparePackage"><dc:Bounds x="338" y="204.5" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="S_Task_RecordNotExercised" bpmnElement="Task_RecordNotExercised"><dc:Bounds x="902" y="192" width="100" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="E_F_Decide_Gateway" bpmnElement="F_Decide_Gateway"><di:waypoint x="738" y="244.5" /><di:waypoint x="788" y="244.5" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Decision_Exercise" bpmnElement="F_Decision_Exercise"><di:waypoint x="838" y="244.5" /><di:waypoint x="862" y="244.5" /><di:waypoint x="862" y="492" /><di:waypoint x="902" y="492" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Decision_Not" bpmnElement="F_Decision_Not"><di:waypoint x="838" y="244.5" /><di:waypoint x="870" y="244.5" /><di:waypoint x="870" y="232" /><di:waypoint x="902" y="232" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Decision_Notice" bpmnElement="F_Decision_Notice"><di:waypoint x="838" y="244.5" /><di:waypoint x="878" y="244.5" /><di:waypoint x="878" y="362" /><di:waypoint x="902" y="362" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Exercise_Join" bpmnElement="F_Exercise_Join"><di:waypoint x="1002" y="492" /><di:waypoint x="1026" y="492" /><di:waypoint x="1026" y="362" /><di:waypoint x="1052" y="362" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Funds_Decide" bpmnElement="F_Funds_Decide"><di:waypoint x="588" y="244.5" /><di:waypoint x="638" y="244.5" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Join_End" bpmnElement="F_Join_End"><di:waypoint x="1102" y="362" /><di:waypoint x="1152" y="362" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Not_Join" bpmnElement="F_Not_Join"><di:waypoint x="1002" y="232" /><di:waypoint x="1026" y="232" /><di:waypoint x="1026" y="362" /><di:waypoint x="1052" y="362" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Notice_Join" bpmnElement="F_Notice_Join"><di:waypoint x="1002" y="362" /><di:waypoint x="1052" y="362" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Prepare_Funds" bpmnElement="F_Prepare_Funds"><di:waypoint x="438" y="244.5" /><di:waypoint x="488" y="244.5" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="E_F_Start_Prepare" bpmnElement="F_Start_Prepare"><di:waypoint x="288" y="244.5" /><di:waypoint x="338" y="244.5" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

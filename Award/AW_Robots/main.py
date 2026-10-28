@@ -26,8 +26,9 @@ import repo
 
 AWARD = "SSAward"
 LETTERS = "SSCorrespondence"
-SCHEDULE, FUNDING, ALERTS = "SSSchedule", "SSFunding", "SSAlert"
+SCHEDULE, FUNDING, ALERTS, MODS, VENDORS = "SSSchedule", "SSFunding", "SSAlert", "SSModification", "SSRefVendor"
 REVIEW_PROCESS = "DeliverableReviewProcess"
+OPTION_PROCESS = "OptionExerciseProcess"
 AWARD_NOTICE, NOTICE = "AwardNotice", "UnsuccessfulNotice"
 
 # The Award phase's steps, as the Award app's tracker names them (award-task-forms/src/lib/record.ts). A district's
@@ -399,12 +400,86 @@ def _counts(writes: list[dict], existing: dict[str, dict]) -> tuple[int, int, in
     return new, worse, resolved
 
 
+def _start_package(sol: str, row: dict, co: str, rm: str) -> str:
+    """Start the option package for an option or the extension: the checks and drafts, then the funds and the decision."""
+    job = repo.retry(lambda: repo.sdk().processes.invoke(OPTION_PROCESS, {"solicitationId": sol, "scheduleId": row["ScheduleId"],
+                                                                          "contractingOfficer": co, "resourceManager": rm}, **repo.run_folder()))
+    return job.key
+
+
+def _watch_one(a: dict, as_of: str, now: str, schedule: list[dict], funding: list[dict], letters_: list[dict], alerts_: list[dict],
+               by_id: dict[str, dict], start: bool = True) -> dict:
+    """The watch for one contract: the next recurring deliverables, the rules as of `as_of`, the alerts and the funds
+    forecast. With `start`, it also starts the work nobody has started: a review for a deliverable on file, and the
+    package for an option or extension that needs action."""
+    sol = a["SolicitationId"]
+    sched = [r for r in schedule if r.get("SolicitationId") == sol]
+    more = admin.materialize(sched, as_of)
+    if more:
+        repo.upsert(SCHEDULE, "ScheduleId", more)
+        sched += more
+    # A deliverable on file with no review yet (it came in some other way than Record receipt) gets one.
+    reviews = []
+    for r in sched if start else []:
+        if (r.get("Kind") == "Deliverable" and r.get("ReceivedDay") and r.get("FilePath") and not r.get("AcceptedDay")
+                and r.get("Status") == "Received" and not r.get("ProcessInstanceId") and a.get("CorEmail")):
+            key = _start_review(sol, r, a["CorEmail"])
+            if key:
+                r["ProcessInstanceId"] = key
+                repo.upsert(SCHEDULE, "ScheduleId", [{"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "ProcessInstanceId": key}])
+                reviews.append(r["Name"])
+    money_ = [r for r in funding if r.get("SolicitationId") == sol]
+    fresh, funds = admin.alerts(a, sched, money_, [c for c in letters_ if c.get("SolicitationId") == sol], as_of, by_id.get(a.get("SuccessorId") or ""))
+    existing = {x["AlertId"]: x for x in alerts_ if x.get("SolicitationId") == sol}
+    writes = admin.reconcile(list(existing.values()), fresh, now)
+    repo.upsert(ALERTS, "AlertId", writes)
+    # An option or extension that needs action and has no package running gets one, unless someone dismissed it.
+    packages = []
+    if start and a.get("CoEmail") and a.get("RmEmail"):
+        status = {k: v.get("Status") for k, v in existing.items()} | {w["AlertId"]: w["Status"] for w in writes if w.get("Status")}
+        for f in fresh:
+            if f["Kind"] not in ("option", "extension") or f["Severity"] not in ("Overdue", "Due soon") or status.get(f["AlertId"]) == "Dismissed":
+                continue
+            sid = json.loads(f.get("EvidenceJson") or "{}").get("scheduleId")
+            r = next((x for x in sched if x.get("ScheduleId") == sid), None)
+            if r and not r.get("ProcessInstanceId") and r.get("Status") in ("Planned", "Notice sent"):
+                key = _start_package(sol, r, a["CoEmail"], a["RmEmail"])
+                if key:
+                    r["ProcessInstanceId"] = key
+                    repo.upsert(SCHEDULE, "ScheduleId", [{"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "ProcessInstanceId": key}])
+                    packages.append(r["Name"])
+    net = lambda kind: sum(float(r.get("Amount") or 0) * (-1 if r.get("Kind") == "Deobligation" else 1)  # noqa: E731
+                           for r in money_ if r.get("Kind") in kind)
+    repo.upsert(AWARD, "AwardId", [{"AwardId": a["AwardId"], "SolicitationId": sol, "CurrentPeriod": funds.get("period"),
+                                    "ObligatedValue": round(net(("Obligation", "Deobligation")), 2), "InvoicedValue": round(net(("Invoice",)), 2),
+                                    "FundsJson": json.dumps(funds), "WatchedAt": now}])
+    new, worse, resolved = _counts(writes, existing)
+    if start and (new or worse or resolved or reviews or packages):
+        titles = "; ".join(w["Title"] for w in writes if w.get("Title") and w.get("Status") == "Open")[:3000]
+        repo.audit(sol, f"watch-{as_of}", "ContractWatched",
+                   f"{new} new, {worse} more urgent, {resolved} resolved" + (f": {titles}" if titles else "")
+                   + (f". Reviews started: {', '.join(reviews)}" if reviews else "") + (f". Packages started: {', '.join(packages)}" if packages else ""))
+    return {"solicitationId": sol, "open": len(fresh), "new": new, "worse": worse, "resolved": resolved, "reviewsStarted": reviews,
+            "packagesStarted": packages}
+
+
+def _refresh(sol: str) -> None:
+    """Re-apply the watch's rules to one contract now, so a decision just filed shows on its items at once."""
+    a = next(iter(repo.rows(AWARD, sol)), None)
+    if not a or a.get("Phase") != "Administration":
+        return
+    now = repo.now()
+    _watch_one(a, clocks.day_of(now), now, repo.rows(SCHEDULE, sol), repo.rows(FUNDING, sol), repo.rows(LETTERS, sol), repo.rows(ALERTS, sol),
+               {x["AwardId"]: x for x in repo.rows(AWARD)}, start=False)
+
+
 @traced(name="WatchContracts", run_type="uipath")
 def watch_contracts(input: WatchInput) -> WatchOutput:
     """The daily contract watch: open administration on any contract signed since the last run, then for every contract
     under administration add the next recurring deliverables, apply the rules as of `asOf` (default today, agency time),
-    write new and changed alerts, resolve the ones that cleared, and refresh the funds forecast. One contract failing
-    doesn't stop the others; the step faults at the end so Maestro opens an incident."""
+    write new and changed alerts, resolve the ones that cleared, refresh the funds forecast, and start the reviews and
+    option packages nobody has started. One contract failing doesn't stop the others; the step faults at the end so
+    Maestro opens an incident."""
     out = WatchOutput()
     try:
         as_of = input.asOf or clocks.day_of(repo.now())
@@ -421,43 +496,289 @@ def watch_contracts(input: WatchInput) -> WatchOutput:
         schedule, funding, letters_, alerts_ = repo.rows(SCHEDULE), repo.rows(FUNDING), repo.rows(LETTERS), repo.rows(ALERTS)
         report = []
         for a in (a for a in awards if a.get("Phase") == "Administration"):
-            sol = a["SolicitationId"]
             try:
-                sched = [r for r in schedule if r.get("SolicitationId") == sol]
-                more = admin.materialize(sched, as_of)
-                if more:
-                    repo.upsert(SCHEDULE, "ScheduleId", more)
-                    sched += more
-                # A deliverable on file with no review yet (it came in some other way than Record receipt) gets one.
-                reviews = []
-                for r in sched:
-                    if (r.get("Kind") == "Deliverable" and r.get("ReceivedDay") and r.get("FilePath") and not r.get("AcceptedDay")
-                            and r.get("Status") == "Received" and not r.get("ProcessInstanceId") and a.get("CorEmail")):
-                        r["ProcessInstanceId"] = _start_review(sol, r, a["CorEmail"])
-                        repo.upsert(SCHEDULE, "ScheduleId", [{"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "ProcessInstanceId": r["ProcessInstanceId"]}])
-                        reviews.append(r["Name"])
-                money_ = [r for r in funding if r.get("SolicitationId") == sol]
-                fresh, funds = admin.alerts(a, sched, money_, [c for c in letters_ if c.get("SolicitationId") == sol], as_of, by_id.get(a.get("SuccessorId") or ""))
-                existing = {x["AlertId"]: x for x in alerts_ if x.get("SolicitationId") == sol}
-                writes = admin.reconcile(list(existing.values()), fresh, now)
-                repo.upsert(ALERTS, "AlertId", writes)
-                net = lambda kind: sum(float(r.get("Amount") or 0) * (-1 if r.get("Kind") == "Deobligation" else 1)  # noqa: E731
-                                       for r in money_ if r.get("Kind") in kind)
-                repo.upsert(AWARD, "AwardId", [{"AwardId": a["AwardId"], "SolicitationId": sol, "CurrentPeriod": funds.get("period"),
-                                                "ObligatedValue": round(net(("Obligation", "Deobligation")), 2), "InvoicedValue": round(net(("Invoice",)), 2),
-                                                "FundsJson": json.dumps(funds), "WatchedAt": now}])
-                new, worse, resolved = _counts(writes, existing)
-                if new or worse or resolved or reviews:
-                    titles = "; ".join(w["Title"] for w in writes if w.get("Title") and w.get("Status") == "Open")[:3000]
-                    repo.audit(sol, f"watch-{as_of}", "ContractWatched",
-                               f"{new} new, {worse} more urgent, {resolved} resolved" + (f": {titles}" if titles else "")
-                               + (f". Reviews started: {', '.join(reviews)}" if reviews else ""))
-                report.append({"solicitationId": sol, "open": sum(1 for x in fresh), "new": new, "worse": worse, "resolved": resolved, "reviewsStarted": reviews})
+                report.append(_watch_one(a, as_of, now, schedule, funding, letters_, alerts_, by_id))
             except Exception as exc:  # one contract failing doesn't stop the others
-                failed.append(f"{sol}: {type(exc).__name__}: {exc}")
+                failed.append(f"{a['SolicitationId']}: {type(exc).__name__}: {exc}")
         out.summary = json.dumps({"asOf": as_of, "opened": opened, "contracts": report})
         if failed:
             raise RuntimeError("; ".join(failed))
+    except Exception as exc:
+        return _fail(out, exc)
+    return out
+
+
+# ── 7. Options and the extension of services: PrepareOptionPackage, IssueOptionExercise, IssuePreliminaryNotice,
+#       RecordNotExercised ─────────────────────────────────────────────────────
+
+class OptionInput(BaseModel):
+    solicitationId: str = ""
+    scheduleId: str = ""
+
+
+class PackageOutput(Result):
+    package: str = ""
+
+
+def _vendor(contract: dict) -> dict | None:
+    """The contractor's SAM and CPARS row (SSRefVendor, the demo's stand-in for both), by UEI."""
+    uei = (json.loads(contract.get("AbstractJson") or "{}").get("contractor") or {}).get("uei")
+    return next((v for v in repo.rows(VENDORS) if v.get("UEI") == uei), None) if uei else None
+
+
+@traced(name="PrepareOptionPackage", run_type="uipath")
+def prepare_option_package(input: OptionInput) -> PackageOutput:
+    """Gather what the Contracting Officer needs to decide an option or the 52.217-8 extension: the proposal, and every
+    check FAR 17.204-1(b) and DFARS 217.207(c) ask for, each with its source. The writer agent drafts the findings that
+    need judgment (existing need, performance, price) and recommends; the robot holds its citations to the checks. The
+    Resource Manager and the CO decide; this only prepares."""
+    out = PackageOutput()
+    try:
+        sol, sid = input.solicitationId, input.scheduleId
+        contract = next(iter(repo.rows(AWARD, sol)), None)
+        if not contract or contract.get("Phase") != "Administration":
+            raise ValueError(f"{sol} isn't under administration")
+        schedule = repo.rows(SCHEDULE, sol)
+        row = next((r for r in schedule if r.get("ScheduleId") == sid), None)
+        if row is None:
+            raise LookupError(f"{sid} is not on {sol}'s schedule")
+        succ = next((a for a in repo.rows(AWARD) if a.get("AwardId") == contract.get("SuccessorId")), None) if contract.get("SuccessorId") else None
+        igce = None
+        if contract.get("Origin") != "Imported":
+            try:
+                igce = repo.plan(sol).get("igce")
+            except Exception:  # an IGCE only sharpens the price check
+                igce = None
+        pkg = admin.option_package(contract, row, schedule, repo.rows(FUNDING, sol), repo.rows(MODS, sol), _vendor(contract), succ,
+                                   repo.rows(SCHEDULE, succ["SolicitationId"]) if succ else [], repo.rows(ALERTS, sol), clocks.day_of(repo.now()), igce)
+        inputs = admin.writer_inputs(pkg)
+        output = None
+        for _ in range(2):  # one retry, as the other agents get (SE-02)
+            key = repo.start_agent(admin.WRITER, inputs)
+            state, result = repo.wait_jobs([key], timeout_s=600)[key]
+            if state == "Successful" and result:
+                output = result
+                break
+        history = json.loads(row.get("ReviewJson") or "{}").get("history") or []
+        texts, writer = admin.checked_writing(output, pkg)
+        # One decision per package: the draft the CO edits and signs (an SSDecision, as the contract award is in slice 1).
+        code = "EXT" if pkg["kind"] == "extension" else admin.period_code(row["Name"])
+        did = f"{sol}-{code}-{len(history) + 1}"
+        signed = next((d for d in repo.rows("SSDecision", sol) if d.get("DecisionId") == did and d.get("Outcome") not in (None, "", "Draft")), None)
+        if signed:
+            raise ValueError(f"{did} is already signed ({signed['Outcome']}); file it before preparing another package")
+        repo.upsert("SSDecision", "DecisionId", [{"DecisionId": did, "SolicitationId": sol, "Kind": "Extension" if pkg["kind"] == "extension" else "OptionExercise",
+                                                  "Outcome": "Draft", "Rationale": f"{pkg['title']}: {pkg['proposal']['reason']}"[:1000],
+                                                  "DocumentText": admin.determination_draft(pkg, texts)}])
+        pkg |= {"writer": writer, "ids": {"decision": did, "letter": f"{did}-Notice", "modification": f"{sol}-{pkg['modification']}"},
+                "history": history, "preparedAt": repo.now()}
+        stored = admin.stored_package(pkg)
+        # Compact, as the forms write it back: the row keeps room for the funds and the decision under its 10,000 characters.
+        repo.upsert(SCHEDULE, "ScheduleId", [{"ScheduleId": sid, "SolicitationId": sol, "ReviewJson": json.dumps(stored, separators=(",", ":"))}])
+        n = lambda s: sum(1 for x in pkg["checks"] if x["status"] == s)  # noqa: E731
+        rec = writer["recommendation"]
+        repo.audit(sol, f"{sid}-{pkg['stage']}-{len(history) + 1}", "OptionPackagePrepared",
+                   f"{pkg['title']}: {n('Met')} of {len(pkg['checks'])} checks met, {n('To confirm')} to confirm, {n('Not met')} not met"
+                   + (f"; the writer recommends: {rec}" + (f", {writer['recommendedMonths']} month{'s' if writer['recommendedMonths'] != 1 else ''}"
+                                                            if writer.get("recommendedMonths") else "") if rec else "")
+                   + ("" if writer["agent"] else "; the writer agent was unavailable, so the findings are the checks' own"), actor=admin.WRITER)
+        text = json.dumps(stored, separators=(",", ":"))
+        out.package = text if len(text) <= 9000 else json.dumps({"scheduleId": sid, "stage": pkg["stage"], "title": pkg["title"]})
+    except Exception as exc:
+        return _fail(out, exc)
+    return out
+
+
+def _decided(sol: str, sid: str, outcome: str) -> tuple[dict, dict, dict, dict, dict, dict]:
+    """The decision the CO signed on an option or extension: (award row, schedule row, package, decision, determination, letter)."""
+    contract = next(iter(repo.rows(AWARD, sol)), None)
+    if not contract:
+        raise LookupError(f"{sol} has no contract record")
+    row = _schedule_row(sol, sid)
+    pkg = json.loads(row.get("ReviewJson") or "{}")
+    dec = pkg.get("decision") or {}
+    if dec.get("outcome") != outcome:
+        raise ValueError(f"{row.get('Name')} has no signed decision of {outcome!r} (it shows {dec.get('outcome') or 'none'})")
+    determination = next((d for d in repo.rows("SSDecision", sol) if d.get("DecisionId") == dec.get("decisionId")), None)
+    if not determination or determination.get("Outcome") != outcome or not determination.get("DocumentText"):
+        raise ValueError(f"The signed determination for {row.get('Name')} isn't on the record")
+    letter = next((c for c in repo.rows(LETTERS, sol) if c.get("CorrespondenceId") == dec.get("letterId")), None)
+    if not letter or letter.get("Status") not in ("Approved", "Delivered"):
+        raise ValueError(f"The signed notice for {row.get('Name')} isn't on the record")
+    return contract, row, pkg, dec, determination, letter
+
+
+def _file(sol: str, contract: dict, path: str, title: str, text: str) -> str:
+    header = f"{contract.get('Agency') or ''} | {contract.get('ContractNumber') or sol} | {contract.get('Title') or ''}"
+    repo.upload(repo.RECORDS_BUCKET, path, records.render(title, header, [("", text)], banner=records.RELEASED_BANNER))
+    return f"{repo.RECORDS_BUCKET}/{path}"
+
+
+def _deliver(sol: str, contract: dict, letter: dict, path: str, title: str, now: str) -> None:
+    """File a signed letter and mark it delivered; a retry never re-sends one already delivered."""
+    if letter.get("Status") != "Delivered":
+        repo.upsert(LETTERS, "CorrespondenceId", [{"CorrespondenceId": letter["CorrespondenceId"], "SolicitationId": sol, "Status": "Delivered",
+                                                    "DeliveredAt": now, "FilePath": _file(sol, contract, path, title, letter["Text"])}])
+
+
+def _resolve(sol: str, row: dict, now: str) -> None:
+    """Clear the option's or extension's item; the refresh raises the next one, if there is one."""
+    aid = f"{sol}-extension-EXT" if admin.is_extension_clause(row) else f"{sol}-option-{admin.period_code(row['Name'])}"
+    repo.upsert(ALERTS, "AlertId", [{"AlertId": a["AlertId"], "SolicitationId": sol, "Status": "Resolved", "ResolvedAt": now}
+                                    for a in repo.rows(ALERTS, sol) if a.get("AlertId") == aid and a.get("Status") != "Resolved"])
+
+
+def _history(pkg: dict, dec: dict) -> str:
+    """What stays on the row once a decision is filed: the decisions so far, so the next package starts fresh."""
+    # The last two only: each decision's full record is its SSDecision and audit row, and the row has 10,000 characters.
+    keep = {k: dec.get(k) for k in ("outcome", "period", "months", "start", "end", "amount", "number", "by", "at")} | {"reason": (dec.get("reason") or "")[:120]}
+    return json.dumps({"history": ((pkg.get("history") or []) + [{"stage": pkg.get("stage"), **keep}])[-2:]}, separators=(",", ":"))
+
+
+@traced(name="IssueOptionExercise", run_type="uipath")
+def issue_option_exercise(input: OptionInput) -> RecordOutput:
+    """After the CO signs an exercise: file the determination, the notice and the modification, obligate the funds by
+    line item, and put the new period on the schedule. An extension adds Extension 1, 2, ... and moves the clause on to
+    what remains; the monthly report and the final evaluation move to the new end."""
+    out = RecordOutput()
+    try:
+        sol, sid = input.solicitationId, input.scheduleId
+        contract, row, pkg, dec, determination, letter = _decided(sol, sid, "Exercised")
+        mod = next((m for m in repo.rows(MODS, sol) if m.get("ModificationId") == dec.get("modificationId")), None)
+        if not mod or mod.get("Status") not in ("Signed", "Issued"):
+            raise ValueError(f"Modification {dec.get('number')} for {row.get('Name')} isn't signed")
+        now = repo.now()
+        today = clocks.day_of(now)
+        number = mod["Number"]
+        base = f"{sol}/modifications/{number}"
+        if mod.get("Status") != "Issued":
+            _file(sol, contract, f"{base}-Determination.pdf", "Determination and Findings", determination["DocumentText"])
+            repo.upsert(MODS, "ModificationId", [{"ModificationId": mod["ModificationId"], "SolicitationId": sol, "Status": "Issued",
+                                                  "FilePath": _file(sol, contract, f"{base}.pdf", f"Modification {number}", mod["Text"])}])
+        _deliver(sol, contract, letter, f"{base}-Notice.pdf", "Notice of option exercise", now)
+        fy = admin.fiscal_year(dec["start"])
+        lines = admin.decided_lines(pkg, dec)
+        repo.upsert(FUNDING, "FundingId", [{"FundingId": f"{sol}-Obligation-{number}-{x['clin']}", "SolicitationId": sol, "Kind": "Obligation",
+                                            "Reference": number, "Clin": x["clin"], "Period": dec["period"], "Amount": x["amount"], "Status": "Obligated",
+                                            "ReceivedDay": today, "Appropriation": dec.get("appropriation") or pkg.get("appropriation"),
+                                            "FundsExpireDay": f"{fy}-09-30"} for x in lines if x.get("amount")])
+        schedule = repo.rows(SCHEDULE, sol)
+        abstract = json.loads(contract.get("AbstractJson") or "{}")
+        award = {"AwardId": contract["AwardId"], "SolicitationId": sol}
+        if pkg.get("kind") == "extension":
+            n = int(str(dec["period"]).split()[-1])
+            old_end = admin.term_end(schedule)
+            after = admin.add_days(dec["end"], 1)
+            left = admin.months_between(after, row["EndDay"]) if after <= row["EndDay"] else 0
+            writes = [{"ScheduleId": f"{sol}-extension-EXT{n}", "SolicitationId": sol, "Kind": "Extension", "Name": dec["period"], "Period": dec["period"],
+                       "StartDay": dec["start"], "EndDay": dec["end"], "Amount": dec["amount"], "Status": "Exercised", "Owner": admin.CO, "ClauseRef": "52.217-8"},
+                      {"ScheduleId": sid, "SolicitationId": sol, "StartDay": after, "DueDay": admin.deadline(admin.add_days(dec["end"], -int(pkg.get("noticeDays") or 0))),
+                       "Status": "Planned" if left else "Used", "ProcessInstanceId": None, "ReviewJson": _history(pkg, dec)}]
+            # The monthly report runs to the new end, and the final evaluation comes due at it.
+            writes += [{"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "EndDay": dec["end"]} for r in schedule if r.get("Recurrence") and r.get("EndDay") == old_end]
+            writes += [{"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "DueDay": dec["end"]} for r in schedule
+                       if r.get("Kind") == "Evaluation" and str(r.get("Name")).startswith("Final") and r.get("Status") == "Due"]
+            abstract["periods"] = (abstract.get("periods") or []) + [{"name": dec["period"], "start": dec["start"], "end": dec["end"]}]
+            amounts = {x["clin"]: x["amount"] for x in lines}
+            for c in abstract.get("clins") or []:
+                if c["clin"] in amounts:
+                    c.setdefault("byPeriod", {})[dec["period"]] = amounts[c["clin"]]
+            award |= {"PeriodEnd": dec["end"], "AbstractJson": json.dumps(abstract)}
+        else:
+            writes = [{"ScheduleId": sid, "SolicitationId": sol, "Status": "Exercised", "ProcessInstanceId": None, "ReviewJson": _history(pkg, dec)}]
+        repo.upsert(SCHEDULE, "ScheduleId", writes)
+        repo.upsert(AWARD, "AwardId", [award])
+        _resolve(sol, row, now)
+        repo.audit(sol, f"{sid}-{number}", "ExtensionExercised" if pkg.get("kind") == "extension" else "OptionExercised",
+                   f"{dec['period']} exercised by modification {number}: {admin.show_day(dec['start'])} to {admin.show_day(dec['end'])}, "
+                   f"{admin.money(dec.get('amount'))} obligated", actor=dec.get("by") or repo.ACTOR)
+        _refresh(sol)
+        out.decision = "Exercised"
+    except Exception as exc:
+        return _fail(out, exc)
+    return out
+
+
+@traced(name="IssuePreliminaryNotice", run_type="uipath")
+def issue_preliminary_notice(input: OptionInput) -> RecordOutput:
+    """After the CO signs a preliminary notice of intent (52.217-9(a)): file it and the findings, and mark the option
+    Notice sent, so its item turns to the exercise deadline. The notice doesn't commit the Government."""
+    out = RecordOutput()
+    try:
+        sol, sid = input.solicitationId, input.scheduleId
+        contract, row, pkg, dec, determination, letter = _decided(sol, sid, "Notice sent")
+        now = repo.now()
+        base = f"{sol}/options/{admin.period_code(row['Name'])}-Preliminary"
+        if letter.get("Status") != "Delivered":
+            _file(sol, contract, f"{base}-Findings.pdf", "Option findings (preliminary notice)", determination["DocumentText"])
+        _deliver(sol, contract, letter, f"{base}-Notice.pdf", "Preliminary notice of intent to extend", now)
+        repo.upsert(SCHEDULE, "ScheduleId", [{"ScheduleId": sid, "SolicitationId": sol, "Status": "Notice sent", "ProcessInstanceId": None,
+                                              "ReviewJson": _history(pkg, dec)}])
+        _resolve(sol, row, now)
+        repo.audit(sol, f"{sid}-preliminary", "PreliminaryNoticeSent", f"Preliminary notice of intent to exercise {row['Name'].lower()} sent; "
+                   f"the exercise is due by {admin.show_day(row.get('DueDay'))}", actor=dec.get("by") or repo.ACTOR)
+        _refresh(sol)
+        out.decision = "Notice sent"
+    except Exception as exc:
+        return _fail(out, exc)
+    return out
+
+
+@traced(name="RecordNotExercised", run_type="uipath")
+def record_not_exercised(input: OptionInput) -> RecordOutput:
+    """After the CO decides not to exercise: file the decision and the letter. An option lapses with every later one, and
+    the contract ends with the last period kept, so the extension clause, the monthly report, the transition-out plan
+    and the final evaluation move to that end. A declined extension closes the clause."""
+    out = RecordOutput()
+    try:
+        sol, sid = input.solicitationId, input.scheduleId
+        contract, row, pkg, dec, determination, letter = _decided(sol, sid, "Not exercised")
+        now = repo.now()
+        code = "EXT" if admin.is_extension_clause(row) else admin.period_code(row["Name"])
+        base = f"{sol}/options/{code}-Not-Exercised"
+        if letter.get("Status") != "Delivered":
+            _file(sol, contract, f"{base}-Decision.pdf", "Decision not to exercise", determination["DocumentText"])
+        _deliver(sol, contract, letter, f"{base}-Notice.pdf", "Notice: option not exercised", now)
+        schedule = repo.rows(SCHEDULE, sol)
+        if admin.is_extension_clause(row):
+            writes = [{"ScheduleId": sid, "SolicitationId": sol, "Status": "Not exercised", "ProcessInstanceId": None, "ReviewJson": _history(pkg, dec)}]
+            award = {}
+        else:
+            lapsed = [r for r in schedule if r.get("Kind") == "Option" and r.get("Status") in ("Planned", "Notice sent") and r["StartDay"] >= row["StartDay"]]
+            names = {r["Period"] for r in lapsed}
+            writes = [{"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "Status": "Not exercised", "ProcessInstanceId": None,
+                       **({"ReviewJson": _history(pkg, dec)} if r["ScheduleId"] == sid else {})} for r in lapsed]
+            kept = [r for r in schedule if r.get("Kind") in ("Period", "Option") and r["ScheduleId"] not in {x["ScheduleId"] for x in lapsed}]
+            end = max(r["EndDay"] for r in kept)
+            old_end = max(r["EndDay"] for r in schedule if r.get("Kind") in ("Period", "Option"))
+            last = max(kept, key=lambda r: r["EndDay"])["Period"]
+            abstract = json.loads(contract.get("AbstractJson") or "{}")
+            notice_days = int((admin.clause_of(abstract, "52.217-8").get("fill") or {}).get("noticeDaysBeforeExpiry") or admin.EXTENSION_NOTICE_DAYS)
+            for r in schedule:
+                if admin.is_extension_clause(r) and r.get("Status") == "Planned":
+                    after = admin.add_days(end, 1)
+                    writes.append({"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "StartDay": after,
+                                   "EndDay": admin.add_days(admin.add_months(after, admin.months_between(r["StartDay"], r["EndDay"])), -1),
+                                   "DueDay": admin.deadline(admin.add_days(end, -notice_days))})
+                elif r.get("Recurrence") and r.get("EndDay") == old_end:
+                    writes.append({"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "EndDay": end})
+                elif r.get("Kind") == "Deliverable" and r.get("Code") == "A002" and r.get("Status") == "Due":
+                    writes.append({"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "DueDay": admin.deadline(admin.add_days(end, -admin.TRANSITION_OUT_DAYS)),
+                                   "Period": last})
+                elif r.get("Kind") == "Evaluation" and r.get("Period") in names:
+                    writes.append({"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "Status": "Waived"})
+                elif r.get("Kind") == "Evaluation" and r.get("Period") == last:
+                    writes.append({"ScheduleId": r["ScheduleId"], "SolicitationId": sol, "Name": "Final evaluation"})
+            award = {"PeriodEnd": end}
+        repo.upsert(SCHEDULE, "ScheduleId", writes)
+        if award:
+            repo.upsert(AWARD, "AwardId", [{"AwardId": contract["AwardId"], "SolicitationId": sol, **award}])
+        _resolve(sol, row, now)
+        repo.audit(sol, f"{sid}-not-exercised", "ExtensionNotExercised" if admin.is_extension_clause(row) else "OptionNotExercised",
+                   f"{'The extension of services' if admin.is_extension_clause(row) else row['Name']} not exercised" + (f": {dec['reason']}" if dec.get("reason") else ""),
+                   actor=dec.get("by") or repo.ACTOR)
+        _refresh(sol)
+        out.decision = "Not exercised"
     except Exception as exc:
         return _fail(out, exc)
     return out
@@ -492,6 +813,10 @@ STEPS = {
     "WatchContracts": (watch_contracts, WatchInput, "summary"),
     "PrepareDeliverableReview": (prepare_deliverable_review, ReviewInput, "review"),
     "RecordDeliverableReview": (record_deliverable_review, ReviewInput, "decision"),
+    "PrepareOptionPackage": (prepare_option_package, OptionInput, "package"),
+    "IssueOptionExercise": (issue_option_exercise, OptionInput, "decision"),
+    "IssuePreliminaryNotice": (issue_preliminary_notice, OptionInput, "decision"),
+    "RecordNotExercised": (record_not_exercised, OptionInput, "decision"),
 }
 
 

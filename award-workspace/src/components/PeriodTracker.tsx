@@ -1,6 +1,6 @@
 import { Archive, Check, CircleDot, Clock } from 'lucide-react'
 import { dayOf } from '@award/lib/clocks'
-import { periodsOf } from '../lib/award'
+import { extensionsOf, periodsOf } from '../lib/award'
 import type { ScheduleRow } from '../lib/award'
 
 const short = (d?: string) => (d ? new Date(`${d}T12:00:00`).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '')
@@ -12,8 +12,7 @@ const short = (d?: string) => (d ? new Date(`${d}T12:00:00`).toLocaleDateString(
 export function PeriodTracker({ schedule, onDark }: { schedule: ScheduleRow[]; onDark?: boolean }) {
   const today = dayOf(new Date().toISOString())
   const periods = periodsOf(schedule)
-  const ext = schedule.find((r) => r.Kind === 'Extension' && r.Status === 'Exercised')
-  const steps = [...periods, ...(ext ? [ext] : []), { ScheduleId: 'closeout', Name: 'Closeout', Kind: 'Closeout' } as ScheduleRow]
+  const steps = [...periods, ...extensionsOf(schedule), { ScheduleId: 'closeout', Name: 'Closeout', Kind: 'Closeout' } as ScheduleRow]
   const current = steps.findIndex((r) => r.Status === 'Exercised' && !!r.StartDay && !!r.EndDay && r.StartDay <= today && today <= r.EndDay)
   const index = current >= 0 ? current : steps.findIndex((r) => r.Kind === 'Closeout' ? false : (r.EndDay ?? '') >= today)
   return (
@@ -35,7 +34,7 @@ export function PeriodTracker({ schedule, onDark }: { schedule: ScheduleRow[]; o
               <Icon className="h-4 w-4" />
             </span>
             <span className={`mt-1.5 w-full text-balance px-1 text-[11px] leading-tight ${now ? 'font-semibold' : ''} ${lapsed ? 'line-through' : ''} ${onDark ? 'text-white/90' : now ? 'text-foreground' : 'text-muted-foreground'}`}>
-              {s.Kind === 'Extension' ? 'Extension' : s.Name}
+              {s.Kind === 'Extension' ? s.Name.replace('Extension', 'Ext.') : s.Name}
             </span>
             {s.StartDay && <span className={`hidden w-full px-1 text-[10px] leading-tight sm:block ${onDark ? 'text-white/65' : 'text-muted-foreground'}`}>{short(s.StartDay)}</span>}
           </li>

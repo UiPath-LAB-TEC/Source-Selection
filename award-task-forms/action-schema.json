@@ -5,7 +5,7 @@
       "actionType": {
         "type": "string",
         "required": true,
-        "description": "Which form to render: executeAward, recordDebriefRequests, deliverDebriefings, followUpQuestions, protestWindow, agencyPosition, recordDecision, reviewDeliverable"
+        "description": "Which form to render: executeAward, recordDebriefRequests, deliverDebriefings, followUpQuestions, protestWindow, agencyPosition, recordDecision, reviewDeliverable, certifyFunds, optionDecision"
       },
       "solicitationId": {
         "type": "string",
@@ -40,12 +40,17 @@
       "scheduleId": {
         "type": "string",
         "required": false,
-        "description": "The schedule row a task is about, such as a deliverable to review (SSSchedule.ScheduleId)"
+        "description": "The schedule row a task is about, such as a deliverable to review or an option to decide (SSSchedule.ScheduleId)"
       },
       "reviewDraft": {
         "type": "string",
         "required": false,
         "description": "The reviewer agent's check of a deliverable against the contract's requirements, held to the report by the robot (JSON)"
+      },
+      "packageDraft": {
+        "type": "string",
+        "required": false,
+        "description": "The option package the robot prepared: the proposal, every check before exercising with its source, and the writer agent's recommendation (JSON)"
       }
     }
   },
@@ -54,7 +59,7 @@
     "properties": {
       "decision": {
         "type": "string",
-        "description": "The outcome the person chose (e.g. Signed, Protest filed, Defend)"
+        "description": "The outcome the person chose (e.g. Signed, Protest filed, Defend, Certified, Exercised, Notice sent, Not exercised)"
       },
       "notes": {
         "type": "string",

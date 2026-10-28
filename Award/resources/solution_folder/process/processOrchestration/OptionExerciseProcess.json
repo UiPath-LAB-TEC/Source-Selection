@@ -1,0 +1,72 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "OptionExerciseProcess",
+    "kind": "process",
+    "type": "processOrchestration",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "cfd67a95-148a-4847-bc59-75e2f00d2344",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "OptionExerciseProcess"
+      }
+    ],
+    "runtimeDependencies": [
+      {
+        "bindingType": "process",
+        "bindingKey": "solution_folder.AW_Robots",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "AW_Robots",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "Process"
+      },
+      {
+        "bindingType": "app",
+        "bindingKey": "solution_folder.AwardTaskForms",
+        "bindingValues": {
+          "name": {
+            "defaultValue": "AwardTaskForms",
+            "isExpression": false
+          },
+          "folderPath": {
+            "defaultValue": "solution_folder",
+            "isExpression": false
+          }
+        },
+        "resourceKind": "App"
+      }
+    ],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "ProcessOrchestration",
+      "name": "OptionExerciseProcess",
+      "package": {
+        "key": "bac6f269-2b64-4119-a831-1edbe61dcc6a"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/OptionExerciseProcess.bpmn#Start_Package\",\n      \"uniqueId\": \"9c0b0bb2-ad8b-420e-b3e9-3f7fa519b3ba\",\n      \"type\": \"ProcessOrchestration\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"solicitationId\": {\n            \"type\": \"string\"\n          },\n          \"scheduleId\": {\n            \"type\": \"string\"\n          },\n          \"contractingOfficer\": {\n            \"type\": \"string\"\n          },\n          \"resourceManager\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"decision\": {\n            \"type\": \"string\"\n          }\n        }\n      },\n      \"displayName\": \"Option or extension due\"\n    }\n  ]\n}\n",
+      "entryPointName": "/content/OptionExerciseProcess.bpmn#Start_Package",
+      "entryPointUniqueId": "9c0b0bb2-ad8b-420e-b3e9-3f7fa519b3ba"
+    },
+    "locks": [],
+    "key": "228406c9-aca2-4046-aaf9-18c409a374ee",
+    "files": []
+  }
+}

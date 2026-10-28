@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { AlarmClock, CalendarClock, Check, ChevronDown, CircleAlert, FileUp, Loader2, RotateCcw, UserCheck } from 'lucide-react'
+import { AlarmClock, CalendarClock, Check, ChevronDown, CircleAlert, FileUp, Loader2, Play, RotateCcw, UserCheck } from 'lucide-react'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@uipath/apollo-wind/components/ui/dialog'
 import { Textarea } from '@uipath/apollo-wind/components/ui/textarea'
@@ -15,8 +15,9 @@ import type { ActionGroup } from '../lib/alerts'
 import { useAwardData } from '../lib/data'
 import { fmtDay } from '../lib/status'
 import { useRecordReceipt } from '../lib/receipt'
+import { optionRowId, useStartPackage } from '../lib/options'
 import type { ScheduleRow } from '../lib/award'
-import { OpenAwardTask } from './AwardTask'
+import { OpenAwardTask, taskOwner } from './AwardTask'
 
 /** An item's title without a trailing "due Nov 10": the due chip beside it already carries the date. */
 export const itemTitle = (a: AlertRow) => (a.DueDay ? a.Title.replace(/\s+due [A-Z][a-z]{2} \d{1,2}(, \d{4})?$/, '') : a.Title)
@@ -109,8 +110,16 @@ function ActionItem({ item: a, contract }: { item: AlertRow; contract?: { id: st
   const scheduleId = a.Kind === 'deliverable' ? (() => { try { return (JSON.parse(a.EvidenceJson ?? '{}') as { scheduleId?: string }).scheduleId } catch { return undefined } })() : undefined
   const row = scheduleId ? data?.schedule.find((r) => r.ScheduleId === scheduleId) : undefined
   const review = row ? tasks.find((t) => !t.isCompleted && (t.data as { scheduleId?: string } | null)?.scheduleId === row.ScheduleId) : undefined
-  const owners = AWARD_PERSONAS.filter((p) => alertOwners(a).includes(p.taskLabel))
-  const mine = persona.id === 'co' || owners.some((p) => p.id === persona.id)
+  // An option's or extension's item starts its package, then opens whichever task it's waiting on: funds, then the decision.
+  const optionId = optionRowId(a)
+  const option = optionId ? data?.schedule.find((r) => r.ScheduleId === optionId) : undefined
+  const step = option ? tasks.find((t) => !t.isCompleted && (t.data as { scheduleId?: string } | null)?.scheduleId === option.ScheduleId) : undefined
+  const stepIsFunds = step?.tags?.some((g) => g.name === 'resource-manager')
+  const { start, busy: starting } = useStartPackage()
+  // While the funds wait on the Resource Manager she's on the item too, for her task only: the item stays the CO's.
+  const assigned = AWARD_PERSONAS.filter((p) => alertOwners(a).includes(p.taskLabel))
+  const owners = stepIsFunds ? [...assigned, ...AWARD_PERSONAS.filter((p) => p.taskLabel === 'resource-manager' && !assigned.includes(p))] : assigned
+  const mine = persona.id === 'co' || assigned.some((p) => p.id === persona.id)
   const quiet = g !== 'needs'
   return (
     <li className="px-4 py-3">
@@ -122,7 +131,8 @@ function ActionItem({ item: a, contract }: { item: AlertRow; contract?: { id: st
             {contract && <Link to={`/a/${encodeURIComponent(contract.id)}`} className="hover:text-primary">{contract.number ?? contract.title}</Link>}
             {contract && ' · '}{ALERT_KIND_LABEL[a.Kind] ?? a.Kind}
             {g === 'inHand' && a.DueDay ? ` · ${a.Severity === 'Overdue' ? 'was due' : 'due'} ${fmtDay(a.DueDay, false)}` : ''}
-            {g === 'inHand' && a.ActedBy ? ` · ${a.ActedBy} is on it` : ''}
+            {g === 'inHand' && a.ActedBy && !option?.ProcessInstanceId ? ` · ${a.ActedBy} is on it` : ''}
+            {option?.ProcessInstanceId ? ` · package under way${step ? `, with ${taskOwner(step)?.name ?? 'the next person'} ${stepIsFunds ? 'for the funds' : 'to decide'}` : ''}` : ''}
           </p>
         </div>
         <span className="flex shrink-0 -space-x-2" aria-label={`Owner: ${owners.map((p) => p.name).join(', ')}`}>
@@ -132,8 +142,15 @@ function ActionItem({ item: a, contract }: { item: AlertRow; contract?: { id: st
           {row && mine && !row.ReceivedDay && <RecordReceipt row={row} item={a} />}
           {row && row.ReceivedDay && review && (mine || persona.id === 'cor') && <OpenAwardTask task={review} label="Review report" size="sm" />}
           {row && row.ReceivedDay && !review && <Button size="sm" variant="ghost" disabled><Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />Review starting</Button>}
-          {!row && mine && g === 'needs' && <Button size="sm" variant="outline" disabled={busy === a.AlertId} onClick={() => acknowledge(a)}><Check className="mr-1.5 h-3.5 w-3.5" />I'm on it</Button>}
-          {!row && mine && g === 'inHand' && <Button size="sm" variant="ghost" disabled={busy === a.AlertId} onClick={() => reopen(a)}><RotateCcw className="mr-1.5 h-3.5 w-3.5" />Reopen</Button>}
+          {option && !option.ProcessInstanceId && persona.id === 'co' && (
+            <Button size="sm" variant={g === 'needs' ? 'default' : 'outline'} disabled={starting === option.ScheduleId} onClick={() => start(option, a)}>
+              {starting === option.ScheduleId ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Play className="mr-1.5 h-3.5 w-3.5" />}Start package
+            </Button>
+          )}
+          {option?.ProcessInstanceId && step && (stepIsFunds ? ['co', 'rm'].includes(persona.id) : persona.id === 'co') && <OpenAwardTask task={step} label={stepIsFunds ? 'Certify funds' : 'Decide'} size="sm" />}
+          {option?.ProcessInstanceId && !step && <Button size="sm" variant="ghost" disabled><Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />Package in progress</Button>}
+          {!row && !option && mine && g === 'needs' && <Button size="sm" variant="outline" disabled={busy === a.AlertId} onClick={() => acknowledge(a)}><Check className="mr-1.5 h-3.5 w-3.5" />I'm on it</Button>}
+          {!row && !(option?.ProcessInstanceId) && mine && g === 'inHand' && <Button size="sm" variant="ghost" disabled={busy === a.AlertId} onClick={() => reopen(a)}><RotateCcw className="mr-1.5 h-3.5 w-3.5" />Reopen</Button>}
           <Button size="sm" variant="ghost" onClick={() => setOpen(!open)} aria-expanded={open}>Details<ChevronDown className={`ml-1 h-3.5 w-3.5 transition ${open ? 'rotate-180' : ''}`} /></Button>
         </div>
       </div>
@@ -143,7 +160,7 @@ function ActionItem({ item: a, contract }: { item: AlertRow; contract?: { id: st
           <p className="text-xs">{a.Rule} · found by the daily contract watch {when(a.RaisedAt)}{a.ActedBy && g === 'inHand' ? ` · picked up by ${a.ActedBy} ${when(a.ActedAt)}` : ''}</p>
           {mine && g !== 'inHand' && (
             <div className="-ml-2 flex flex-wrap gap-1">
-              {row && g === 'needs' && <Button size="sm" variant="ghost" disabled={busy === a.AlertId} onClick={() => acknowledge(a)}><Check className="mr-1.5 h-3.5 w-3.5" />I'm on it</Button>}
+              {(row || option) && g === 'needs' && <Button size="sm" variant="ghost" disabled={busy === a.AlertId} onClick={() => acknowledge(a)}><Check className="mr-1.5 h-3.5 w-3.5" />I'm on it</Button>}
               <Button size="sm" variant="ghost" onClick={() => setDismissing(true)}>Dismiss with a reason</Button>
             </div>
           )}

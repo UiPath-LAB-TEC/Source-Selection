@@ -1,0 +1,98 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "52495100-cad4-47a0-8a93-0014bcbd9555",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "contractFacts": {
+            "type": "string",
+            "description": "JSON: contract number, contractor, the period running now, when the contract ends, whether it's a DoD contract, and each line item with its monthly rate"
+          },
+          "decision": {
+            "type": "string",
+            "description": "JSON: what's being decided (an extension of services, or an option's preliminary notice or exercise), the clause, the notice deadline and days left, whether the window has closed, the allowed actions, the proposal with the robot's reason, the months that remain and the follow-on contract's status"
+          },
+          "checks": {
+            "type": "string",
+            "description": "JSON array: every check FAR 17.204-1(b) and DFARS 217.207(c) ask for, each with id, label, rule, status (Met, Not met, To confirm, Not required), the robot's one-line finding and the facts behind it"
+          }
+        },
+        "required": [
+          "contractFacts",
+          "decision",
+          "checks"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "description": "The three findings that need judgment: requirement, performance and price",
+            "items": {
+              "type": "object",
+              "properties": {
+                "element": {
+                  "type": "string",
+                  "description": "One of: requirement, performance, price"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "The finding, 2 to 4 sentences, using only facts from the checks"
+                },
+                "sources": {
+                  "type": "array",
+                  "description": "Ids of the checks the finding rests on",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "element",
+                "text",
+                "sources"
+              ]
+            }
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "One of the decision's allowedActions"
+          },
+          "recommendedMonths": {
+            "type": "number",
+            "description": "For an extension you recommend: its length in months, 1 to monthsRemaining. Otherwise 0."
+          },
+          "reason": {
+            "type": "string",
+            "description": "One or two sentences on why"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Two or three sentences the Contracting Officer reads first"
+          },
+          "risks": {
+            "type": "array",
+            "description": "Up to three short items the Contracting Officer should weigh. Empty when there are none.",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "findings",
+          "recommendation",
+          "recommendedMonths",
+          "reason",
+          "summary",
+          "risks"
+        ]
+      }
+    }
+  ]
+}

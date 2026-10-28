@@ -32,6 +32,16 @@
       "Type": "processOrchestration",
       "ProjectRelativePath": "DeliverableReviewProcess/project.uiproj",
       "Id": "d56a68a7-5617-41cb-be92-ddebd5e991d8"
+    },
+    {
+      "Type": "Agent",
+      "ProjectRelativePath": "AW_OptionWriter/project.uiproj",
+      "Id": "b32355d4-3b6f-4038-9eeb-250e3572bd45"
+    },
+    {
+      "Type": "processOrchestration",
+      "ProjectRelativePath": "OptionExerciseProcess/project.uiproj",
+      "Id": "cfd67a95-148a-4847-bc59-75e2f00d2344"
     }
   ]
 }

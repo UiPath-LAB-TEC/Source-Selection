@@ -5,6 +5,8 @@
 - Slice 1 (contract award and notices) is deployed and committed (e80a2ad). See §16.
 - §17 adds the administration phase: managing the contract after award. Slice A is deployed (2026-10-23; §18), and §19 is
   the clarity redesign (2026-10-27). Both are committed (e80a2ad).
+- §20, the deliverable review, is deployed and committed (97442c3). §21, slice B (option exercise and the extension of
+  services), is deployed as Award 1.4.0 and Contract Management web 1.0.11 (§21.4). Not committed yet.
 
 **Sales play phase:** 4 of 4, Award. It moves the play page from "Decision built" to "Demo ready".
 
@@ -1158,3 +1160,217 @@ receipt, Review starting) and the review form on the incumbent's contract.
   - **To tighten in the next upgrade:** follow-ups and issues about other contracts or deliverables shouldn't downgrade
     a deliverable whose every element is met.
 - Contract Management web 1.0.10 deployed 2026-10-27 (index-BE7cXQhg.js). The live UI wasn't re-checked, because the browser pane's sign-in had expired.
+
+## 21. Slice B (2026-10-27): option exercise and the extension of services
+
+**Goal:** the incumbent's extension decision (52.217-8, the notice due Oct 30) is finished in the app: the checks are
+gathered, the determination is drafted, Nadia certifies the funds, Dana signs, and the notice and the modification are
+filed, with the new period, its obligations and its schedule in place. The same process runs 52.217-9 options: first
+the preliminary notice, then the exercise.
+
+**Checked against primary text on 2026-10-27:** RFO 17.204-1(b) (acquisition.gov, FAR overhaul Part 17). The CO may
+exercise an option only after (1) written notice within the contract's period, (2) confirming funds are available,
+and (3) determining that (i) the option fulfills an existing need, (ii) it was synopsized unless exempt, (iii) the
+contractor has no active SAM exclusion, (iv) performance on this contract has been acceptable, (v) the price is fair
+and reasonable based on current market conditions and exercise is in the Government's best interest, and (vi) it
+complies with part 6: evaluated in the initial competition, at a price set by or determinable from the contract.
+17.203(f) and (g) prescribe 52.217-8 and 52.217-9. DFARS 217.207(c) adds the SAM registration match, SPRS and CMMC.
+
+### 21.1 Process: `OptionExerciseProcess` (BPMN, Award solution)
+
+```
+Start (solicitationId, scheduleId, contractingOfficer, resourceManager)
+ ─► [R] PrepareOptionPackage ─► [H] Certify Funds (Resource Manager) ─► [H] Option Decision (CO) ─► ◇ decision
+       Exercised ─► [R] IssueOptionExercise ─► End "Exercised"
+       Notice sent ─► [R] IssuePreliminaryNotice ─► End "Preliminary notice sent"
+       (default) ─► [R] RecordNotExercised ─► End "Not exercised"
+```
+
+- **Started** by Start package on the item (CO), or by the daily watch when an option or extension item reaches
+  needs action (due within 14 days, or overdue) with no package running and the contract has CoEmail and RmEmail.
+- **PrepareOptionPackage** (robot, with AW_OptionWriter): works out what's being decided and gathers the checks.
+  - Stage: an extension (52.217-8), an option's preliminary notice (52.217-9(a), while the option is Planned), or its
+    exercise (once the notice is sent).
+  - The proposal: the period, each line item's price (an extension runs at the current period's rates, by the month),
+    and for an extension the proposed length. The length is the shortest that covers the risk: while the follow-on's
+    protest window is open, the shortest increment whose next notice day falls after that window closes (52.217-8 may
+    be exercised more than once), so the CO decides the rest once the window has closed. A follow-on that's under way
+    and in place before the contract ends means no extension; no follow-on means the whole remaining extension.
+  - The checks, one per element above, each Met, Not met, To confirm or Not required, with the facts and their source:
+    notice window, funds (the Resource Manager's step), existing need (the follow-on's status), synopsis, SAM exclusion
+    and registration (SSRefVendor, the demo's SAM and CPARS source), performance (CPARS ratings for this contract, this
+    period's deliverables, open items), price (the contract's rates against the follow-on's competed prices, or the
+    IGCE), part 6 (evaluated at award), the duration limits (52.217-8's 6 months, 52.217-9(c)), SPRS and CMMC.
+  - The agent drafts the three findings that need judgment (existing need, performance, price and best interest) from
+    those checks, citing them by ID, and recommends an action. The robot drops any citation of a check that doesn't
+    exist. The other findings are written by the robot from the checks.
+- **Certify Funds** (Nadia, `certifyFunds`): certifies funds for the proposal (or another length), marks them planned
+  but not yet available (enough for a preliminary notice), or not available. She gives the funding document and the
+  appropriation. The certification goes on the package.
+- **Option Decision** (Dana, `optionDecision`): the checks, the funds, the determination and findings (editable), the
+  agent's recommendation, and the choice. Exercise needs certified funds; the preliminary notice needs funds at least
+  planned. Not exercising needs a reason. She signs, and the form writes the signed determination (SSDecision, Kind
+  OptionExercise or Extension), the notice (SSCorrespondence) and, on exercise, the modification (SSModification).
+  - **Late:** past the notice window, a unilateral exercise isn't available. The form says so, and an exercise becomes
+    a bilateral modification that needs the contractor's agreement; counsel should check whether part 6 then applies.
+- **The issue steps** file the PDFs to SS-Records `<sol>/modifications/`, mark the letter delivered and the modification
+  issued, and update the record:
+  - **Exercised:** the option row is Exercised, or a new extension period row (Extension 1, 2, ...) is added and the
+    clause row moves on to what remains. Obligations are added per line item, the abstract gains the new period's
+    prices, PeriodEnd moves, and the monthly report and final evaluation move to the new end.
+  - **Preliminary notice:** the option is Notice sent, so its item turns to the exercise deadline.
+  - **Not exercised:** the option and any later options, or the extension clause, are Not exercised.
+  - Each re-runs the watch's rules for that contract, so the item clears (or the next one appears) at once.
+
+### 21.2 Data
+
+- **SSModification** (new): ModificationId `<sol>-<number>`, SolicitationId, Number (P00012), Kind (Option exercise ·
+  Extension of services), Authority, Bilateral, ScheduleId, EffectiveDay, Amount, Status (Signed · Issued), Text
+  (10,000), FilePath, SignedBy, SignedAt. The number follows the highest P-number on the contract's funding rows and
+  modifications.
+- **SSAward:** CoEmail and RmEmail, for the watch to start packages (CorEmail exists).
+- **SSSchedule:** the package lives in ReviewJson on the option or extension row, with ProcessInstanceId while it runs.
+- **SSRefVendor:** the generator adds Ostrander's row (active, no exclusion, registration to Feb 14, CPARS for this
+  contract: Very Good, Very Good, Satisfactory, Satisfactory). The incumbent's abstract gains its SPRS assessment and
+  `evaluated` on its option clauses.
+- Reused: SSDecision Kinds OptionExercise and Extension; SSCorrespondence Kinds PreliminaryNotice, OptionNotice,
+  ExtensionNotice and OptionNotExercised; SSFunding obligations by the modification.
+
+### 21.3 Apps
+
+- **award-task-forms:** `certifyFunds` and `optionDecision`, with the letter, modification and memo templates in
+  `src/lib/options.ts` (tested with `npm test`). The action schema gains `packageDraft`.
+- **Contract Management web:** Start package on option and extension items (CO); while it runs, the item shows whose
+  turn it is and opens the task (Certify funds for Nadia, Decide for Dana). Contract pages show the exercised
+  extension periods and a Modifications list on the Funds tab.
+- **Source Selection web:** Delete evaluation also deletes SSModification rows.
+- **Also in this upgrade:** the deliverable reviewer's instructions say follow-ups about other contracts or
+  deliverables don't downgrade a deliverable whose every element is met (§20).
+
+### 21.4 Status (2026-10-28): built; Award 1.4.0 deployed
+
+**Deployed 2026-10-28: Award 1.4.0.** The upgrade from 1.3.0 succeeded and the deployment is active.
+- All seven releases are at 1.4.0: OptionExerciseProcess 95D0BEEC-CF4E-441C-9017-72B4C38D5E01 and AW_OptionWriter
+  0D07A1C6-FB2D-4099-A5ED-6D37069CB953 are new.
+- The daily watch trigger kept its release.
+- The next upgrade uses record key 1ab38c97-4d9b-4e4d-ac46-8f252d61b0c6.
+
+**Web deployed 2026-10-28; both live bundles match local:**
+- Contract Management web 1.0.11 (index-wP_CF09P.js)
+- Source Selection web 1.0.74 (index-BbN5h6C4.js)
+
+**Live data already changed (no deploy needed):**
+- SSModification created (99169e7e-3cd2-f111-bf5b-000d3a66d571, in entity-ids.json). SSAward has CoEmail and
+  RmEmail, both set on the two live contracts.
+- Ostrander's SSRefVendor row is in, and the incumbent's abstract has its SPRS assessment, `synopsized` and
+  `evaluated` on both option clauses. The generator writes all of it on a fresh seed.
+
+**Changes from the plan in §21.1–21.3:**
+- **The determination is an SSDecision draft** (`<sol>-EXT-1`, `<sol>-OY1-1`, ...), written by PrepareOptionPackage
+  with the writer's three findings and the robot's own for the rest, and two blanks (`[Funds certification]`,
+  `[Determination]`) the CO's form fills. The package on the schedule row keeps the checks, the proposal and the
+  writer's recommendation (about 7,000 characters), with room for the funds and the decision.
+- **The notice, the modification and the determination paragraph are written by the CO's form**
+  (`award-task-forms/src/lib/options.ts`), because the length the CO picks changes all three. The robot files what was
+  signed and works out each line's amount the same way (`admin.decided_lines`).
+- **One join before one end:** the gateway's three branches meet at "Filed" before End "Decision filed", which
+  returns the outcome (a public output needs a single completion event).
+- **The watch starts a package once its item needs action** (due within 14 days, or overdue), unless the item was
+  dismissed. Start package on the item works at any time.
+- **Exercised extensions are their own periods** (Extension 1, 2, ...): `current_period` and the funds forecast read
+  them, the abstract gains their prices, and the clause row keeps only what remains (Planned, Used, Not exercised).
+- **The late case:** the notice check is Not met, and an exercise becomes a bilateral modification with the
+  contractor's signature line.
+
+**Checked:**
+- 82 AW_Robots tests pass (19 new in `tests/test_options.py`), plus `npm test` in award-task-forms (the option
+  templates) and type checks in all four apps.
+- Both agents pass `uip agent review` (100, A+). AW_OptionWriter has 5 eval cases:
+  - the demo day (extend 1 month)
+  - the window closed with the follow-on under way (don't extend)
+  - the follow-on stayed (extend 4 months)
+  - Marginal performance (don't extend)
+  - the follow-on's option 1 preliminary notice
+- OptionExerciseProcess validates.
+- **In the local preview,** on a fresh export of the tenant:
+  - The incumbent's extension item shows Start package.
+  - Nadia's certifyFunds and Dana's optionDecision forms render at desktop and phone widths, in both themes. Signing
+    writes the determination, the notice, the modification, the decision and the audit row.
+  - After the robot filed a simulated exercise, the contract page showed Ext. 1 in the period tracker, Extension 1 and
+    "Further extension: up to 5 months, decide by Dec 2" on the Schedule tab, and P00012 with its notice under
+    Modifications and letters.
+
+**The demo, once deployed:** the incumbent's notice is due Oct 30.
+- Dana starts the package from the item, or the 6:00 AM watch starts it on Oct 29.
+- The agent recommends one month, because Keystone can be protested until Nov 2.
+- A second decision for the rest of the extension is then due Dec 2.
+
+**First live run (2026-10-28):** Start package on Ostrander's extension started OptionExerciseProcess instance
+a0147084-bfa1-44a1-9c88-7e04b6c0e769.
+- PrepareOptionPackage (job 9be41b56) and AW_OptionWriter (job e691ec29, 18 seconds) wrote the package (7,623
+  characters) and the draft determination W52P1J-22-R-0011-EXT-1.
+- The checks match the preview: 8 Met, 3 to confirm, CMMC not required.
+- The writer recommended one month to Jan 31, 2027, as the robot proposed.
+- Nadia's task #20781454, "Certify funds for an option or extension", is pending in the Award folder.
+- **The writer's three findings have factual slips, to fix in the next upgrade:**
+  - **Existing need:** it says the work must continue because Keystone's transition-in ends Dec 22. That date is
+    before Dec 31; the real reason is a protest stay until Nov 2.
+  - **Performance:** it calls line item 0002 "past its labor-hour ceiling" and a "ceiling overrun". The line is past
+    85% of its ceiling with no notice from Ostrander, not over it.
+  - **Price:** it singles out line item 0001, with a comparison the figures don't support, and misses that 0002 is
+    about 19% above the follow-on's price.
+  - **The fix:**
+    - The robot gives the price check each line's difference, with direction and percent.
+    - The ceiling item gets a plain fact (past 85%, not over 100%).
+    - The requirement check states whether the follow-on is in place before the contract ends.
+    - The prompt says to use only those facts.
+
+**The writer fix, Award 1.4.1, deployed 2026-10-28.** All seven releases are at 1.4.1 and the trigger is kept. The next upgrade uses
+record key 06b366a6-7de2-48a9-a6b4-75d007c562dc. Web 1.0.12 is deployed, and its live bundle (index-DE2XO1my.js) matches.
+- **Existing need:** the requirement check states why the work is needed (`whyNeeded`) and whether the follow-on is in
+  place before the contract ends (`followOnInPlaceBeforeEnd`). On the demo day it reads: the follow-on is set to take
+  over on time, so the need is the risk that a protest filed by Nov 2 stays it.
+- **Ceiling:** the performance check lists each labor-hour line against its ceiling (`laborHourCeilings`: percent,
+  past 85%, over the ceiling, contractor notice on file). The robot's own finding says it plainly: 0002 is at about 87%,
+  past the 85% notice point, not over the ceiling, with no notice. The open items now count only a ceiling item, or
+  deliverables and milestones that are overdue.
+- **Price:** the price check gives each line's difference, percent and direction, and the lines that differ by 10% or
+  more, largest first (`notable`). The finding names them: 0002 is 19% above, and 0004, 0001 and 0003 are 15%, 13% and
+  12% below.
+- **Writer rules:**
+  - Argue the need from `whyNeeded`.
+  - Quote figures exactly, and don't add, rank or compare them.
+  - A line is over its ceiling only when `overCeiling` is true.
+  - Only listed late, returned or open items count against performance.
+  - Name the `notable` lines.
+- **Room on the row:**
+  - The package is stored compact, without the clause text (the row has ClauseText).
+  - The writer's summary is capped at 450 characters and the reason at 300; history keeps the last two decisions.
+  - The forms cap the CO's reason and the RM's note.
+  - The worst case with every field full is under 10,000 characters.
+- 83 tests pass. The agent review gives 100, A+, and its eval cases expect the corrected readings.
+- The run waiting on Nadia (a0147084) keeps its 1.4.0 draft; Dana corrects the three sentences in the form before
+  signing. After the upgrade, its remaining robot steps run on the 1.4.1 robot, which reads the 1.4.0 package the
+  same way.
+
+**The Resource Manager sees her funds step (web 1.0.13, deployed 2026-10-28; the live bundle index-PoXY1XFz.js matches):** an option or extension
+item belongs to the CO, so Nadia never saw it, and her funds task was only under My tasks. Now, while a package waits on
+her certification (running, prepared, no funds yet), her action items show the item under Needs action, with Nadia on it
+and the Certify funds button. It counts on her badge. She gets no "I'm on it", dismiss or reopen there: the item stays
+the CO's (`waitingOnFunds` and `alertsFor` in award-workspace `lib/alerts.ts`). Checked in the preview as Nadia and as
+Dana.
+
+**First live run, end to end (2026-10-28):** instance a0147084 completed at 14:35 UTC.
+- **Funds:** Nadia certified $289,999.99 for one month (O&M Army FY2027, PR 2938293); task #20781454.
+- **Decision:** Dana signed the extension; task #20782303.
+- **Filing:** IssueOptionExercise (job 9926bb85) filed P00012.pdf, P00012-Notice.pdf and P00012-Determination.pdf to
+  SS-Records `W52P1J-22-R-0011/modifications/`. Modification P00012 is Issued and the notice is Delivered.
+- **The record:**
+  - Extension 1 runs Jan 1–31, 2027, with four obligations totalling $289,999.99.
+  - PeriodEnd and the abstract move to Jan 31; the monthly report and the final evaluation move with them.
+  - The clause row now covers Feb 1 to Jun 30, with the next notice due Dec 2. The item now reads "Further extension:
+    decide by Dec 2" (Upcoming).
+- **The signed determination kept the 1.4.0 writer's three slips** (need, ceiling, price; see above), because they
+  weren't edited before signing. A signed record isn't rewritten. A clean demo run needs a fresh seed of the incumbent
+  (`tools/generate_incumbent.py --reset`, then a seed; the user runs the reset), after which packages get the 1.4.1
+  writer.

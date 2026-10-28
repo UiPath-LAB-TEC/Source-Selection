@@ -17,7 +17,7 @@ const RECORDS_BUCKET = 'SS-Records'
  * Award app's rows go too: the record is one record across both apps.
  */
 const ENTITIES = [ENTITY.offerors, ENTITY.pages, ENTITY.findings, ENTITY.ratings, ENTITY.decisions, ENTITY.audit,
-  AWARD_ENTITY.alerts, AWARD_ENTITY.funding, AWARD_ENTITY.schedule, AWARD_ENTITY.correspondence, AWARD_ENTITY.protests, AWARD_ENTITY.awards,
+  AWARD_ENTITY.alerts, AWARD_ENTITY.modifications, AWARD_ENTITY.funding, AWARD_ENTITY.schedule, AWARD_ENTITY.correspondence, AWARD_ENTITY.protests, AWARD_ENTITY.awards,
   ENTITY.solicitations]
 
 export interface DeleteSummary { runsCancelled: number; records: number; files: number }

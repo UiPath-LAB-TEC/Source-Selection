@@ -40,6 +40,7 @@ export function appUrl(id: AppId, path = '/'): string {
  */
 export const AWARD_ENTITY = {
   awards: 'SSAward', correspondence: 'SSCorrespondence', protests: 'SSProtest', schedule: 'SSSchedule', funding: 'SSFunding', alerts: 'SSAlert',
+  modifications: 'SSModification',
 } as const
 
 /** The Award solution's deployment folder (AMER Presales/Public Sector/Source Selection/Award), where its runs live. By key, as every folder here. */

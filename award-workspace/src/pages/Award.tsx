@@ -22,6 +22,7 @@ import { ActionGroups } from '../components/ActionItems'
 import { ActiveChip } from '../components/ContractCard'
 import { FundsPanel } from '../components/FundsPanel'
 import { Letters } from '../components/Letters'
+import { Modifications } from '../components/Modifications'
 import { NextStep } from '../components/NextStep'
 import { PeriodTracker } from '../components/PeriodTracker'
 import { ScheduleTimeline } from '../components/ScheduleTimeline'
@@ -74,7 +75,7 @@ const rowsOf = (d: AwardDataset, id: string) => {
   return {
     award: of(d.awards)[0],
     offerors: of(d.offerors).sort((a, b) => a.Name.localeCompare(b.Name)),
-    letters: of(d.correspondence), protests: of(d.protests), schedule: of(d.schedule), funding: of(d.funding), alerts: of(d.alerts),
+    letters: of(d.correspondence), protests: of(d.protests), schedule: of(d.schedule), funding: of(d.funding), alerts: of(d.alerts), modifications: of(d.modifications ?? []),
     audit: of(d.audit).sort((a, b) => a.OccurredAt.localeCompare(b.OccurredAt)),
     decision: decisions.find((x) => x.Kind === 'Award'), contract: decisions.find((x) => x.Kind === 'Contract'),
   }
@@ -284,7 +285,10 @@ function ContractView({ d, sol }: { d: AwardDataset; sol: Solicitation }) {
         </TabsContent>
 
         <TabsContent value="funds" className="mt-4">
-          <FundsPanel funds={fundsOf(award)} funding={r.funding} />
+          <div className="space-y-6">
+            <FundsPanel funds={fundsOf(award)} funding={r.funding} />
+            <Modifications mods={r.modifications} letters={r.letters} />
+          </div>
         </TabsContent>
 
         {!imported && (

@@ -16,6 +16,7 @@ export const ENTITY = {
   // The Award app's own rows (the award phase, then the contract's administration): its forms read and write them,
   // Source Selection's forms ignore them.
   awards: 'SSAward', correspondence: 'SSCorrespondence', protests: 'SSProtest', schedule: 'SSSchedule', alerts: 'SSAlert',
+  funding: 'SSFunding', modifications: 'SSModification',
 } as const
 
 /**
@@ -50,9 +51,11 @@ export interface TaskData {
   awardee?: string
   /** Work in progress the person saved without submitting (JSON, shape owned by the form). */
   draft?: string
-  /** Contract Management: the schedule row a task is about (a deliverable to review) and the robot's prepared review. */
+  /** Contract Management: the schedule row a task is about (a deliverable to review, an option or extension to decide) and
+   *  what the robot prepared for it: the deliverable review, or the option package. */
   scheduleId?: string
   reviewDraft?: string
+  packageDraft?: string
 }
 
 export interface LoadedTask { data: TaskData; isReadOnly: boolean; dark: boolean; actor: string }
@@ -388,6 +391,13 @@ export function sampleInputs(o: PreviewOptions, d: Record<EntityKey, Row[]>): Pa
   const sol = d.solicitations.find((s) => s.SolicitationId === o.solicitationId)
   const plan = sol ? JSON.parse(sol.PlanJson as string) : null
   switch (o.actionType) {
+    case 'certifyFunds':
+    case 'optionDecision': {
+      // Contract Management: the contract's option or extension with a package prepared (the incumbent's extension in the demo).
+      const row = (d.schedule ?? []).find((r) => r.SolicitationId === o.solicitationId && (r.Kind === 'Extension' || r.Kind === 'Option')
+        && String(r.ReviewJson ?? '').includes('"checks"'))
+      return { scheduleId: (row?.ScheduleId as string) ?? '', packageDraft: (row?.ReviewJson as string) ?? '' }
+    }
     case 'reviewDeliverable': {
       // Contract Management: the contract's first deliverable on file (received, with the reviewer's check if it ran).
       const row = (d.schedule ?? []).find((r) => r.SolicitationId === o.solicitationId && r.Kind === 'Deliverable' && !!r.FilePath)

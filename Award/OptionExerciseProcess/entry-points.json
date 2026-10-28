@@ -1,0 +1,37 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/OptionExerciseProcess.bpmn#Start_Package",
+      "uniqueId": "9c0b0bb2-ad8b-420e-b3e9-3f7fa519b3ba",
+      "type": "ProcessOrchestration",
+      "input": {
+        "type": "object",
+        "properties": {
+          "solicitationId": {
+            "type": "string"
+          },
+          "scheduleId": {
+            "type": "string"
+          },
+          "contractingOfficer": {
+            "type": "string"
+          },
+          "resourceManager": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string"
+          }
+        }
+      },
+      "displayName": "Option or extension due"
+    }
+  ]
+}

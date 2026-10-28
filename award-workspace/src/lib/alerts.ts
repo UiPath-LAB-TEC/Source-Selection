@@ -7,17 +7,39 @@ import { AWARD_ENTITY, AWARD_PROCESS_FOLDER } from '@ss/lib/apps'
 import { ENTITY } from '@ss/lib/data'
 import type { Persona } from '@ss/lib/types'
 import { useAwardPersona } from '../hooks/usePersona'
-import { alertOwners, byUrgency, isLive } from './award'
+import { parsePackage } from '@award/lib/options'
+import { RM_PERSONA, alertOwners, byUrgency, isLive } from './award'
 import type { AlertRow, AwardDataset } from './award'
 import { useAwardData } from './data'
+import { optionRowId } from './options'
 
 /** The Maestro BPMN process that runs the daily contract watch (Award solution). */
 export const WATCH_PROCESS = 'ContractWatchProcess'
 
-/** A persona's live alerts, most urgent first. The Contracting Officer sees every alert; the others see their own. */
+/**
+ * An option or extension whose package is waiting on the Resource Manager's funds certification: it's running, the
+ * robot has prepared it, and nobody has certified yet.
+ */
+export function waitingOnFunds(data: AwardDataset | undefined, a: AlertRow) {
+  const id = optionRowId(a)
+  const row = id ? data?.schedule.find((r) => r.ScheduleId === id) : undefined
+  const pkg = parsePackage(row?.ReviewJson)
+  return !!row?.ProcessInstanceId && !!pkg && !pkg.funds && !pkg.decision
+}
+
+/**
+ * A persona's live alerts, most urgent first. The Contracting Officer sees every alert; the others see their own. The
+ * Resource Manager also sees an option or extension while its funds wait on her, as hers to act on: open, whatever the
+ * CO did with it, so it sits in her Needs action with its Certify funds button.
+ */
 export function alertsFor(data: AwardDataset | undefined, persona: Persona, all = false) {
   const live = (data?.alerts ?? []).filter(isLive)
-  return byUrgency(all || persona.id === 'co' ? live : live.filter((a) => alertOwners(a).includes(persona.taskLabel)))
+  if (all || persona.id === 'co') return byUrgency(live)
+  const own = live.filter((a) => alertOwners(a).includes(persona.taskLabel))
+  const funds = persona.taskLabel === RM_PERSONA.taskLabel
+    ? live.filter((a) => !own.includes(a) && waitingOnFunds(data, a)).map((a) => ({ ...a, Status: 'Open' }))
+    : []
+  return byUrgency([...own, ...funds])
 }
 
 /**

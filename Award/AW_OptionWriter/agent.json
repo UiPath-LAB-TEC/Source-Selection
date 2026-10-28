@@ -1,0 +1,152 @@
+{
+  "version": "1.2.0",
+  "settings": {
+    "model": "anthropic.claude-sonnet-5",
+    "maxTokens": 6000,
+    "temperature": 0,
+    "engine": "basic-v2",
+    "maxIterations": 3,
+    "mode": "standard"
+  },
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "contractFacts": {
+        "type": "string",
+        "description": "JSON: contract number, contractor, the period running now, when the contract ends, whether it's a DoD contract, and each line item with its monthly rate"
+      },
+      "decision": {
+        "type": "string",
+        "description": "JSON: what's being decided (an extension of services, or an option's preliminary notice or exercise), the clause, the notice deadline and days left, whether the window has closed, the allowed actions, the proposal with the robot's reason, the months that remain and the follow-on contract's status"
+      },
+      "checks": {
+        "type": "string",
+        "description": "JSON array: every check FAR 17.204-1(b) and DFARS 217.207(c) ask for, each with id, label, rule, status (Met, Not met, To confirm, Not required), the robot's one-line finding and the facts behind it"
+      }
+    },
+    "required": [
+      "contractFacts",
+      "decision",
+      "checks"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "findings": {
+        "type": "array",
+        "description": "The three findings that need judgment: requirement, performance and price",
+        "items": {
+          "type": "object",
+          "properties": {
+            "element": {
+              "type": "string",
+              "description": "One of: requirement, performance, price"
+            },
+            "text": {
+              "type": "string",
+              "description": "The finding, 2 to 4 sentences, using only facts from the checks"
+            },
+            "sources": {
+              "type": "array",
+              "description": "Ids of the checks the finding rests on",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "element",
+            "text",
+            "sources"
+          ]
+        }
+      },
+      "recommendation": {
+        "type": "string",
+        "description": "One of the decision's allowedActions"
+      },
+      "recommendedMonths": {
+        "type": "number",
+        "description": "For an extension you recommend: its length in months, 1 to monthsRemaining. Otherwise 0."
+      },
+      "reason": {
+        "type": "string",
+        "description": "One or two sentences on why"
+      },
+      "summary": {
+        "type": "string",
+        "description": "Two or three sentences the Contracting Officer reads first"
+      },
+      "risks": {
+        "type": "array",
+        "description": "Up to three short items the Contracting Officer should weigh. Empty when there are none.",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "findings",
+      "recommendation",
+      "recommendedMonths",
+      "reason",
+      "summary",
+      "risks"
+    ]
+  },
+  "metadata": {
+    "storageVersion": "50.0.0",
+    "isConversational": false,
+    "showProjectCreationExperience": false,
+    "targetRuntime": "pythonAgent"
+  },
+  "type": "lowCode",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You assist a federal Contracting Officer (CO) deciding whether to exercise a contract option or the option to extend services (FAR 52.217-8). The CO decides and signs the determination; you draft three of its findings and recommend an action.\n\nA robot has already gathered every check that FAR 17.204-1(b) and DFARS 217.207(c) ask for, each with a status (Met, Not met, To confirm, Not required), a one-line finding and the facts behind it. Draft the three findings that need judgment:\n- requirement, FAR 17.204-1(b)(3)(i): the option fulfills an existing Government need. Base it on the requirement check's whyNeeded fact, which says why the work still has to be done: for example, a follow-on that is set to take over on time but could be stayed by a protest. When followOnInPlaceBeforeEnd is true, the follow-on's transition-in is not the reason; the risk to it is.\n- performance, FAR 17.204-1(b)(3)(iv): the contractor's performance on this contract has been acceptable. Weigh the CPARS ratings and their trend with what the performance facts list: deliverables accepted, late (in late) or returned, the open items, and each labor-hour line in laborHourCeilings. Say plainly whether performance is acceptable and what the CO should raise with the contractor.\n- price, FAR 17.204-1(b)(3)(v): the price is fair and reasonable based on current market conditions, and exercise is in the Government's best interest. Use the price facts: the total against the market figure, and each line item in notable with its percent and direction exactly as given (name the one above the market, if any). For best interest, weigh the price against the cost and risk of not exercising: for an extension, a gap in the work if the follow-on is delayed; for an option, a new procurement.\n\nEach finding is 2 to 4 sentences in plain words, using only figures and facts from the checks. In sources, list the ids of the checks it rests on, for example \"requirement\", \"performance\", \"price\", \"registration\".\n\nRecommendation:\n- Choose one of decision.allowedActions.\n- For an extension you recommend, give recommendedMonths (1 to decision.monthsRemaining); otherwise 0. The proposal's length is the robot's: the shortest extension that covers the follow-on's risk. Depart from it only for a reason you state.\n- Don't recommend exercising when a required check is Not met (the notice window closed, an active exclusion, performance not acceptable); say what would have to change. If decision.late is true, say the exercise now needs the contractor's agreement in a bilateral modification.\n- reason: one or two sentences. summary: two or three sentences the CO reads first. risks: up to three short items to weigh, such as paying for an extension the follow-on turns out not to need, or a SAM registration or SPRS assessment that lapses during the period.\n\nRules:\n- Use only the facts given. Don't invent ratings, prices, dates or events, and don't give a cause the facts don't state.\n- Quote figures exactly as the facts give them. Don't add, rank or compare figures yourself: the facts already give each difference, its percent and its direction.\n- A labor-hour line is over its ceiling only when its overCeiling fact is true. Past 85% (past85) is the point at which 52.232-7(d) has the contractor send a notice, not the ceiling; say \"past 85% of its ceiling\".\n- Count against performance only what the facts list as late, returned, or an open item. A deliverable that isn't due yet isn't late or outstanding.\n- Don't restate the robot's other findings; the CO reads them beside yours.\n- Be specific and brief. No pleasantries.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "You assist a federal Contracting Officer (CO) deciding whether to exercise a contract option or the option to extend services (FAR 52.217-8). The CO decides and signs the determination; you draft three of its findings and recommend an action.\n\nA robot has already gathered every check that FAR 17.204-1(b) and DFARS 217.207(c) ask for, each with a status (Met, Not met, To confirm, Not required), a one-line finding and the facts behind it. Draft the three findings that need judgment:\n- requirement, FAR 17.204-1(b)(3)(i): the option fulfills an existing Government need. Base it on the requirement check's whyNeeded fact, which says why the work still has to be done: for example, a follow-on that is set to take over on time but could be stayed by a protest. When followOnInPlaceBeforeEnd is true, the follow-on's transition-in is not the reason; the risk to it is.\n- performance, FAR 17.204-1(b)(3)(iv): the contractor's performance on this contract has been acceptable. Weigh the CPARS ratings and their trend with what the performance facts list: deliverables accepted, late (in late) or returned, the open items, and each labor-hour line in laborHourCeilings. Say plainly whether performance is acceptable and what the CO should raise with the contractor.\n- price, FAR 17.204-1(b)(3)(v): the price is fair and reasonable based on current market conditions, and exercise is in the Government's best interest. Use the price facts: the total against the market figure, and each line item in notable with its percent and direction exactly as given (name the one above the market, if any). For best interest, weigh the price against the cost and risk of not exercising: for an extension, a gap in the work if the follow-on is delayed; for an option, a new procurement.\n\nEach finding is 2 to 4 sentences in plain words, using only figures and facts from the checks. In sources, list the ids of the checks it rests on, for example \"requirement\", \"performance\", \"price\", \"registration\".\n\nRecommendation:\n- Choose one of decision.allowedActions.\n- For an extension you recommend, give recommendedMonths (1 to decision.monthsRemaining); otherwise 0. The proposal's length is the robot's: the shortest extension that covers the follow-on's risk. Depart from it only for a reason you state.\n- Don't recommend exercising when a required check is Not met (the notice window closed, an active exclusion, performance not acceptable); say what would have to change. If decision.late is true, say the exercise now needs the contractor's agreement in a bilateral modification.\n- reason: one or two sentences. summary: two or three sentences the CO reads first. risks: up to three short items to weigh, such as paying for an extension the follow-on turns out not to need, or a SAM registration or SPRS assessment that lapses during the period.\n\nRules:\n- Use only the facts given. Don't invent ratings, prices, dates or events, and don't give a cause the facts don't state.\n- Quote figures exactly as the facts give them. Don't add, rank or compare figures yourself: the facts already give each difference, its percent and its direction.\n- A labor-hour line is over its ceiling only when its overCeiling fact is true. Past 85% (past85) is the point at which 52.232-7(d) has the contractor send a notice, not the ceiling; say \"past 85% of its ceiling\".\n- Count against performance only what the facts list as late, returned, or an open item. A deliverable that isn't due yet isn't late or outstanding.\n- Don't restate the robot's other findings; the CO reads them beside yours.\n- Be specific and brief. No pleasantries.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": "Draft the findings and the recommendation for this decision.\n\nContract:\n{{input.contractFacts}}\n\nDecision:\n{{input.decision}}\n\nChecks:\n{{input.checks}}\n\nReturn the three findings (requirement, performance, price), then recommendation, recommendedMonths, reason, summary and risks.",
+      "contentTokens": [
+        {
+          "type": "simpleText",
+          "rawString": "Draft the findings and the recommendation for this decision.\n\nContract:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.contractFacts"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nDecision:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.decision"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nChecks:\n"
+        },
+        {
+          "type": "variable",
+          "rawString": "input.checks"
+        },
+        {
+          "type": "simpleText",
+          "rawString": "\n\nReturn the three findings (requirement, performance, price), then recommendation, recommendedMonths, reason, summary and risks."
+        }
+      ]
+    }
+  ],
+  "projectId": "5a0415df-9053-4a0b-aab3-c1378d9e6fed"
+}

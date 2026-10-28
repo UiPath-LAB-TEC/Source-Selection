@@ -1,9 +1,9 @@
 import type { Framework } from '@forms/lib/terms'
-import { COR } from '@forms/lib/types'
+import { COR, RM } from '@forms/lib/types'
 import { PERSONAS } from '@ss/lib/types'
 import type { Dataset, Persona, Solicitation } from '@ss/lib/types'
 import type { AwardRow, Correspondence, Protest } from '@award/lib/record'
-import type { AlertRow, FundingRow, ScheduleRow } from '@award/lib/admin'
+import type { AlertRow, FundingRow, ModificationRow, ScheduleRow } from '@award/lib/admin'
 
 // The record's types, stages and who-moves-next live with the Contract Management forms; the app uses them from source.
 export * from '@award/lib/record'
@@ -17,6 +17,7 @@ export interface AwardDataset extends Dataset {
   schedule: ScheduleRow[]
   funding: FundingRow[]
   alerts: AlertRow[]
+  modifications: ModificationRow[]
 }
 
 /**
@@ -55,9 +56,7 @@ export const COUNSEL: Persona = {
 export const COR_PERSONA: Persona = COR
 
 /** The Resource Manager: certifies funds and keeps each line item's obligations ahead of its spending. Fictional. */
-export const RM_PERSONA: Persona = {
-  id: 'rm', name: 'Nadia Sorensen', label: 'Resource Manager', role: 'Certifies funds and tracks obligations', short: 'NS', taskLabel: 'resource-manager',
-}
+export const RM_PERSONA: Persona = RM
 
 /**
  * The app's people: the Contracting Officer does most of the work; counsel handles protests; the SSA reads; the COR and

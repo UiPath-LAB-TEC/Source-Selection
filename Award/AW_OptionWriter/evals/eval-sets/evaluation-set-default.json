@@ -1,0 +1,272 @@
+{
+  "fileName": "evaluation-set-default.json",
+  "id": "57dfc700-f810-4ffa-bf9c-1cd146ed1785",
+  "name": "Default Evaluation Set",
+  "batchSize": 10,
+  "evaluatorRefs": [
+    "878c4dbb-1569-487d-8be4-8468ebea596b",
+    "91a366c5-36cd-4a26-ada9-44ccd31c6ecb"
+  ],
+  "evaluations": [
+    {
+      "id": "25d83c6a-6640-455c-b4b6-dc85f76e8a8b",
+      "name": "ostrander-extension-protest-window",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-22-C-0011\", \"contractor\": \"Ostrander Analytics Group Inc\", \"currentPeriod\": \"Option 4\", \"contractEnds\": \"2026-12-31\", \"dod\": true, \"lines\": [{\"clin\": \"0001\", \"description\": \"Analytics platform operations\", \"type\": \"Firm-fixed-price\", \"monthly\": 115000.0}, {\"clin\": \"0002\", \"description\": \"Data engineering support\", \"type\": \"Labor-hour\", \"monthly\": 95833.33}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"type\": \"Firm-fixed-price\", \"monthly\": 50833.33}, {\"clin\": \"0004\", \"description\": \"Program management\", \"type\": \"Firm-fixed-price\", \"monthly\": 28333.33}]}",
+        "decision": "{\"stage\": \"extension\", \"what\": \"Extension of services\", \"clause\": \"52.217-8\", \"noticeBy\": \"2026-10-30\", \"daysLeft\": 3, \"late\": false, \"allowedActions\": [\"Extend\", \"Do not extend\"], \"proposal\": {\"months\": 1, \"start\": \"2027-01-01\", \"end\": \"2027-01-31\", \"amount\": 289999.99, \"reason\": \"The follow-on, W52P1J-27-C-0023, is in its protest window until Nov 2. 1 month, to Jan 31, 2027, keeps the work going if it's protested and stayed, and the next notice day, Dec 2, comes after the window closes, so the rest can be decided then (52.217-8 may be exercised more than once).\"}, \"monthsRemaining\": 6, \"successor\": {\"contract\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"state\": \"protest window\", \"stayBy\": \"2026-11-02\", \"transitionInDone\": \"2026-12-22\", \"start\": \"2026-10-23\"}}",
+        "checks": "[{\"id\": \"notice\", \"label\": \"Written notice within the contract's period\", \"rule\": \"FAR 17.204-1(b)(1)\", \"status\": \"Met\", \"finding\": \"The contract's period for written notice runs to Oct 30, 2026: at least 60 days before the contract expires (52.217-8, as filled in).\", \"facts\": {\"window\": \"at least 60 days before the contract expires (52.217-8, as filled in)\", \"noticeBy\": \"2026-10-30\", \"daysLeft\": 3}}, {\"id\": \"funds\", \"label\": \"Funds are available\", \"rule\": \"FAR 17.204-1(b)(2)\", \"status\": \"To confirm\", \"finding\": \"$290,000 for extension 1, Jan 1, 2027 to Jan 31, 2027. The Resource Manager certifies them next.\", \"facts\": {\"amount\": 289999.99}}, {\"id\": \"requirement\", \"label\": \"The option fulfills an existing need\", \"rule\": \"FAR 17.204-1(b)(3)(i)\", \"status\": \"To confirm\", \"finding\": \"The work continues until the follow-on, W52P1J-27-C-0023 with Keystone Ridge Analytics LLC, takes over. The follow-on is set to take over on time: its transition-in completes Dec 22, before this contract ends Dec 31. The need is the risk that a GAO protest filed by Nov 2 stays the follow-on's performance; this contract's notice deadline, Oct 30, comes before that window closes. Without an extension the work would stop after Dec 31 if that happens.\", \"facts\": {\"whyNeeded\": \"The follow-on is set to take over on time: its transition-in completes Dec 22, before this contract ends Dec 31. The need is the risk that a GAO protest filed by Nov 2 stays the follow-on's performance; this contract's notice deadline, Oct 30, comes before that window closes. Without an extension the work would stop after Dec 31 if that happens.\", \"followOnInPlaceBeforeEnd\": true, \"successor\": {\"contract\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"state\": \"protest window\", \"stayBy\": \"2026-11-02\", \"transitionInDone\": \"2026-12-22\", \"start\": \"2026-10-23\"}, \"lastInvoicedThrough\": \"2026-09-30\", \"contractEnds\": \"2026-12-31\"}}, {\"id\": \"synopsis\", \"label\": \"Synopsized, or exempt\", \"rule\": \"FAR 17.204-1(b)(3)(ii)\", \"status\": \"Met\", \"finding\": \"The options were in the original solicitation, posted on SAM.gov, so exercising one needs no new synopsis (part 5).\", \"facts\": {}}, {\"id\": \"exclusion\", \"label\": \"No active exclusion in SAM\", \"rule\": \"FAR 17.204-1(b)(3)(iii)\", \"status\": \"Met\", \"finding\": \"SAM shows no active exclusion for Ostrander Analytics Group Inc (UEI OAGX7Q2M4K91).\", \"facts\": {}}, {\"id\": \"performance\", \"label\": \"Performance on this contract has been acceptable\", \"rule\": \"FAR 17.204-1(b)(3)(iv)\", \"status\": \"Met\", \"finding\": \"CPARS ratings on this contract: Very Good (base period), Very Good (option 1), Satisfactory (option 2), Satisfactory (option 3). This period: 9 deliverables accepted; transition-out plan (due Oct 2) not yet received. Line item 0002 has accrued about 87% of its labor-hour ceiling (past the 85% notice point, not over the ceiling) with no notice from Ostrander Analytics Group Inc (52.232-7(d)).\", \"facts\": {\"cpars\": [{\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Base\", \"rating\": \"Very Good\", \"year\": 2022}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 1\", \"rating\": \"Very Good\", \"year\": 2023}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 2\", \"rating\": \"Satisfactory\", \"year\": 2024}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 3\", \"rating\": \"Satisfactory\", \"year\": 2025}], \"accepted\": 9, \"late\": [{\"name\": \"Transition-out plan\", \"due\": \"2026-10-02\"}], \"returned\": [], \"openItems\": [{\"item\": \"Line item 0002 near its ceiling: no notice from Ostrander Analytics Group Inc\", \"severity\": \"Overdue\"}, {\"item\": \"Transition-out plan is late\", \"severity\": \"Overdue\"}], \"laborHourCeilings\": [{\"clin\": \"0002\", \"percentOfCeiling\": 87, \"past85\": true, \"overCeiling\": false, \"contractorNoticeOnFile\": false}]}}, {\"id\": \"price\", \"label\": \"Price fair and reasonable; exercise in the Government's best interest\", \"rule\": \"FAR 17.204-1(b)(3)(v)\", \"status\": \"To confirm\", \"finding\": \"At the contract's rates the extension costs $290,000 a month. For the same line items, the follow-on's competed prices (W52P1J-27-C-0023, awarded Oct 23): $303,333 a month. These rates are 4% below that. By line item: 0002 (Data engineering support) is 19% above it; 0004 (Program management) is 15% below it; 0001 (Analytics platform operations) is 13% below it; 0003 (Cybersecurity and RMF support) is 12% below it.\", \"facts\": {\"monthly\": 289999.99, \"market\": 303333.33, \"comparison\": [{\"clin\": \"0001\", \"description\": \"Analytics platform operations\", \"monthly\": 115000.0, \"market\": 131666.67, \"differencePerMonth\": -16666.67, \"percent\": -13, \"direction\": \"below\"}, {\"clin\": \"0002\", \"description\": \"Data engineering support\", \"monthly\": 95833.33, \"market\": 80833.33, \"differencePerMonth\": 15000.0, \"percent\": 19, \"direction\": \"above\"}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"monthly\": 50833.33, \"market\": 57500.0, \"differencePerMonth\": -6666.67, \"percent\": -12, \"direction\": \"below\"}, {\"clin\": \"0004\", \"description\": \"Program management\", \"monthly\": 28333.33, \"market\": 33333.33, \"differencePerMonth\": -5000.0, \"percent\": -15, \"direction\": \"below\"}], \"basis\": \"the follow-on's competed prices (W52P1J-27-C-0023, awarded Oct 23)\", \"notable\": [\"0002\", \"0004\", \"0001\", \"0003\"]}}, {\"id\": \"competition\", \"label\": \"Evaluated at award, at a price the contract sets\", \"rule\": \"FAR 17.204-1(b)(3)(vi)\", \"status\": \"Met\", \"finding\": \"The extension was evaluated in the initial competition, and its price is set by the contract: the rates of option 4.\", \"facts\": {}}, {\"id\": \"duration\", \"label\": \"Within the clauses' limits\", \"rule\": \"52.217-8; 52.217-9(c)\", \"status\": \"Met\", \"finding\": \"0 of the 6 months 52.217-8 allows are used, so up to 6 more stay within it and within the 66-month total in 52.217-9(c).\", \"facts\": {}}, {\"id\": \"registration\", \"label\": \"SAM registration active and matching the contract\", \"rule\": \"DFARS 217.207(c)(1)\", \"status\": \"Met\", \"finding\": \"Active through Feb 14, 2027; the UEI and name match the contract.\", \"facts\": {\"expires\": \"2027-02-14\"}}, {\"id\": \"sprs\", \"label\": \"SPRS assessment current (3 years or less)\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"Met\", \"finding\": \"Basic (contractor self-assessment) of Mar 16, 2024, score 104: current until Mar 16, 2027.\", \"facts\": {\"assessed\": \"2024-03-16\", \"currentUntil\": \"2027-03-16\"}}, {\"id\": \"cmmc\", \"label\": \"CMMC status current, if required\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"Not required\", \"finding\": \"The contract has no CMMC requirement.\", \"facts\": {}}]"
+      },
+      "expectedOutput": {
+        "findings": [
+          {
+            "element": "requirement",
+            "text": "Keystone Ridge is set to take over on time under W52P1J-27-C-0023: its transition-in completes Dec 22, before this contract ends Dec 31. The need is the risk that a GAO protest filed by Nov 2 stays Keystone's performance, and this contract's Oct 30 notice deadline comes before that window closes; without an extension the work would stop after Dec 31.",
+            "sources": [
+              "requirement"
+            ]
+          },
+          {
+            "element": "performance",
+            "text": "Performance has been acceptable: CPARS ratings were Very Good for the base period and option 1 and Satisfactory for options 2 and 3, and nine deliverables were accepted this period. The trend is down: the transition-out plan due Oct 2 hasn't arrived, and line item 0002 is past 85% of its ceiling (about 87%, not over it) with no notice from Ostrander, so raise both with Ostrander.",
+            "sources": [
+              "performance"
+            ]
+          },
+          {
+            "element": "price",
+            "text": "At the contract's rates the extension costs $290,000 a month, 4% below the follow-on's competed prices of $303,333 a month for the same line items. Line item 0002 (Data engineering support) is 19% above the follow-on's price, while the other three are 12% to 15% below it. Continuing at these rates costs far less than a gap in the work, so exercise is in the Government's best interest.",
+            "sources": [
+              "price"
+            ]
+          }
+        ],
+        "recommendation": "Extend",
+        "recommendedMonths": 1,
+        "reason": "One month keeps the work going if the follow-on is protested and stayed, and the next notice day, Dec 2, comes after its protest window closes.",
+        "summary": "Extend for one month, to Jan 31, 2027, at $290,000. The follow-on can be protested until Nov 2, after the Oct 30 notice deadline, and a second decision is due Dec 2 once the window has closed.",
+        "risks": [
+          "If Keystone's award isn't protested, the January extension may not be needed.",
+          "The transition-out plan is late and the ceiling notice on line item 0002 is missing."
+        ]
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Recommends a one-month extension. Grounds the need on the protest risk, not on the transition-in date (which is before the contract ends). Finds performance acceptable but declining, saying line item 0002 is past 85% of its ceiling, not over it. Gives the rates as 4% below the follow-on's and names line item 0002 as 19% above. Uses only the figures the facts give.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "57dfc700-f810-4ffa-bf9c-1cd146ed1785",
+      "createdAt": "2026-10-28T13:57:52.710Z",
+      "updatedAt": "2026-10-28T13:57:52.710Z",
+      "source": "manual"
+    },
+    {
+      "id": "04fea893-35da-48de-907f-92bcedae9932",
+      "name": "ostrander-extension-window-closed-follow-on-under-way",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-22-C-0011\", \"contractor\": \"Ostrander Analytics Group Inc\", \"currentPeriod\": \"Option 4\", \"contractEnds\": \"2026-12-31\", \"dod\": true, \"lines\": [{\"clin\": \"0001\", \"description\": \"Analytics platform operations\", \"type\": \"Firm-fixed-price\", \"monthly\": 115000.0}, {\"clin\": \"0002\", \"description\": \"Data engineering support\", \"type\": \"Labor-hour\", \"monthly\": 95833.33}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"type\": \"Firm-fixed-price\", \"monthly\": 50833.33}, {\"clin\": \"0004\", \"description\": \"Program management\", \"type\": \"Firm-fixed-price\", \"monthly\": 28333.33}]}",
+        "decision": "{\"stage\": \"extension\", \"what\": \"Extension of services\", \"clause\": \"52.217-8\", \"noticeBy\": \"2026-10-30\", \"daysLeft\": -6, \"late\": true, \"allowedActions\": [\"Extend\", \"Do not extend\"], \"proposal\": {\"months\": 0, \"start\": \"2027-01-01\", \"end\": null, \"amount\": 0.0, \"reason\": \"The follow-on, W52P1J-27-C-0023, is under way and its transition-in completes Dec 22, before this contract ends Dec 31. No extension is needed.\"}, \"monthsRemaining\": 6, \"successor\": {\"contract\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"state\": \"under way\", \"stayBy\": \"2026-11-02\", \"transitionInDone\": \"2026-12-22\", \"start\": \"2026-10-23\"}}",
+        "checks": "[{\"id\": \"notice\", \"label\": \"Written notice within the contract's period\", \"rule\": \"FAR 17.204-1(b)(1)\", \"status\": \"Not met\", \"finding\": \"The notice window closed Oct 30. A unilateral exercise is no longer available: it needs Ostrander Analytics Group Inc's agreement in a bilateral modification, and counsel should check whether part 6 then applies.\", \"facts\": {\"window\": \"at least 60 days before the contract expires (52.217-8, as filled in)\", \"noticeBy\": \"2026-10-30\"}}, {\"id\": \"funds\", \"label\": \"Funds are available\", \"rule\": \"FAR 17.204-1(b)(2)\", \"status\": \"To confirm\", \"finding\": \"$0 for extension 1. The Resource Manager certifies them next.\", \"facts\": {\"amount\": 0.0}}, {\"id\": \"requirement\", \"label\": \"The option fulfills an existing need\", \"rule\": \"FAR 17.204-1(b)(3)(i)\", \"status\": \"To confirm\", \"finding\": \"The work continues until the follow-on, W52P1J-27-C-0023 with Keystone Ridge Analytics LLC, takes over. The follow-on is under way and its transition-in completes Dec 22, before this contract ends Dec 31, so it takes over on time and no work is left for an extension.\", \"facts\": {\"whyNeeded\": \"The follow-on is under way and its transition-in completes Dec 22, before this contract ends Dec 31, so it takes over on time and no work is left for an extension.\", \"followOnInPlaceBeforeEnd\": true, \"successor\": {\"contract\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"state\": \"under way\", \"stayBy\": \"2026-11-02\", \"transitionInDone\": \"2026-12-22\", \"start\": \"2026-10-23\"}, \"lastInvoicedThrough\": \"2026-09-30\", \"contractEnds\": \"2026-12-31\"}}, {\"id\": \"synopsis\", \"label\": \"Synopsized, or exempt\", \"rule\": \"FAR 17.204-1(b)(3)(ii)\", \"status\": \"Met\", \"finding\": \"The options were in the original solicitation, posted on SAM.gov, so exercising one needs no new synopsis (part 5).\", \"facts\": {}}, {\"id\": \"exclusion\", \"label\": \"No active exclusion in SAM\", \"rule\": \"FAR 17.204-1(b)(3)(iii)\", \"status\": \"Met\", \"finding\": \"SAM shows no active exclusion for Ostrander Analytics Group Inc (UEI OAGX7Q2M4K91).\", \"facts\": {}}, {\"id\": \"performance\", \"label\": \"Performance on this contract has been acceptable\", \"rule\": \"FAR 17.204-1(b)(3)(iv)\", \"status\": \"Met\", \"finding\": \"CPARS ratings on this contract: Very Good (base period), Very Good (option 1), Satisfactory (option 2), Satisfactory (option 3). This period: 9 deliverables accepted; transition-out plan (due Oct 2) not yet received. Line item 0002 has accrued about 89% of its labor-hour ceiling (past the 85% notice point, not over the ceiling) with no notice from Ostrander Analytics Group Inc (52.232-7(d)).\", \"facts\": {\"cpars\": [{\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Base\", \"rating\": \"Very Good\", \"year\": 2022}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 1\", \"rating\": \"Very Good\", \"year\": 2023}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 2\", \"rating\": \"Satisfactory\", \"year\": 2024}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 3\", \"rating\": \"Satisfactory\", \"year\": 2025}], \"accepted\": 9, \"late\": [{\"name\": \"Transition-out plan\", \"due\": \"2026-10-02\"}], \"returned\": [], \"openItems\": [{\"item\": \"Line item 0002 near its ceiling: no notice from Ostrander Analytics Group Inc\", \"severity\": \"Overdue\"}, {\"item\": \"Transition-out plan is late\", \"severity\": \"Overdue\"}], \"laborHourCeilings\": [{\"clin\": \"0002\", \"percentOfCeiling\": 89, \"past85\": true, \"overCeiling\": false, \"contractorNoticeOnFile\": false}]}}, {\"id\": \"price\", \"label\": \"Price fair and reasonable; exercise in the Government's best interest\", \"rule\": \"FAR 17.204-1(b)(3)(v)\", \"status\": \"To confirm\", \"finding\": \"At the contract's rates the extension costs $290,000 a month. For the same line items, the follow-on's competed prices (W52P1J-27-C-0023, awarded Oct 23): $303,333 a month. These rates are 4% below that. By line item: 0002 (Data engineering support) is 19% above it; 0004 (Program management) is 15% below it; 0001 (Analytics platform operations) is 13% below it; 0003 (Cybersecurity and RMF support) is 12% below it.\", \"facts\": {\"monthly\": 289999.99, \"market\": 303333.33, \"comparison\": [{\"clin\": \"0001\", \"description\": \"Analytics platform operations\", \"monthly\": 115000.0, \"market\": 131666.67, \"differencePerMonth\": -16666.67, \"percent\": -13, \"direction\": \"below\"}, {\"clin\": \"0002\", \"description\": \"Data engineering support\", \"monthly\": 95833.33, \"market\": 80833.33, \"differencePerMonth\": 15000.0, \"percent\": 19, \"direction\": \"above\"}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"monthly\": 50833.33, \"market\": 57500.0, \"differencePerMonth\": -6666.67, \"percent\": -12, \"direction\": \"below\"}, {\"clin\": \"0004\", \"description\": \"Program management\", \"monthly\": 28333.33, \"market\": 33333.33, \"differencePerMonth\": -5000.0, \"percent\": -15, \"direction\": \"below\"}], \"basis\": \"the follow-on's competed prices (W52P1J-27-C-0023, awarded Oct 23)\", \"notable\": [\"0002\", \"0004\", \"0001\", \"0003\"]}}, {\"id\": \"competition\", \"label\": \"Evaluated at award, at a price the contract sets\", \"rule\": \"FAR 17.204-1(b)(3)(vi)\", \"status\": \"Met\", \"finding\": \"The extension was evaluated in the initial competition, and its price is set by the contract: the rates of option 4.\", \"facts\": {}}, {\"id\": \"duration\", \"label\": \"Within the clauses' limits\", \"rule\": \"52.217-8; 52.217-9(c)\", \"status\": \"Met\", \"finding\": \"0 of the 6 months 52.217-8 allows are used, so up to 6 more stay within it and within the 66-month total in 52.217-9(c).\", \"facts\": {}}, {\"id\": \"registration\", \"label\": \"SAM registration active and matching the contract\", \"rule\": \"DFARS 217.207(c)(1)\", \"status\": \"Met\", \"finding\": \"Active through Feb 14, 2027; the UEI and name match the contract.\", \"facts\": {\"expires\": \"2027-02-14\"}}, {\"id\": \"sprs\", \"label\": \"SPRS assessment current (3 years or less)\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"Met\", \"finding\": \"Basic (contractor self-assessment) of Mar 16, 2024, score 104: current until Mar 16, 2027.\", \"facts\": {\"assessed\": \"2024-03-16\", \"currentUntil\": \"2027-03-16\"}}, {\"id\": \"cmmc\", \"label\": \"CMMC status current, if required\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"Not required\", \"finding\": \"The contract has no CMMC requirement.\", \"facts\": {}}]"
+      },
+      "expectedOutput": {
+        "findings": [
+          {
+            "element": "requirement",
+            "text": "The follow-on, W52P1J-27-C-0023, is under way and its transition-in completes Dec 22, before this contract ends Dec 31, so no work is left for an extension to cover.",
+            "sources": [
+              "requirement"
+            ]
+          },
+          {
+            "element": "performance",
+            "text": "Performance has been acceptable: CPARS ratings were Very Good for the base period and option 1 and Satisfactory for options 2 and 3, and nine deliverables were accepted this period. The trend is down: the transition-out plan due Oct 2 hasn't arrived, and line item 0002 is past 85% of its ceiling (about 87%, not over it) with no notice from Ostrander, so raise both with Ostrander.",
+            "sources": [
+              "performance"
+            ]
+          },
+          {
+            "element": "price",
+            "text": "At the contract's rates the extension costs $290,000 a month, 4% below the follow-on's competed prices of $303,333 a month for the same line items. Line item 0002 (Data engineering support) is 19% above the follow-on's price, while the other three are 12% to 15% below it. Continuing at these rates costs far less than a gap in the work, but with the follow-on in place no extension is needed.",
+            "sources": [
+              "price"
+            ]
+          }
+        ],
+        "recommendation": "Do not extend",
+        "recommendedMonths": 0,
+        "reason": "The notice window closed Oct 30, so an extension would now need Ostrander's agreement in a bilateral modification, and the follow-on takes over before the contract ends.",
+        "summary": "Don't extend. The follow-on's protest window closed with no protest, its transition-in completes Dec 22, and the notice window for a unilateral extension closed Oct 30.",
+        "risks": [
+          "If Keystone's transition-in slips past Dec 31, a bridge would need Ostrander's agreement."
+        ]
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Recommends not extending: the notice window has closed (an extension would now need a bilateral modification) and the follow-on is under way with its transition-in done before the contract ends.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "57dfc700-f810-4ffa-bf9c-1cd146ed1785",
+      "createdAt": "2026-10-28T13:57:52.710Z",
+      "updatedAt": "2026-10-28T13:57:52.710Z",
+      "source": "manual"
+    },
+    {
+      "id": "6567c25f-b67f-40ee-af0c-1b92dc66145d",
+      "name": "ostrander-extension-follow-on-stayed",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-22-C-0011\", \"contractor\": \"Ostrander Analytics Group Inc\", \"currentPeriod\": \"Option 4\", \"contractEnds\": \"2026-12-31\", \"dod\": true, \"lines\": [{\"clin\": \"0001\", \"description\": \"Analytics platform operations\", \"type\": \"Firm-fixed-price\", \"monthly\": 115000.0}, {\"clin\": \"0002\", \"description\": \"Data engineering support\", \"type\": \"Labor-hour\", \"monthly\": 95833.33}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"type\": \"Firm-fixed-price\", \"monthly\": 50833.33}, {\"clin\": \"0004\", \"description\": \"Program management\", \"type\": \"Firm-fixed-price\", \"monthly\": 28333.33}]}",
+        "decision": "{\"stage\": \"extension\", \"what\": \"Extension of services\", \"clause\": \"52.217-8\", \"noticeBy\": \"2026-10-30\", \"daysLeft\": 3, \"late\": false, \"allowedActions\": [\"Extend\", \"Do not extend\"], \"proposal\": {\"months\": 4, \"start\": \"2027-01-01\", \"end\": \"2027-04-30\", \"amount\": 1159999.96, \"reason\": \"The follow-on, W52P1J-27-C-0023, is stayed by a protest. GAO decides within 100 days and the follow-on then needs its 60-day transition-in, so 4 months runs to Apr 30, 2027.\"}, \"monthsRemaining\": 6, \"successor\": {\"contract\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"state\": \"stayed\", \"stayBy\": \"2026-11-02\", \"transitionInDone\": \"2026-12-22\", \"start\": \"2026-10-23\"}}",
+        "checks": "[{\"id\": \"notice\", \"label\": \"Written notice within the contract's period\", \"rule\": \"FAR 17.204-1(b)(1)\", \"status\": \"Met\", \"finding\": \"The contract's period for written notice runs to Oct 30, 2026: at least 60 days before the contract expires (52.217-8, as filled in).\", \"facts\": {\"window\": \"at least 60 days before the contract expires (52.217-8, as filled in)\", \"noticeBy\": \"2026-10-30\", \"daysLeft\": 3}}, {\"id\": \"funds\", \"label\": \"Funds are available\", \"rule\": \"FAR 17.204-1(b)(2)\", \"status\": \"To confirm\", \"finding\": \"$1,160,000 for extension 1, Jan 1, 2027 to Apr 30, 2027. The Resource Manager certifies them next.\", \"facts\": {\"amount\": 1159999.96}}, {\"id\": \"requirement\", \"label\": \"The option fulfills an existing need\", \"rule\": \"FAR 17.204-1(b)(3)(i)\", \"status\": \"To confirm\", \"finding\": \"The work continues until the follow-on, W52P1J-27-C-0023 with Keystone Ridge Analytics LLC, takes over. The follow-on is stayed by a protest, so it can't take over until GAO decides and its transition-in is done. The work has to continue past Dec 31, when this contract ends.\", \"facts\": {\"whyNeeded\": \"The follow-on is stayed by a protest, so it can't take over until GAO decides and its transition-in is done. The work has to continue past Dec 31, when this contract ends.\", \"followOnInPlaceBeforeEnd\": false, \"successor\": {\"contract\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"state\": \"stayed\", \"stayBy\": \"2026-11-02\", \"transitionInDone\": \"2026-12-22\", \"start\": \"2026-10-23\"}, \"lastInvoicedThrough\": \"2026-09-30\", \"contractEnds\": \"2026-12-31\"}}, {\"id\": \"synopsis\", \"label\": \"Synopsized, or exempt\", \"rule\": \"FAR 17.204-1(b)(3)(ii)\", \"status\": \"Met\", \"finding\": \"The options were in the original solicitation, posted on SAM.gov, so exercising one needs no new synopsis (part 5).\", \"facts\": {}}, {\"id\": \"exclusion\", \"label\": \"No active exclusion in SAM\", \"rule\": \"FAR 17.204-1(b)(3)(iii)\", \"status\": \"Met\", \"finding\": \"SAM shows no active exclusion for Ostrander Analytics Group Inc (UEI OAGX7Q2M4K91).\", \"facts\": {}}, {\"id\": \"performance\", \"label\": \"Performance on this contract has been acceptable\", \"rule\": \"FAR 17.204-1(b)(3)(iv)\", \"status\": \"Met\", \"finding\": \"CPARS ratings on this contract: Very Good (base period), Very Good (option 1), Satisfactory (option 2), Satisfactory (option 3). This period: 9 deliverables accepted; transition-out plan (due Oct 2) not yet received. Line item 0002 has accrued about 87% of its labor-hour ceiling (past the 85% notice point, not over the ceiling) with no notice from Ostrander Analytics Group Inc (52.232-7(d)).\", \"facts\": {\"cpars\": [{\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Base\", \"rating\": \"Very Good\", \"year\": 2022}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 1\", \"rating\": \"Very Good\", \"year\": 2023}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 2\", \"rating\": \"Satisfactory\", \"year\": 2024}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 3\", \"rating\": \"Satisfactory\", \"year\": 2025}], \"accepted\": 9, \"late\": [{\"name\": \"Transition-out plan\", \"due\": \"2026-10-02\"}], \"returned\": [], \"openItems\": [{\"item\": \"Line item 0002 near its ceiling: no notice from Ostrander Analytics Group Inc\", \"severity\": \"Overdue\"}, {\"item\": \"Transition-out plan is late\", \"severity\": \"Overdue\"}], \"laborHourCeilings\": [{\"clin\": \"0002\", \"percentOfCeiling\": 87, \"past85\": true, \"overCeiling\": false, \"contractorNoticeOnFile\": false}]}}, {\"id\": \"price\", \"label\": \"Price fair and reasonable; exercise in the Government's best interest\", \"rule\": \"FAR 17.204-1(b)(3)(v)\", \"status\": \"To confirm\", \"finding\": \"At the contract's rates the extension costs $290,000 a month ($1,160,000 for 4 months). For the same line items, the follow-on's competed prices (W52P1J-27-C-0023, awarded Oct 23): $303,333 a month. These rates are 4% below that. By line item: 0002 (Data engineering support) is 19% above it; 0004 (Program management) is 15% below it; 0001 (Analytics platform operations) is 13% below it; 0003 (Cybersecurity and RMF support) is 12% below it.\", \"facts\": {\"monthly\": 289999.99, \"market\": 303333.33, \"comparison\": [{\"clin\": \"0001\", \"description\": \"Analytics platform operations\", \"monthly\": 115000.0, \"market\": 131666.67, \"differencePerMonth\": -16666.67, \"percent\": -13, \"direction\": \"below\"}, {\"clin\": \"0002\", \"description\": \"Data engineering support\", \"monthly\": 95833.33, \"market\": 80833.33, \"differencePerMonth\": 15000.0, \"percent\": 19, \"direction\": \"above\"}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"monthly\": 50833.33, \"market\": 57500.0, \"differencePerMonth\": -6666.67, \"percent\": -12, \"direction\": \"below\"}, {\"clin\": \"0004\", \"description\": \"Program management\", \"monthly\": 28333.33, \"market\": 33333.33, \"differencePerMonth\": -5000.0, \"percent\": -15, \"direction\": \"below\"}], \"basis\": \"the follow-on's competed prices (W52P1J-27-C-0023, awarded Oct 23)\", \"notable\": [\"0002\", \"0004\", \"0001\", \"0003\"]}}, {\"id\": \"competition\", \"label\": \"Evaluated at award, at a price the contract sets\", \"rule\": \"FAR 17.204-1(b)(3)(vi)\", \"status\": \"Met\", \"finding\": \"The extension was evaluated in the initial competition, and its price is set by the contract: the rates of option 4.\", \"facts\": {}}, {\"id\": \"duration\", \"label\": \"Within the clauses' limits\", \"rule\": \"52.217-8; 52.217-9(c)\", \"status\": \"Met\", \"finding\": \"0 of the 6 months 52.217-8 allows are used, so up to 6 more stay within it and within the 66-month total in 52.217-9(c).\", \"facts\": {}}, {\"id\": \"registration\", \"label\": \"SAM registration active and matching the contract\", \"rule\": \"DFARS 217.207(c)(1)\", \"status\": \"Met\", \"finding\": \"Active through Feb 14, 2027; the UEI and name match the contract. It expires before extension 1 would end (Apr 30, 2027), so ask Ostrander Analytics Group Inc to renew it.\", \"facts\": {\"expires\": \"2027-02-14\"}}, {\"id\": \"sprs\", \"label\": \"SPRS assessment current (3 years or less)\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"Met\", \"finding\": \"Basic (contractor self-assessment) of Mar 16, 2024, score 104: current until Mar 16, 2027, before extension 1 would end, so a new assessment is due during it.\", \"facts\": {\"assessed\": \"2024-03-16\", \"currentUntil\": \"2027-03-16\"}}, {\"id\": \"cmmc\", \"label\": \"CMMC status current, if required\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"Not required\", \"finding\": \"The contract has no CMMC requirement.\", \"facts\": {}}]"
+      },
+      "expectedOutput": {
+        "findings": [
+          {
+            "element": "requirement",
+            "text": "A protest has stayed the follow-on, W52P1J-27-C-0023, so Keystone can't start. Ostrander's work has to continue past Dec 31 until GAO decides and Keystone completes its transition-in.",
+            "sources": [
+              "requirement"
+            ]
+          },
+          {
+            "element": "performance",
+            "text": "Performance has been acceptable: CPARS ratings were Very Good for the base period and option 1 and Satisfactory for options 2 and 3, and nine deliverables were accepted this period. The trend is down: the transition-out plan due Oct 2 hasn't arrived, and line item 0002 is past 85% of its ceiling (about 87%, not over it) with no notice from Ostrander, so raise both with Ostrander.",
+            "sources": [
+              "performance"
+            ]
+          },
+          {
+            "element": "price",
+            "text": "At the contract's rates the extension costs $290,000 a month, 4% below the follow-on's competed prices of $303,333 a month for the same line items. Line item 0002 (Data engineering support) is 19% above the follow-on's price, while the other three are 12% to 15% below it. Continuing at these rates costs far less than a gap in the work, so exercise is in the Government's best interest.",
+            "sources": [
+              "price"
+            ]
+          }
+        ],
+        "recommendation": "Extend",
+        "recommendedMonths": 4,
+        "reason": "GAO decides within 100 days and Keystone then needs its 60-day transition-in, so four months, to Apr 30, 2027, covers it.",
+        "summary": "Extend for four months, to Apr 30, 2027, at about $1,160,000. The follow-on is stayed by a protest, and four months covers GAO's decision and Keystone's transition-in.",
+        "risks": [
+          "Ostrander's SAM registration expires Feb 14, 2027, inside the extension: ask it to renew.",
+          "If GAO decides early, part of the extension may not be needed."
+        ]
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Recommends a four-month extension to cover the protest decision and the follow-on's transition-in, and flags the SAM registration that lapses Feb 14, 2027, inside the extension.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "57dfc700-f810-4ffa-bf9c-1cd146ed1785",
+      "createdAt": "2026-10-28T13:57:52.710Z",
+      "updatedAt": "2026-10-28T13:57:52.710Z",
+      "source": "manual"
+    },
+    {
+      "id": "bb02c17c-5d60-43b0-9287-53d89a9293b3",
+      "name": "ostrander-extension-performance-marginal",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-22-C-0011\", \"contractor\": \"Ostrander Analytics Group Inc\", \"currentPeriod\": \"Option 4\", \"contractEnds\": \"2026-12-31\", \"dod\": true, \"lines\": [{\"clin\": \"0001\", \"description\": \"Analytics platform operations\", \"type\": \"Firm-fixed-price\", \"monthly\": 115000.0}, {\"clin\": \"0002\", \"description\": \"Data engineering support\", \"type\": \"Labor-hour\", \"monthly\": 95833.33}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"type\": \"Firm-fixed-price\", \"monthly\": 50833.33}, {\"clin\": \"0004\", \"description\": \"Program management\", \"type\": \"Firm-fixed-price\", \"monthly\": 28333.33}]}",
+        "decision": "{\"stage\": \"extension\", \"what\": \"Extension of services\", \"clause\": \"52.217-8\", \"noticeBy\": \"2026-10-30\", \"daysLeft\": 3, \"late\": false, \"allowedActions\": [\"Extend\", \"Do not extend\"], \"proposal\": {\"months\": 1, \"start\": \"2027-01-01\", \"end\": \"2027-01-31\", \"amount\": 289999.99, \"reason\": \"The follow-on, W52P1J-27-C-0023, is in its protest window until Nov 2. 1 month, to Jan 31, 2027, keeps the work going if it's protested and stayed, and the next notice day, Dec 2, comes after the window closes, so the rest can be decided then (52.217-8 may be exercised more than once).\"}, \"monthsRemaining\": 6, \"successor\": {\"contract\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"state\": \"protest window\", \"stayBy\": \"2026-11-02\", \"transitionInDone\": \"2026-12-22\", \"start\": \"2026-10-23\"}}",
+        "checks": "[{\"id\": \"notice\", \"label\": \"Written notice within the contract's period\", \"rule\": \"FAR 17.204-1(b)(1)\", \"status\": \"Met\", \"finding\": \"The contract's period for written notice runs to Oct 30, 2026: at least 60 days before the contract expires (52.217-8, as filled in).\", \"facts\": {\"window\": \"at least 60 days before the contract expires (52.217-8, as filled in)\", \"noticeBy\": \"2026-10-30\", \"daysLeft\": 3}}, {\"id\": \"funds\", \"label\": \"Funds are available\", \"rule\": \"FAR 17.204-1(b)(2)\", \"status\": \"To confirm\", \"finding\": \"$290,000 for extension 1, Jan 1, 2027 to Jan 31, 2027. The Resource Manager certifies them next.\", \"facts\": {\"amount\": 289999.99}}, {\"id\": \"requirement\", \"label\": \"The option fulfills an existing need\", \"rule\": \"FAR 17.204-1(b)(3)(i)\", \"status\": \"To confirm\", \"finding\": \"The work continues until the follow-on, W52P1J-27-C-0023 with Keystone Ridge Analytics LLC, takes over. The follow-on is set to take over on time: its transition-in completes Dec 22, before this contract ends Dec 31. The need is the risk that a GAO protest filed by Nov 2 stays the follow-on's performance; this contract's notice deadline, Oct 30, comes before that window closes. Without an extension the work would stop after Dec 31 if that happens.\", \"facts\": {\"whyNeeded\": \"The follow-on is set to take over on time: its transition-in completes Dec 22, before this contract ends Dec 31. The need is the risk that a GAO protest filed by Nov 2 stays the follow-on's performance; this contract's notice deadline, Oct 30, comes before that window closes. Without an extension the work would stop after Dec 31 if that happens.\", \"followOnInPlaceBeforeEnd\": true, \"successor\": {\"contract\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"state\": \"protest window\", \"stayBy\": \"2026-11-02\", \"transitionInDone\": \"2026-12-22\", \"start\": \"2026-10-23\"}, \"lastInvoicedThrough\": \"2026-09-30\", \"contractEnds\": \"2026-12-31\"}}, {\"id\": \"synopsis\", \"label\": \"Synopsized, or exempt\", \"rule\": \"FAR 17.204-1(b)(3)(ii)\", \"status\": \"Met\", \"finding\": \"The options were in the original solicitation, posted on SAM.gov, so exercising one needs no new synopsis (part 5).\", \"facts\": {}}, {\"id\": \"exclusion\", \"label\": \"No active exclusion in SAM\", \"rule\": \"FAR 17.204-1(b)(3)(iii)\", \"status\": \"Met\", \"finding\": \"SAM shows no active exclusion for Ostrander Analytics Group Inc (UEI OAGX7Q2M4K91).\", \"facts\": {}}, {\"id\": \"performance\", \"label\": \"Performance on this contract has been acceptable\", \"rule\": \"FAR 17.204-1(b)(3)(iv)\", \"status\": \"Not met\", \"finding\": \"CPARS ratings on this contract: Very Good (base period), Satisfactory (option 1), Marginal (option 2), Marginal (option 3). This period: 9 deliverables accepted; transition-out plan (due Oct 2) not yet received. Line item 0002 has accrued about 87% of its labor-hour ceiling (past the 85% notice point, not over the ceiling) with no notice from Ostrander Analytics Group Inc (52.232-7(d)).\", \"facts\": {\"cpars\": [{\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Base\", \"rating\": \"Very Good\", \"year\": 2022}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 1\", \"rating\": \"Satisfactory\", \"year\": 2023}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 2\", \"rating\": \"Marginal\", \"year\": 2024}, {\"contract\": \"W52P1J-22-C-0011\", \"period\": \"Option 3\", \"rating\": \"Marginal\", \"year\": 2025}], \"accepted\": 9, \"late\": [{\"name\": \"Transition-out plan\", \"due\": \"2026-10-02\"}], \"returned\": [], \"openItems\": [{\"item\": \"Line item 0002 near its ceiling: no notice from Ostrander Analytics Group Inc\", \"severity\": \"Overdue\"}, {\"item\": \"Transition-out plan is late\", \"severity\": \"Overdue\"}], \"laborHourCeilings\": [{\"clin\": \"0002\", \"percentOfCeiling\": 87, \"past85\": true, \"overCeiling\": false, \"contractorNoticeOnFile\": false}]}}, {\"id\": \"price\", \"label\": \"Price fair and reasonable; exercise in the Government's best interest\", \"rule\": \"FAR 17.204-1(b)(3)(v)\", \"status\": \"To confirm\", \"finding\": \"At the contract's rates the extension costs $290,000 a month. For the same line items, the follow-on's competed prices (W52P1J-27-C-0023, awarded Oct 23): $303,333 a month. These rates are 4% below that. By line item: 0002 (Data engineering support) is 19% above it; 0004 (Program management) is 15% below it; 0001 (Analytics platform operations) is 13% below it; 0003 (Cybersecurity and RMF support) is 12% below it.\", \"facts\": {\"monthly\": 289999.99, \"market\": 303333.33, \"comparison\": [{\"clin\": \"0001\", \"description\": \"Analytics platform operations\", \"monthly\": 115000.0, \"market\": 131666.67, \"differencePerMonth\": -16666.67, \"percent\": -13, \"direction\": \"below\"}, {\"clin\": \"0002\", \"description\": \"Data engineering support\", \"monthly\": 95833.33, \"market\": 80833.33, \"differencePerMonth\": 15000.0, \"percent\": 19, \"direction\": \"above\"}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"monthly\": 50833.33, \"market\": 57500.0, \"differencePerMonth\": -6666.67, \"percent\": -12, \"direction\": \"below\"}, {\"clin\": \"0004\", \"description\": \"Program management\", \"monthly\": 28333.33, \"market\": 33333.33, \"differencePerMonth\": -5000.0, \"percent\": -15, \"direction\": \"below\"}], \"basis\": \"the follow-on's competed prices (W52P1J-27-C-0023, awarded Oct 23)\", \"notable\": [\"0002\", \"0004\", \"0001\", \"0003\"]}}, {\"id\": \"competition\", \"label\": \"Evaluated at award, at a price the contract sets\", \"rule\": \"FAR 17.204-1(b)(3)(vi)\", \"status\": \"Met\", \"finding\": \"The extension was evaluated in the initial competition, and its price is set by the contract: the rates of option 4.\", \"facts\": {}}, {\"id\": \"duration\", \"label\": \"Within the clauses' limits\", \"rule\": \"52.217-8; 52.217-9(c)\", \"status\": \"Met\", \"finding\": \"0 of the 6 months 52.217-8 allows are used, so up to 6 more stay within it and within the 66-month total in 52.217-9(c).\", \"facts\": {}}, {\"id\": \"registration\", \"label\": \"SAM registration active and matching the contract\", \"rule\": \"DFARS 217.207(c)(1)\", \"status\": \"Met\", \"finding\": \"Active through Feb 14, 2027; the UEI and name match the contract.\", \"facts\": {\"expires\": \"2027-02-14\"}}, {\"id\": \"sprs\", \"label\": \"SPRS assessment current (3 years or less)\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"Met\", \"finding\": \"Basic (contractor self-assessment) of Mar 16, 2024, score 104: current until Mar 16, 2027.\", \"facts\": {\"assessed\": \"2024-03-16\", \"currentUntil\": \"2027-03-16\"}}, {\"id\": \"cmmc\", \"label\": \"CMMC status current, if required\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"Not required\", \"finding\": \"The contract has no CMMC requirement.\", \"facts\": {}}]"
+      },
+      "expectedOutput": {
+        "findings": [
+          {
+            "element": "requirement",
+            "text": "Ostrander's work must continue until Keystone Ridge takes over under W52P1J-27-C-0023, which can still be protested until Nov 2.",
+            "sources": [
+              "requirement"
+            ]
+          },
+          {
+            "element": "performance",
+            "text": "Performance hasn't been acceptable: CPARS ratings fell from Very Good to Marginal for options 2 and 3, the transition-out plan due Oct 2 hasn't arrived, and line item 0002 is past 85 percent of its ceiling with no notice from Ostrander.",
+            "sources": [
+              "performance"
+            ]
+          },
+          {
+            "element": "price",
+            "text": "At the contract's rates the extension costs $290,000 a month, 4% below the follow-on's competed prices of $303,333 a month for the same line items. Line item 0002 (Data engineering support) is 19% above the follow-on's price, while the other three are 12% to 15% below it. Continuing at these rates costs far less than a gap in the work, but price alone can't support exercise.",
+            "sources": [
+              "price"
+            ]
+          }
+        ],
+        "recommendation": "Do not extend",
+        "recommendedMonths": 0,
+        "reason": "FAR 17.204-1(b)(3)(iv) requires acceptable performance before exercising, and the last two ratings are Marginal.",
+        "summary": "Don't extend on this record. The last two CPARS ratings are Marginal, so the performance finding can't be made, though the follow-on's protest window leaves a risk of a gap in the work.",
+        "risks": [
+          "If the follow-on is protested and stayed, the work stops after Dec 31.",
+          "A bridge would need a new justification."
+        ]
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Recommends not extending because the performance finding can't be made with two Marginal ratings, and names the risk of a gap if the follow-on is stayed.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "57dfc700-f810-4ffa-bf9c-1cd146ed1785",
+      "createdAt": "2026-10-28T13:57:52.710Z",
+      "updatedAt": "2026-10-28T13:57:52.710Z",
+      "source": "manual"
+    },
+    {
+      "id": "50c1670e-1505-4582-bb2b-205f861f22a5",
+      "name": "keystone-option-1-preliminary-notice",
+      "inputs": {
+        "contractFacts": "{\"contractNumber\": \"W52P1J-27-C-0023\", \"contractor\": \"Keystone Ridge Analytics LLC\", \"currentPeriod\": \"Base\", \"contractEnds\": \"2031-10-22\", \"dod\": true, \"lines\": [{\"clin\": \"0001\", \"description\": \"Platform build and analytics operations\", \"type\": \"Firm-fixed-price\", \"monthly\": 131666.67}, {\"clin\": \"0002\", \"description\": \"Data integration and engineering\", \"type\": \"Labor-hour\", \"monthly\": 80833.33}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"type\": \"Labor-hour\", \"monthly\": 57500.0}, {\"clin\": \"0004\", \"description\": \"Program management\", \"type\": \"Firm-fixed-price\", \"monthly\": 33333.33}]}",
+        "decision": "{\"stage\": \"preliminary\", \"what\": \"Option 1\", \"clause\": \"52.217-9\", \"noticeBy\": \"2027-08-23\", \"daysLeft\": 11, \"late\": false, \"allowedActions\": [\"Send preliminary notice\", \"Do not exercise\"], \"proposal\": {\"months\": 12, \"start\": \"2027-10-23\", \"end\": \"2028-10-22\", \"amount\": 3640000.0, \"reason\": \"Option 1 runs Oct 23 to Oct 22, 2028 at the prices in the contract.\"}, \"monthsRemaining\": null, \"successor\": null}",
+        "checks": "[{\"id\": \"notice\", \"label\": \"Written notice within the contract's period\", \"rule\": \"FAR 17.204-1(b)(1)\", \"status\": \"Met\", \"finding\": \"The contract's period for written notice runs to Aug 23, 2027: at least 60 days before the contract expires (52.217-9(a)).\", \"facts\": {\"window\": \"at least 60 days before the contract expires (52.217-9(a))\", \"noticeBy\": \"2027-08-23\", \"daysLeft\": 11}}, {\"id\": \"funds\", \"label\": \"Funds are available\", \"rule\": \"FAR 17.204-1(b)(2)\", \"status\": \"To confirm\", \"finding\": \"A preliminary notice doesn't commit funds, but they should be planned: $3,640,000 for option 1. The Resource Manager certifies them next.\", \"facts\": {\"amount\": 3640000.0}}, {\"id\": \"requirement\", \"label\": \"The option fulfills an existing need\", \"rule\": \"FAR 17.204-1(b)(3)(i)\", \"status\": \"To confirm\", \"finding\": \"The requirement runs through W52P1J-27-C-0023's option years.\", \"facts\": {\"whyNeeded\": \"The requirement runs through W52P1J-27-C-0023's option years.\", \"followOnInPlaceBeforeEnd\": null, \"successor\": null, \"lastInvoicedThrough\": null, \"contractEnds\": \"2031-10-22\"}}, {\"id\": \"synopsis\", \"label\": \"Synopsized, or exempt\", \"rule\": \"FAR 17.204-1(b)(3)(ii)\", \"status\": \"Met\", \"finding\": \"The options were in the original solicitation, posted on SAM.gov, so exercising one needs no new synopsis (part 5).\", \"facts\": {}}, {\"id\": \"exclusion\", \"label\": \"No active exclusion in SAM\", \"rule\": \"FAR 17.204-1(b)(3)(iii)\", \"status\": \"Met\", \"finding\": \"SAM shows no active exclusion for Keystone Ridge Analytics LLC (UEI KR7D2M9QX4LB).\", \"facts\": {}}, {\"id\": \"performance\", \"label\": \"Performance on this contract has been acceptable\", \"rule\": \"FAR 17.204-1(b)(3)(iv)\", \"status\": \"To confirm\", \"finding\": \"No CPARS ratings for this contract are on file. No deliverables have come due this period.\", \"facts\": {\"cpars\": [], \"accepted\": 0, \"late\": [], \"returned\": [], \"openItems\": [], \"laborHourCeilings\": [{\"clin\": \"0002\", \"percentOfCeiling\": 81, \"past85\": false, \"overCeiling\": false, \"contractorNoticeOnFile\": null}, {\"clin\": \"0003\", \"percentOfCeiling\": 81, \"past85\": false, \"overCeiling\": false, \"contractorNoticeOnFile\": null}]}}, {\"id\": \"price\", \"label\": \"Price fair and reasonable; exercise in the Government's best interest\", \"rule\": \"FAR 17.204-1(b)(3)(v)\", \"status\": \"To confirm\", \"finding\": \"At the contract's rates option 1 costs $303,333 a month ($3,640,000 for 12 months). For the same line items, the independent Government cost estimate, by period: $286,667 a month. These rates are 6% above that.\", \"facts\": {\"monthly\": 303333.33, \"market\": 286666.67, \"comparison\": [{\"clin\": \"0001\", \"description\": \"Platform build and analytics operations\", \"monthly\": 131666.67, \"market\": 123333.33, \"differencePerMonth\": 8333.34, \"percent\": 7, \"direction\": \"above\"}, {\"clin\": \"0002\", \"description\": \"Data integration and engineering\", \"monthly\": 80833.33, \"market\": 76666.67, \"differencePerMonth\": 4166.66, \"percent\": 5, \"direction\": \"above\"}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and RMF support\", \"monthly\": 57500.0, \"market\": 55000.0, \"differencePerMonth\": 2500.0, \"percent\": 5, \"direction\": \"above\"}, {\"clin\": \"0004\", \"description\": \"Program management\", \"monthly\": 33333.33, \"market\": 31666.67, \"differencePerMonth\": 1666.66, \"percent\": 5, \"direction\": \"above\"}], \"basis\": \"the independent Government cost estimate, by period\", \"notable\": []}}, {\"id\": \"competition\", \"label\": \"Evaluated at award, at a price the contract sets\", \"rule\": \"FAR 17.204-1(b)(3)(vi)\", \"status\": \"Met\", \"finding\": \"The option was evaluated in the initial competition, and its price is set by the contract: the prices for option 1.\", \"facts\": {}}, {\"id\": \"duration\", \"label\": \"Within the clauses' limits\", \"rule\": \"52.217-8; 52.217-9(c)\", \"status\": \"Met\", \"finding\": \"With option 1 the contract runs 24 months.\", \"facts\": {}}, {\"id\": \"registration\", \"label\": \"SAM registration active and matching the contract\", \"rule\": \"DFARS 217.207(c)(1)\", \"status\": \"Met\", \"finding\": \"Active through Sep 30; the UEI and name match the contract. It expires before option 1 would end (Oct 22, 2028), so ask Keystone Ridge Analytics LLC to renew it.\", \"facts\": {\"expires\": \"2027-09-30\"}}, {\"id\": \"sprs\", \"label\": \"SPRS assessment current (3 years or less)\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"To confirm\", \"finding\": \"No SPRS assessment is on the record. Check SPRS before exercising.\", \"facts\": {}}, {\"id\": \"cmmc\", \"label\": \"CMMC status current, if required\", \"rule\": \"DFARS 217.207(c)(2)\", \"status\": \"To confirm\", \"finding\": \"The record doesn't say whether the contract requires a CMMC level. If it does, check the status in SPRS.\", \"facts\": {}}]"
+      },
+      "expectedOutput": {
+        "findings": [
+          {
+            "element": "requirement",
+            "text": "The Army's logistics data analytics platform runs through the contract's option years, and Keystone's work under option 1 continues the platform it is building in the base year.",
+            "sources": [
+              "requirement"
+            ]
+          },
+          {
+            "element": "performance",
+            "text": "No CPARS ratings for this contract are on file yet. Record the base-year evaluation, or the COR's assessment, before the exercise.",
+            "sources": [
+              "performance"
+            ]
+          },
+          {
+            "element": "price",
+            "text": "Option 1 costs $3,640,000, $303,333 a month, about 6 percent above the independent Government cost estimate for the period. The price was evaluated at award in a competition, so it reflects market prices, and continuing avoids a new procurement.",
+            "sources": [
+              "price"
+            ]
+          }
+        ],
+        "recommendation": "Send preliminary notice",
+        "recommendedMonths": 0,
+        "reason": "The preliminary notice is due Aug 23, 2027, doesn't commit the Government, and keeps option 1 available.",
+        "summary": "Send the preliminary notice of intent to exercise option 1 by Aug 23, 2027. It doesn't commit the Government; confirm funds and performance before the exercise, due Oct 22.",
+        "risks": [
+          "No performance evaluation is on file yet.",
+          "The contract's CMMC requirement isn't on the record."
+        ]
+      },
+      "simulationInstructions": "",
+      "expectedAgentBehavior": "Recommends sending the preliminary notice, notes it doesn't commit the Government, asks for a performance evaluation before the exercise, and compares option 1's price with the cost estimate.",
+      "simulateInput": false,
+      "inputGenerationInstructions": "",
+      "simulateTools": false,
+      "evalSetId": "57dfc700-f810-4ffa-bf9c-1cd146ed1785",
+      "createdAt": "2026-10-28T13:57:52.710Z",
+      "updatedAt": "2026-10-28T13:57:52.710Z",
+      "source": "manual"
+    }
+  ],
+  "modelSettings": [],
+  "agentMemoryEnabled": false,
+  "agentMemorySettings": [],
+  "lineByLineEvaluation": false,
+  "createdAt": "2026-10-27T19:41:26.009Z",
+  "updatedAt": "2026-10-27T19:41:26.009Z"
+}

@@ -158,11 +158,13 @@ export interface Dataset {
   protests?: Record<string, unknown>[]
   schedule?: Record<string, unknown>[]
   alerts?: Record<string, unknown>[]
+  funding?: Record<string, unknown>[]
+  modifications?: Record<string, unknown>[]
 }
 
 export const STAGES = ['Proposal Intake', 'Individual Evaluation', 'Consensus', 'Price Evaluation', 'Award Decision'] as const
 
-export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'cor'
+export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'cor' | 'rm'
 
 export interface Persona {
   id: PersonaId
@@ -193,7 +195,12 @@ export const COR: Persona = {
   id: 'cor', name: 'Owen Mercer', label: "Contracting Officer's Representative", role: 'Monitors performance, deliverables and invoices', short: 'OM', taskLabel: 'cor',
 }
 
-export const persona = (id: PersonaId) => (id === 'cor' ? COR : PERSONAS.find((p) => p.id === id)!)
+/** The Resource Manager, who certifies funds for an option or extension (Contract Management's forms). Fictional. */
+export const RM: Persona = {
+  id: 'rm', name: 'Nadia Sorensen', label: 'Resource Manager', role: 'Certifies funds and tracks obligations', short: 'NS', taskLabel: 'resource-manager',
+}
+
+export const persona = (id: PersonaId) => (id === 'cor' ? COR : id === 'rm' ? RM : PERSONAS.find((p) => p.id === id)!)
 export const evaluatorBySlot = (slot?: number) => PERSONAS.find((p) => p.slot === slot)
 
 /**

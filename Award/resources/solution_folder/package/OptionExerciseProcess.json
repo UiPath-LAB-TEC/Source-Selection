@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "OptionExerciseProcess",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "cfd67a95-148a-4847-bc59-75e2f00d2344",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "OptionExerciseProcess"
+    },
+    "locks": [],
+    "key": "bac6f269-2b64-4119-a831-1edbe61dcc6a",
+    "files": []
+  }
+}

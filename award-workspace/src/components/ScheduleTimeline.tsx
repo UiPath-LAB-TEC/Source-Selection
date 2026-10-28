@@ -5,7 +5,8 @@ import { Info } from '@forms/components/Bits'
 import { dayOf } from '@award/lib/clocks'
 import { Section } from '@ss/components/Bits'
 import { money } from '@ss/lib/eval'
-import { periodsOf } from '../lib/award'
+import { addMonths } from '@award/lib/options'
+import { extensionsOf, isExtensionClause, periodsOf } from '../lib/award'
 import type { AlertRow, ContractAbstract, ScheduleRow } from '../lib/award'
 
 type State = 'done' | 'current' | 'due' | 'late' | 'planned'
@@ -17,6 +18,14 @@ const ICON: Record<State, ReactNode> = {
 }
 
 const fmt = (d?: string) => (d ? new Date(`${d}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—')
+
+/** Whole months from `start` through `end` (Jan 1 to Jun 30 is 6), as the robot counts them (admin.months_between). */
+function monthsBetween(start: string, end: string) {
+  const after = new Date(Date.parse(`${end}T12:00:00Z`) + 86_400_000).toISOString().slice(0, 10)
+  let n = 0
+  while (addMonths(start, n + 1) <= after) n++
+  return n
+}
 
 function Row({ state, label, right, sub, cite }: { state: State; label: string; right?: string; sub?: string; cite?: { ref: string; text?: string } }) {
   return (
@@ -41,7 +50,7 @@ function periodRow(r: ScheduleRow, today: string) {
   const state: State = running ? 'current' : r.Status === 'Exercised' ? 'done' : 'planned'
   const deciding = r.Kind === 'Option' && r.Status !== 'Exercised' && r.Status !== 'Not exercised'
   const sub = deciding
-    ? `Preliminary notice by ${fmt(r.NoticeDay)} · exercise by ${fmt(r.DueDay)}`
+    ? r.Status === 'Notice sent' ? `Preliminary notice sent · exercise by ${fmt(r.DueDay)}` : `Preliminary notice by ${fmt(r.NoticeDay)} · exercise by ${fmt(r.DueDay)}`
     : running ? 'Running now' : r.Status === 'Exercised' ? (r.Kind === 'Option' ? 'Exercised' : 'Awarded') : r.Status
   return <Row key={r.ScheduleId} state={state} label={`${r.Name}: ${fmt(r.StartDay)} to ${fmt(r.EndDay)}`} right={money(r.Amount)} sub={sub}
     cite={r.ClauseRef ? { ref: r.ClauseRef, text: r.ClauseText } : undefined} />
@@ -66,7 +75,10 @@ function dueRow(r: ScheduleRow, today: string) {
 export function ScheduleTimeline({ schedule, abstract, alerts }: { schedule: ScheduleRow[]; abstract?: ContractAbstract; alerts: AlertRow[] }) {
   const today = dayOf(new Date().toISOString())
   const periods = periodsOf(schedule)
-  const extension = schedule.filter((r) => r.Kind === 'Extension')
+  const extensions = extensionsOf(schedule)
+  const clause = schedule.find(isExtensionClause)
+  const optionsLeft = periods.some((r) => r.Kind === 'Option' && (r.Status === 'Planned' || r.Status === 'Notice sent'))
+  const left = clause?.StartDay && clause.EndDay ? monthsBetween(clause.StartDay, clause.EndDay) : 0
   const templates = schedule.filter((r) => r.Status === 'Recurring')
   const instances = (t: ScheduleRow) => schedule.filter((r) => r.ScheduleId.startsWith(`${t.ScheduleId}-`)).sort((a, b) => (a.DueDay ?? '').localeCompare(b.DueDay ?? ''))
   const recurring = templates.flatMap((t) => {
@@ -89,11 +101,19 @@ export function ScheduleTimeline({ schedule, abstract, alerts }: { schedule: Sch
         <Card><CardContent className="p-5">
           <ol className="relative space-y-4 border-l border-border pl-6">
             {periods.map((r) => periodRow(r, today))}
-            {extension.map((r) => (
-              <Row key={r.ScheduleId} state={r.Status === 'Exercised' ? 'current' : live.has('EXT') ? 'due' : 'planned'}
-                label={`${r.Name}: ${fmt(r.StartDay)} to ${fmt(r.EndDay)}`} right={r.Status === 'Exercised' ? 'Exercised' : `Decide by ${fmt(r.DueDay)}`}
-                sub={r.Status === 'Exercised' ? undefined : 'Available once the options are used'} cite={r.ClauseRef ? { ref: r.ClauseRef, text: r.ClauseText } : undefined} />
-            ))}
+            {extensions.map((r) => {
+              const running = !!r.StartDay && !!r.EndDay && r.StartDay <= today && today <= r.EndDay
+              return <Row key={r.ScheduleId} state={running ? 'current' : (r.EndDay ?? '') < today ? 'done' : 'planned'} label={`${r.Name}: ${fmt(r.StartDay)} to ${fmt(r.EndDay)}`}
+                right={money(r.Amount)} sub={running ? 'Running now' : 'Exercised'} cite={{ ref: '52.217-8' }} />
+            })}
+            {clause && clause.Status === 'Planned' && (
+              <Row state={live.has('EXT') ? 'due' : 'planned'} label={`${extensions.length ? 'Further extension' : 'Extension of services'}: up to ${left} month${left === 1 ? '' : 's'}, from ${fmt(clause.StartDay)}`}
+                right={`Decide by ${fmt(clause.DueDay)}`} sub={optionsLeft ? 'Available once the options are used' : clause.ProcessInstanceId ? 'Option package under way' : undefined}
+                cite={clause.ClauseRef ? { ref: clause.ClauseRef, text: clause.ClauseText } : undefined} />
+            )}
+            {clause && clause.Status !== 'Planned' && (
+              <Row state="done" label="Extension of services" right={clause.Status === 'Used' ? 'All months used' : 'Not exercised'} cite={clause.ClauseRef ? { ref: clause.ClauseRef, text: clause.ClauseText } : undefined} />
+            )}
           </ol>
         </CardContent></Card>
       </Section>
