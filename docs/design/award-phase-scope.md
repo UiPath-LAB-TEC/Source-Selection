@@ -6,7 +6,7 @@
 - §17 adds the administration phase: managing the contract after award. Slice A is deployed (2026-10-23; §18), and §19 is
   the clarity redesign (2026-10-27). Both are committed (e80a2ad).
 - §20, the deliverable review, is deployed and committed (97442c3). §21, slice B (option exercise and the extension of
-  services), is deployed as Award 1.4.0 and Contract Management web 1.0.11 (§21.4). Not committed yet.
+  services), is deployed as Award 1.4.1, Contract Management web 1.0.13 and Source Selection web 1.0.74 (§21.4), and committed (260b553).
 
 **Sales play phase:** 4 of 4, Award. It moves the play page from "Decision built" to "Demo ready".
 
