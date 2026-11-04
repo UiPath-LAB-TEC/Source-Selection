@@ -57,3 +57,8 @@ Data Fabric, Orchestrator storage buckets, and the `@uipath/uipath-typescript` S
 
 All agencies, districts, offerors, people and contract numbers are fictional and synthetic. Every generated
 document carries a "synthetic demo" banner.
+
+## Collateral
+
+[`docs/collateral/`](docs/collateral) has the whitepaper, the SE handoff 1-pager and the solution kit (staging,
+reset, test documents and setup), as PDFs.
