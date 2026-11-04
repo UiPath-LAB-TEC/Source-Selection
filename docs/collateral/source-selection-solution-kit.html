@@ -1,0 +1,286 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{margin:0}img{max-width:100%}</style></head><body><title>Source Selection Solution Kit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a dark UiPath band on top, then one 920px reading column of numbered, actionable sections */
+:root {
+  --bg: #ffffff; --surface: #f5f6f7; --card: #ffffff; --ink: #182126; --body: #343c41; --muted: #5d6870;
+  --line: #d9dde0; --accent: #fa4616; --accent-ink: #c2330b; --teal: #0b7f8c; --band: #182126; --band-ink: #ffffff; --band-muted: #c4ccd1;
+  --code-bg: #f1f3f4;
+  --f-display: 'Poppins', 'Arial', system-ui, sans-serif; --f-body: 'Inter', 'Arial', system-ui, sans-serif; --f-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #10171b; --surface: #172025; --card: #182126; --ink: #eef1f3; --body: #cdd4d9; --muted: #9aa6ae;
+  --line: #2f3a40; --accent: #ff6a3d; --accent-ink: #ff8a63; --teal: #4cc6d4; --band: #0b1013; --band-ink: #ffffff; --band-muted: #b5bfc6;
+  --code-bg: #1f2a30; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #10171b; --surface: #172025; --card: #182126; --ink: #eef1f3; --body: #cdd4d9; --muted: #9aa6ae;
+  --line: #2f3a40; --accent: #ff6a3d; --accent-ink: #ff8a63; --teal: #4cc6d4; --band: #0b1013; --band-ink: #ffffff; --band-muted: #b5bfc6;
+  --code-bg: #1f2a30; color-scheme: dark }
+body { background: var(--bg); color: var(--body); font-family: var(--f-body); font-size: 15px; line-height: 1.6; }
+a { color: var(--teal); text-underline-offset: 2px; }
+a:hover { color: var(--accent-ink); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+.wrap { max-width: 920px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { background: var(--band); color: var(--band-ink); }
+header .wrap { padding-block: 36px 40px; display: flex; flex-direction: column; gap: 14px; position: relative; }
+.pixels { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 38px; display: grid; grid-template-columns: repeat(4, 10px); grid-auto-rows: 10px; }
+.pixels .o { background: #fa4616 } .pixels .t { background: #0ba2b3 }
+.logo { height: 26px; width: auto; display: block; align-self: flex-start; }
+.eyebrow { font-family: var(--f-display); font-weight: 600; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #fb6b45; margin-top: 18px; }
+h1 { margin: 0; font-family: var(--f-display); font-weight: 700; font-size: clamp(30px, 5vw, 42px); line-height: 1.08; letter-spacing: -0.035em; color: var(--band-ink); text-wrap: balance; }
+.stop { display: inline-block; width: 0.16em; height: 0.16em; background: #fa4616; margin-left: 0.05em; }
+.lead { margin: 0; max-width: 640px; color: var(--band-muted); font-size: 16px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 999px; font-family: var(--f-display); font-weight: 600; font-size: 14px; letter-spacing: -0.01em; text-decoration: none; }
+.btn.primary { background: #fa4616; color: #ffffff; }
+.btn.primary:hover { background: #ce340b; color: #ffffff; }
+.btn.ghost { border: 1px solid rgba(255,255,255,0.32); color: #ffffff; }
+.btn.ghost:hover { background: rgba(255,255,255,0.08); color: #ffffff; }
+main .wrap { padding-block: 40px 64px; display: flex; flex-direction: column; gap: 44px; }
+section { display: flex; flex-direction: column; gap: 14px; }
+h2 { margin: 0; display: flex; align-items: baseline; gap: 12px; font-family: var(--f-display); font-weight: 700; font-size: 24px; letter-spacing: -0.03em; color: var(--ink); text-wrap: balance; }
+h2 .n { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 6px; background: var(--ink); color: var(--bg); font-size: 14px; display: inline-grid; place-items: center; transform: translateY(-3px); }
+h3 { margin: 0; font-family: var(--f-display); font-weight: 600; font-size: 16px; letter-spacing: -0.02em; color: var(--ink); }
+p { margin: 0; max-width: 68ch; text-wrap: pretty; }
+code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; color: var(--ink); overflow-wrap: anywhere; }
+pre { margin: 0; background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-family: var(--f-mono); font-size: 13px; line-height: 1.55; color: var(--ink); }
+.note { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start; }
+.note::before { content: ""; flex: 0 0 8px; height: 8px; margin-top: 8px; background: var(--accent); }
+.urlrow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.url { font-family: var(--f-mono); font-size: 14px; background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+.copy { font-family: var(--f-display); font-weight: 600; font-size: 13px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; min-height: 38px; }
+.copy:hover { border-color: var(--ink); }
+ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 10px; }
+ol.steps > li { counter-increment: s; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; }
+ol.steps > li::before { content: counter(s); width: 24px; height: 24px; border-radius: 5px; background: var(--accent); color: #ffffff; font-family: var(--f-display); font-weight: 600; font-size: 12.5px; display: grid; place-items: center; margin-top: 1px; }
+ol.steps > li > div { min-width: 0; }
+.who { font-weight: 600; color: var(--ink); }
+.tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-display); font-weight: 600; font-size: 12.5px; color: var(--muted); letter-spacing: 0.02em; background: var(--surface); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.mono { white-space: nowrap; color: var(--ink); }
+.pkg { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
+.pkg-head { padding: 14px 16px; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; justify-content: space-between; }
+.pkg-head .tag { font-family: var(--f-display); font-weight: 600; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-ink); }
+.pkg-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+.files { display: flex; flex-wrap: wrap; gap: 8px; }
+.file { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13.5px; text-decoration: none; color: var(--ink); background: var(--surface); }
+.file:hover { border-color: var(--teal); color: var(--teal); }
+.file::before { content: "PDF"; font-family: var(--f-mono); font-size: 10px; font-weight: 500; color: var(--accent-ink); }
+.vol a { text-decoration: none; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.persona b { color: var(--ink); font-weight: 600; }
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 18px 28px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 13px; }
+.roles span { font-family: var(--f-display); font-weight: 700; }
+.r { color: var(--accent-ink) } .a { color: var(--teal) } .p { color: var(--ink) }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="pixels" aria-hidden="true"><span class="o"></span><span></span><span class="t"></span><span class="o"></span><span></span><span class="t"></span><span></span><span></span><span></span><span></span><span class="o"></span><span></span></div>
+    <img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABQoAAAGkCAYAAAB5BBjVAAAACXBIWXMAAAsTAAALEwEAmpwYAAAE4WlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgMTAuMC1jMDAwIDc5LmQyMGU0NjYzMCwgMjAyNS8xMi8wOS0wMjoxMToyMyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIDI3LjQgKE1hY2ludG9zaCkiIHhtcDpDcmVhdGVEYXRlPSIyMDI2LTAzLTE3VDE1OjAzOjE0WiIgeG1wOk1vZGlmeURhdGU9IjIwMjYtMDMtMTdUMTU6MDQ6MTlaIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI2LTAzLTE3VDE1OjA0OjE5WiIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6M2Y2NzMyMjktOTA1YS00ZTc4LWE2ZjgtZGIyMTM4YzgyYTVkIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjNm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" alt="UiPath">
+    <div class="eyebrow">Solution kit · Agentic source selection</div>
+    <h1>Source selection solution kit<span class="stop"></span></h1>
+    <p class="lead">Everything you need to stage, run and reset the agentic source selection demo: where to go, the test documents, the reset tools and how to stand it up in another tenant. All data is synthetic.</p>
+    <div class="actions">
+      <a class="btn primary" href="https://uipathlabs.uipath.host/source-selection#/" target="_blank" rel="noopener">Open the workspace</a>
+      <a class="btn ghost" href="https://github.com/UiPath-LAB-TEC/Source-Selection" target="_blank" rel="noopener">GitHub repo</a>
+      <a class="btn ghost" href="https://github.com/UiPath-LAB-TEC/Source-Selection/archive/refs/heads/main.zip" target="_blank" rel="noopener">All test data (.zip)</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <section id="open">
+      <h2><span class="n">1</span>Open the workspace</h2>
+      <div class="urlrow">
+        <span class="url" id="ws-url">https://uipathlabs.uipath.host/source-selection#/</span>
+        <button class="copy" id="copy-url" type="button">Copy link</button>
+      </div>
+      <p>Sign in with your UiPath account in the uipathlabs organization, then choose <b>Federal</b> on the sign-in screen (State &amp; Local runs the same process as a K-12 district RFP). One sign-in plays every role: switch people from the persona menu in the sidebar.</p>
+      <div class="note"><p><b>Access first.</b> Evaluations are visible to anyone in the tenant, but the tasks, the Maestro run and the proposal PDFs need a role on the <code>AMER Presales/Public Sector/Procurement</code> folder. Members of AMER_SE_PublicSector and AMER_SE_Other have it; anyone else needs a folder assignment before they try the demo.</p></div>
+      <div class="tablebox">
+        <table>
+          <thead><tr><th>Persona</th><th>Role</th><th>What they do in the demo</th></tr></thead>
+          <tbody>
+            <tr><td class="persona"><b>Dana Whitfield</b></td><td>Contracting Officer</td><td>Creates the evaluation, releases proposals, makes the price determination</td></tr>
+            <tr><td class="persona"><b>Marcus Reyes, Priya Natarajan, Tom Okafor</b></td><td>Evaluators 1–3</td><td>Review the drafted findings and rate their assigned factors</td></tr>
+            <tr><td class="persona"><b>Rebecca Hale</b></td><td>SSEB Chair</td><td>Confirms each consensus rating and signs the consensus report</td></tr>
+            <tr><td class="persona"><b>James Thornton</b></td><td>Source Selection Authority</td><td>Writes the rationale and signs the award decision</td></tr>
+            <tr><td class="persona"><b>Jordan Ellis</b></td><td>System Admin</td><td>Deletes evaluations so a number can be staged again</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="stage">
+      <h2><span class="n">2</span>Stage a new evaluation</h2>
+      <p>The live demo starts three weeks into an evaluation: intake done and two of the three evaluators submitted, so the audience watches Tom finish his worksheet and the evaluation run on to award. Staging takes about ten minutes with the federal VA package below.</p>
+      <ol class="steps">
+        <li><div><span class="who">As Dana Whitfield,</span> open <b>New source selection</b> and upload <code>Solicitation.pdf</code>, <code>IGCE.pdf</code> and <code>Section-M.pdf</code>. The agents fill in the plan; check it against the expected values below.</div></li>
+        <li><div>Assign the evaluation board (who rates which factor), add all 15 proposal volumes (they match to each offeror by file name), check the plan and <b>start</b> the source selection. Robots ingest and screen the proposals in a minute or two.</div></li>
+        <li><div><span class="who">Still as Dana,</span> open the release task in <b>My tasks</b> and release the proposals to the evaluators. The evaluation agent drafts findings for each worksheet.</div></li>
+        <li><div><span class="who">As Marcus Reyes,</span> open his worksheet, accept, edit or reject each drafted finding, rate his factors, confirm the independence statement and submit. Then do the same <span class="who">as Priya Natarajan.</span></div></li>
+        <li><div>Stop there. Tom Okafor's worksheet, the consensus (Rebecca), price (Dana) and award decision (James) are the live demo.</div></li>
+      </ol>
+      <div class="tablebox">
+        <table>
+          <thead><tr><th>What the agents should fill in</th><th>Expected</th></tr></thead>
+          <tbody>
+            <tr><td>Title and agency</td><td>Veterans Claims Intake Modernization · Department of Veterans Affairs</td></tr>
+            <tr><td>Contract type</td><td>Firm-fixed-price task order, one base year and four option years</td></tr>
+            <tr><td>Price lines</td><td>4 CLINs totalling $14,000,000</td></tr>
+            <tr><td>Evaluation factors</td><td>Technical Approach, Management Approach, Past Performance, Price, in descending order of importance</td></tr>
+            <tr><td>Page limits</td><td>Technical 25 · Management 15 · Past Performance 10</td></tr>
+            <tr><td>Offerors</td><td>Tallgrass Federal Group LLC · Orinoco Digital Inc · Brightwater Systems Corp</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="data">
+      <h2><span class="n">3</span>Test data and documents</h2>
+      <p>Every document is fictional and carries a synthetic-demo banner. Each solicitation number can be staged once; to stage it again, delete the evaluation first (section 4) or generate a fresh package with <code>tools/generate_sample.py --id &lt;number&gt;</code>.</p>
+
+      <div class="pkg">
+        <div class="pkg-head"><h3>VA · Veterans Claims Intake Modernization</h3><span class="tag">Federal · 36C10B-27-R-0060</span></div>
+        <div class="pkg-body">
+          <div class="files">
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/Solicitation.pdf" target="_blank" rel="noopener">Solicitation</a>
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/IGCE.pdf" target="_blank" rel="noopener">IGCE (cost estimate)</a>
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/Section-M.pdf" target="_blank" rel="noopener">Section M (evaluation criteria)</a>
+          </div>
+          <div class="tablebox">
+            <table class="vol">
+              <thead><tr><th>Offeror</th><th>Cover</th><th>Technical</th><th>Management</th><th>Past performance</th><th>Price</th></tr></thead>
+              <tbody>
+                <tr><td>Tallgrass</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/TALLGRASS/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/TALLGRASS/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/TALLGRASS/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/TALLGRASS/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/TALLGRASS/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+                <tr><td>Orinoco</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/ORINOCO/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/ORINOCO/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/ORINOCO/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/ORINOCO/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/ORINOCO/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+                <tr><td>Brightwater</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/BRIGHTWATER/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/BRIGHTWATER/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/BRIGHTWATER/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/BRIGHTWATER/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/BRIGHTWATER/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/tree/main/samples/36C10B-27-R-0060" target="_blank" rel="noopener">Open the whole package folder on GitHub</a></p>
+        </div>
+      </div>
+
+      <div class="pkg">
+        <div class="pkg-head"><h3>Willowmere USD · Student Transportation Routing and Fleet Management</h3><span class="tag">State &amp; Local · WUSD-RFP-27-021</span></div>
+        <div class="pkg-body">
+          <div class="files">
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/RFP.pdf" target="_blank" rel="noopener">RFP</a>
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/Cost-Estimate.pdf" target="_blank" rel="noopener">Cost estimate</a>
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/Evaluation-Criteria.pdf" target="_blank" rel="noopener">Evaluation criteria</a>
+          </div>
+          <div class="tablebox">
+            <table class="vol">
+              <thead><tr><th>Proposer</th><th>Cover</th><th>Technical</th><th>Management</th><th>Past performance</th><th>Price</th></tr></thead>
+              <tbody>
+                <tr><td>Copperline</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/COPPERLINE/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/COPPERLINE/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/COPPERLINE/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/COPPERLINE/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/COPPERLINE/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+                <tr><td>Fairhaven</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/FAIRHAVEN/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/FAIRHAVEN/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/FAIRHAVEN/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/FAIRHAVEN/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/FAIRHAVEN/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+                <tr><td>Bramblewood</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/BRAMBLEWOOD/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/BRAMBLEWOOD/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/BRAMBLEWOOD/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/BRAMBLEWOOD/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/BRAMBLEWOOD/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Sign in as <b>State &amp; Local</b> and open <b>New RFP evaluation</b>. The <a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/WUSD-RFP-27-021/README.md" target="_blank" rel="noopener">package README</a> walks through every step with the values the agents should fill in and the answer key.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="reset">
+      <h2><span class="n">4</span>Reset and rerun</h2>
+      <div class="grid2">
+        <div class="pkg"><div class="pkg-body">
+          <h3>Start over with the same number</h3>
+          <p>Sign in as <b>Jordan Ellis</b> (System Admin) and choose <b>Delete evaluation</b>. It cancels the run, then deletes the proposal files and every record. Stage it again from section 2.</p>
+        </div></div>
+        <div class="pkg"><div class="pkg-body">
+          <h3>Clear the work between takes</h3>
+          <p>Keep the evaluation but clear its offerors, pages, findings, ratings, decisions and audit events, and set it back to Proposals Received:</p>
+          <pre>python3 tools/reset.py &lt;solicitation&gt;</pre>
+        </div></div>
+      </div>
+      <p>The terminal version of Delete evaluation is <code>python3 tools/delete_solicitation.py &lt;solicitation&gt; --confirm &lt;solicitation&gt;</code>. Both are permanent.</p>
+      <h3 style="margin-top: 6px;">Evaluations parked for jump-in demos</h3>
+      <p>These stay open on purpose, so you can start a demo at any stage. Show them, but don't complete their open tasks.</p>
+      <div class="tablebox">
+        <table>
+          <thead><tr><th>Solicitation</th><th>Requirement</th><th>Waiting at</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">FA8771-27-R-0031</td><td>Air Force · Enterprise IT Modernization Services</td><td>Price determination (Contracting Officer)</td></tr>
+            <tr><td class="mono">75N910-27-R-0052</td><td>HHS/NIH · Research Data Platform and Analytics Support</td><td>Award decision (Source Selection Authority)</td></tr>
+            <tr><td class="mono">WUSD-RFP-27-014</td><td>K-12 · Student Information System</td><td>Cost evaluation (Procurement Officer)</td></tr>
+            <tr><td class="mono">WUSD-RFP-27-009</td><td>K-12 · Learning Management System</td><td>Award recommendation (Award Authority)</td></tr>
+            <tr><td class="mono">36C10B-27-R-0059</td><td>VA · Veterans Claims Intake Modernization</td><td>Awarded (the record in the demo video)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tenant">
+      <h2><span class="n">5</span>Stand it up in another tenant</h2>
+      <p>Only needed outside uipathlabs. The apps, robots and process find folders by key, so point them at your own folder and bucket keys before you deploy.</p>
+      <ol class="steps">
+        <li><div>Clone the repo and sign in: <code>uip login</code>.</div></li>
+        <li><div>Create a folder with the <code>SS-Proposals</code> and <code>SS-Records</code> storage buckets (keys go in <code>tools/schema/bucket-keys.json</code>).</div></li>
+        <li><div>Create the Data Fabric entities from <code>tools/schema/*.json</code> and record their IDs in <code>tools/schema/entity-ids.json</code>, then load the vendor reference data and demo evaluations with <code>python3 tools/seed.py</code>.</div></li>
+        <li><div>Create the three IXP projects (proposal cover, price schedule, past performance), train them on the corpus from <code>tools/generate_ixp_corpus.py</code> and publish each with the <code>live</code> tag.</div></li>
+        <li><div>Pack, publish and deploy the solution (Maestro process, six agents and the robots):
+          <pre>cd SourceSelection
+uip solution resources refresh
+uip solution pack . dist -v &lt;version&gt;
+uip solution publish dist/&lt;package&gt;.zip
+uip solution deploy run -n SourceSelection --package-name SourceSelection \
+  --package-version &lt;version&gt; --folder-name &lt;folder&gt; --parent-folder-path &lt;parent&gt;</pre></div></li>
+        <li><div>Build and deploy the two coded apps, <code>ss-workspace</code> (type Web) and <code>ss-taskforms</code> (type Action):
+          <pre>npm run build
+uip codedapp pack dist -n &lt;name&gt; -v &lt;version&gt;
+uip codedapp publish -n &lt;name&gt; -v &lt;version&gt; -t Web   # -t Action for ss-taskforms
+uip codedapp deploy -n &lt;name&gt; --folder-key &lt;folder key&gt;</pre></div></li>
+      </ol>
+    </section>
+
+    <section id="docs">
+      <h2><span class="n">6</span>Reference</h2>
+      <div class="files">
+        <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection#readme" target="_blank" rel="noopener">Repo README</a>
+        <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/docs/design/source-selection-sdd.md" target="_blank" rel="noopener">Process design</a>
+        <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/docs/design/source-selection-solution-sdd.md" target="_blank" rel="noopener">Solution design</a>
+        <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/tree/main/docs/design" target="_blank" rel="noopener">All design documents</a>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="roles"><span class="r">Robots do.</span> <span class="a">Agents think.</span> <span class="p">People lead.</span></span>
+    <span>Anagh Bhave · UiPath Public Sector · <span class="mono">anagh.bhave@uipath.com</span></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var btn = document.getElementById('copy-url');
+  var url = document.getElementById('ws-url');
+  if (!btn || !url) return;
+  btn.addEventListener('click', function () {
+    var text = url.textContent.trim();
+    var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy link'; }, 1600); };
+    var select = function () { var r = document.createRange(); r.selectNodeContents(url); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected, press copy'; };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(done, select); } else { select(); }
+    } catch (e) { select(); }
+  });
+})();
+</script>
+</body></html>
