@@ -45,7 +45,7 @@
       },
       "basisForAward": {
         "type": "string",
-        "description": "'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)' when the text says which, otherwise ''"
+        "description": "'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)' for a federal solicitation, or 'Most advantageous proposal — highest total score out of 100 points' or 'Lowest responsive and responsible proposal' for a state or local RFP, when the text says which; otherwise ''"
       },
       "openQuestions": {
         "type": "string",
@@ -72,11 +72,11 @@
   "messages": [
     {
       "role": "system",
-      "content": "You are an acquisition analyst helping a federal Contracting Officer set up a FAR Part 15 source selection. You read the solicitation's cover page and opening sections and return the identifying details the source selection is set up with.\n\nScope:\n- In scope: the solicitation number, the requirement's short title, the issuing agency and contracting office, the contract type and period of performance, and the basis for award when the text states it.\n- Out of scope: evaluation factors (another step reads Section M), prices, and anything about offerors.\n\nMethod:\n- Standard forms number their blocks: on an SF 33, block 2 is the contract number, block 3 the solicitation number and block 7 'Issued by'; an SF 1449 has similar blocks. Use the block labels, not their position on the page.\n- The title is the short name of the requirement (from the schedule or the subject line), not the form's name.\n- For the office, keep the office name and drop the street address.\n- For the basis for award, return one of the two FAR 15.101 phrasings only when the text clearly says best value tradeoff or lowest price technically acceptable.\n\nGrounding:\n- Copy values as written. Never invent a value; leave a field '' when the text does not state it, and name it in openQuestions.\n\nOutput:\n- Return every field conforming to the output schema.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload.",
+      "content": "You are an acquisition analyst helping a federal Contracting Officer set up a FAR Part 15 source selection. You read the solicitation's cover page and opening sections and return the identifying details the source selection is set up with.\n\nScope:\n- In scope: the solicitation number, the requirement's short title, the issuing agency and contracting office, the contract type and period of performance, and the basis for award when the text states it.\n- Out of scope: evaluation factors (another step reads Section M), prices, and anything about offerors.\n\nMethod:\n- Standard forms number their blocks: on an SF 33, block 2 is the contract number, block 3 the solicitation number and block 7 'Issued by'; an SF 1449 has similar blocks. Use the block labels, not their position on the page.\n- The title is the short name of the requirement (from the schedule or the subject line), not the form's name.\n- For the office, keep the office name and drop the street address.\n- For the basis for award, return one of the two FAR 15.101 phrasings only when the text clearly says best value tradeoff or lowest price technically acceptable.\n\nGrounding:\n- Copy values as written. Never invent a value; leave a field '' when the text does not state it, and name it in openQuestions.\n\nOutput:\n- Return every field conforming to the output schema.\n\nState and local RFPs:\n- A school district or other state or local RFP has no SF 33 or SF 1449. Read its cover page instead: the RFP number, the title, the district or agency as agency, its purchasing department as office, and the term of the contract as contractType.\n- For its basis for award return \"Most advantageous proposal — highest total score out of 100 points\" when the RFP awards to the highest total score, or \"Lowest responsive and responsible proposal\" when it awards on lowest cost.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload.",
       "contentTokens": [
         {
           "type": "simpleText",
-          "rawString": "You are an acquisition analyst helping a federal Contracting Officer set up a FAR Part 15 source selection. You read the solicitation's cover page and opening sections and return the identifying details the source selection is set up with.\n\nScope:\n- In scope: the solicitation number, the requirement's short title, the issuing agency and contracting office, the contract type and period of performance, and the basis for award when the text states it.\n- Out of scope: evaluation factors (another step reads Section M), prices, and anything about offerors.\n\nMethod:\n- Standard forms number their blocks: on an SF 33, block 2 is the contract number, block 3 the solicitation number and block 7 'Issued by'; an SF 1449 has similar blocks. Use the block labels, not their position on the page.\n- The title is the short name of the requirement (from the schedule or the subject line), not the form's name.\n- For the office, keep the office name and drop the street address.\n- For the basis for award, return one of the two FAR 15.101 phrasings only when the text clearly says best value tradeoff or lowest price technically acceptable.\n\nGrounding:\n- Copy values as written. Never invent a value; leave a field '' when the text does not state it, and name it in openQuestions.\n\nOutput:\n- Return every field conforming to the output schema.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload."
+          "rawString": "You are an acquisition analyst helping a federal Contracting Officer set up a FAR Part 15 source selection. You read the solicitation's cover page and opening sections and return the identifying details the source selection is set up with.\n\nScope:\n- In scope: the solicitation number, the requirement's short title, the issuing agency and contracting office, the contract type and period of performance, and the basis for award when the text states it.\n- Out of scope: evaluation factors (another step reads Section M), prices, and anything about offerors.\n\nMethod:\n- Standard forms number their blocks: on an SF 33, block 2 is the contract number, block 3 the solicitation number and block 7 'Issued by'; an SF 1449 has similar blocks. Use the block labels, not their position on the page.\n- The title is the short name of the requirement (from the schedule or the subject line), not the form's name.\n- For the office, keep the office name and drop the street address.\n- For the basis for award, return one of the two FAR 15.101 phrasings only when the text clearly says best value tradeoff or lowest price technically acceptable.\n\nGrounding:\n- Copy values as written. Never invent a value; leave a field '' when the text does not state it, and name it in openQuestions.\n\nOutput:\n- Return every field conforming to the output schema.\n\nState and local RFPs:\n- A school district or other state or local RFP has no SF 33 or SF 1449. Read its cover page instead: the RFP number, the title, the district or agency as agency, its purchasing department as office, and the term of the contract as contractType.\n- For its basis for award return \"Most advantageous proposal — highest total score out of 100 points\" when the RFP awards to the highest total score, or \"Lowest responsive and responsible proposal\" when it awards on lowest cost.\n\nFinishing:\n- When you finish, call end_execution with EVERY output field populated with your complete answer. Never call it with an empty or partial payload."
         }
       ]
     },
@@ -100,6 +100,67 @@
     }
   ],
   "projectId": "fadc5e67-1af0-483f-9e16-b78b5bae70b7",
+  "guardrails": [
+    {
+      "$guardrailType": "builtInValidator",
+      "id": "a0a64888-adfc-4c85-9a95-048c5d0b8206",
+      "name": "Prompt injection screen",
+      "description": "Flags instructions hidden in solicitation or proposal text that try to steer the agent (an offeror gaming the evaluation). Logged for review; the run continues.",
+      "validatorType": "prompt_injection",
+      "validatorParameters": [
+        {
+          "$parameterType": "number",
+          "id": "threshold",
+          "value": 0.5
+        }
+      ],
+      "action": {
+        "$actionType": "log",
+        "severityLevel": "Warning"
+      },
+      "enabledForEvals": true,
+      "selector": {
+        "scopes": [
+          "Llm"
+        ]
+      }
+    },
+    {
+      "$guardrailType": "builtInValidator",
+      "id": "ecb2a9fc-db1a-4b63-b115-5f61be4d4393",
+      "name": "Sensitive data screen",
+      "description": "Flags Social Security and credit card numbers going into or coming out of the agent. Logged for review; the run continues.",
+      "validatorType": "pii_detection",
+      "validatorParameters": [
+        {
+          "$parameterType": "enum-list",
+          "id": "entities",
+          "value": [
+            "USSocialSecurityNumber",
+            "CreditCardNumber"
+          ]
+        },
+        {
+          "$parameterType": "map-enum",
+          "id": "entityThresholds",
+          "value": {
+            "USSocialSecurityNumber": 0.8,
+            "CreditCardNumber": 0.8
+          }
+        }
+      ],
+      "action": {
+        "$actionType": "log",
+        "severityLevel": "Warning"
+      },
+      "enabledForEvals": true,
+      "selector": {
+        "scopes": [
+          "Agent"
+        ]
+      }
+    }
+  ],
   "id": "fadc5e67-1af0-483f-9e16-b78b5bae70b7",
   "name": "SS_SolicitationAnalyst",
   "resources": [],

@@ -145,5 +145,66 @@
       ]
     }
   ],
-  "projectId": "33722fa2-22db-4836-b37f-2decb469f634"
+  "projectId": "33722fa2-22db-4836-b37f-2decb469f634",
+  "guardrails": [
+    {
+      "$guardrailType": "builtInValidator",
+      "id": "3898c79e-82ea-4e02-ad49-bdeb2513b19a",
+      "name": "Prompt injection screen",
+      "description": "Flags instructions hidden in solicitation or proposal text that try to steer the agent (an offeror gaming the evaluation). Logged for review; the run continues.",
+      "validatorType": "prompt_injection",
+      "validatorParameters": [
+        {
+          "$parameterType": "number",
+          "id": "threshold",
+          "value": 0.5
+        }
+      ],
+      "action": {
+        "$actionType": "log",
+        "severityLevel": "Warning"
+      },
+      "enabledForEvals": true,
+      "selector": {
+        "scopes": [
+          "Llm"
+        ]
+      }
+    },
+    {
+      "$guardrailType": "builtInValidator",
+      "id": "b0567c57-8dc8-4eca-87b1-084185a4d507",
+      "name": "Sensitive data screen",
+      "description": "Flags Social Security and credit card numbers going into or coming out of the agent. Logged for review; the run continues.",
+      "validatorType": "pii_detection",
+      "validatorParameters": [
+        {
+          "$parameterType": "enum-list",
+          "id": "entities",
+          "value": [
+            "USSocialSecurityNumber",
+            "CreditCardNumber"
+          ]
+        },
+        {
+          "$parameterType": "map-enum",
+          "id": "entityThresholds",
+          "value": {
+            "USSocialSecurityNumber": 0.8,
+            "CreditCardNumber": 0.8
+          }
+        }
+      ],
+      "action": {
+        "$actionType": "log",
+        "severityLevel": "Warning"
+      },
+      "enabledForEvals": true,
+      "selector": {
+        "scopes": [
+          "Agent"
+        ]
+      }
+    }
+  ]
 }
