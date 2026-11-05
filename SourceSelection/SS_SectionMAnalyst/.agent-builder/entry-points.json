@@ -70,6 +70,10 @@
                 "sourceQuote": {
                   "type": "string",
                   "description": "Verbatim sentence from Section M that defines this factor"
+                },
+                "maxPoints": {
+                  "type": "integer",
+                  "description": "Maximum points the RFP assigns this criterion (state and local points-scored RFPs), or 0 when it assigns none"
                 }
               },
               "required": [
@@ -79,7 +83,8 @@
                 "ratingType",
                 "volume",
                 "importanceRank",
-                "sourceQuote"
+                "sourceQuote",
+                "maxPoints"
               ]
             }
           },
