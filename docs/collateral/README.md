@@ -6,6 +6,9 @@
 | [`source-selection-handoff-1-pager.pdf`](source-selection-handoff-1-pager.pdf) | SE handoff 1-pager: use case, target persona, value metrics, components used, setup and reset |
 | [`source-selection-solution-kit.pdf`](source-selection-solution-kit.pdf) | Solution kit: how to stage, run and reset the demo, the expected agent output, links to every test document, and setup in another tenant |
 | [`source-selection-solution-kit.html`](source-selection-solution-kit.html) | The same solution kit as a page with working links, hosted at https://uipathlabs.uipath.host/source-selection-solution-kit |
+| [`source-selection-demo.mp4`](source-selection-demo.mp4) | The narrated demo video (6:10, 1080p): the procurement problem, then a source selection run end to end |
+| [`source-selection-demo.srt`](source-selection-demo.srt), [`.vtt`](source-selection-demo.vtt) | English captions for the video |
+| [`source-selection-demo-thumbnail.png`](source-selection-demo-thumbnail.png) | The video's thumbnail (1920×1080), also its first frame |
 
 The test documents the solution kit links to are in [`samples/36C10B-27-R-0060`](../../samples/36C10B-27-R-0060) (federal,
 VA) and [`samples/WUSD-RFP-27-021`](../../samples/WUSD-RFP-27-021) (State & Local, K-12).
