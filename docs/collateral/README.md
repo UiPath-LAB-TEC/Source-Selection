@@ -7,8 +7,10 @@
 | [`source-selection-solution-kit.pdf`](source-selection-solution-kit.pdf) | Solution kit: how to stage, run and reset the demo, the expected agent output, links to every test document, and setup in another tenant |
 | [`source-selection-solution-kit.html`](source-selection-solution-kit.html) | The same solution kit as a page with working links, hosted at https://uipathlabs.uipath.host/source-selection-solution-kit |
 
-The test documents the solution kit links to are in [`samples/36C10B-27-R-0060`](../../samples/36C10B-27-R-0060) (federal,
-VA) and [`samples/WUSD-RFP-27-021`](../../samples/WUSD-RFP-27-021) (State & Local, K-12).
+The test documents the solution kit links to are in [`samples/36C10B-27-R-0060`](../../samples/36C10B-27-R-0060) (civilian,
+VA), [`samples/W56KGU-27-R-0041`](../../samples/W56KGU-27-R-0041) (DoD, Army) and
+[`samples/WUSD-RFP-27-021`](../../samples/WUSD-RFP-27-021) (State & Local, K-12). The two federal packages come from
+`tools/generate_sample.py` (`--package army` for the DoD one).
 
 ## Hosting the solution kit
 

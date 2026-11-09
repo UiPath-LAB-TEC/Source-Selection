@@ -45,7 +45,7 @@ officer to review.
 | `award-task-forms/` | Award action app: its forms run on the task host shared with `ss-task-forms` (`@forms/host`) |
 | `Award/` | Award solution: the `AwardProcess` BPMN process and the `AW_Robots` Python function (with tests). Scope in `docs/design/award-phase-scope.md` |
 | `tools/` | Data Fabric seeding, synthetic proposal and solicitation generators, and helper scripts |
-| `evaluation-plans/`, `samples/` | Evaluation plans and ready-to-upload demo packages (federal VA and K-12 district) |
+| `evaluation-plans/`, `samples/` | Evaluation plans and ready-to-upload demo packages (civilian VA, DoD Army and K-12 district) |
 | `docs/design/` | Solution design documents |
 
 ## Built with
