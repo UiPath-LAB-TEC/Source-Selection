@@ -43,7 +43,7 @@
           },
           "basisForAward": {
             "type": "string",
-            "description": "'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)' when the text says which, otherwise ''"
+            "description": "'Best value tradeoff (FAR 15.101-1)' or 'Lowest price technically acceptable (FAR 15.101-2)' for a federal solicitation, or 'Most advantageous proposal — highest total score out of 100 points' or 'Lowest responsive and responsible proposal' for a state or local RFP, when the text says which; otherwise ''"
           },
           "openQuestions": {
             "type": "string",
