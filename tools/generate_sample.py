@@ -1,10 +1,12 @@
-"""Render the self-contained sample package for trying "New source selection" end to end.
+"""Render a self-contained sample package for trying "New source selection" end to end.
 
-Usage: .venv/bin/python tools/generate_sample.py [--id <solicitation number>] [--seed-vendors]
-Output: samples/<solicitationId>/Section-M.pdf and samples/<solicitationId>/<OFFEROR>/<volume>.pdf
+Usage: .venv/bin/python tools/generate_sample.py [--package va|army] [--id <solicitation number>] [--out <dir>] [--seed-vendors]
+--package picks the content: va (default, civilian: sample_content.py) or army (DoD: dod_sample_content.py).
+Output: <out, default samples>/<solicitationId>/Solicitation.pdf, IGCE.pdf, Section-M.pdf and <OFFEROR>/<volume>.pdf
 --seed-vendors adds the sample offerors to SSRefVendor (idempotent) so SAM, exclusion and FAPIIS screening
 finds them; without it each one is flagged "No SAM registration found".
 """
+import importlib
 import json
 import os
 import sys
@@ -18,15 +20,17 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import generate_proposals as gp  # noqa: E402
 import generate_section_m as sm  # noqa: E402
-import sample_content as sc  # noqa: E402
+PACKAGES = {"va": "sample_content", "army": "dod_sample_content"}
+sc = importlib.import_module(PACKAGES[sys.argv[sys.argv.index("--package") + 1] if "--package" in sys.argv else "va"])
+D = sc.DOCS
 
-out = ROOT / "samples"
+out = Path(sys.argv[sys.argv.index("--out") + 1]).resolve() if "--out" in sys.argv else ROOT / "samples"
 sm.render(sc.PLAN, out / sc.SOLICITATION_ID)
 (out / sc.SOLICITATION_ID / "Section-M.txt").unlink(missing_ok=True)
 
 
 # Fictional contacts for the synthetic package (the Contracting Officer matches the workspace persona).
-CO = ("Dana Whitfield", "Contracting Officer", "(555) 010-4417", "dana.whitfield@tac.example")
+CO = D["co"]
 PERIODS = ["Base year", "Option year 1", "Option year 2", "Option year 3", "Option year 4"]
 
 
@@ -48,14 +52,14 @@ def render_igce(path: Path):
     rows.append(["", "<b>Total estimate</b>", *[f"<b>{money(t)}</b>" for t in totals], f"<b>{money(sum(totals))}</b>"])
     table = ruled(rows, [0.5 * inch, 1.45 * inch] + [0.78 * inch] * 5 + [0.95 * inch], style=small, head_style=small_b, align_right_from=2)
     facts = ruled([
-        ["Solicitation number", plan["solicitationId"], "Estimate date", "August 28, 2026"],
+        ["Solicitation number", plan["solicitationId"], "Estimate date", D["estimate_date"]],
         ["Requirement", plan["title"], "Contract type", plan["contractType"]],
-        ["Requiring activity", "Veterans Benefits Administration, Office of Business Integration", "Period of performance", "One 12-month base year and four 12-month option years"],
+        ["Requiring activity", D["requiring_activity"], "Period of performance", "One 12-month base year and four 12-month option years"],
         ["Contracting office", plan["office"], "Estimate total", money(sum(totals))],
     ], [1.25 * inch, 2.15 * inch, 1.25 * inch, 2.15 * inch], header=False)
-    who = [("Prepared by", "Marisol Grant", "Cost/Price Analyst, VBA Office of Business Integration"),
-           ("Reviewed by", "Program Manager", "Veterans Claims Intake Modernization"),
-           ("Approved by", CO[0], f"{CO[1]}, {plan['office'].split(',')[0]}")]
+    who = [("Prepared by", *D["preparer"]),
+           ("Reviewed by", "Program Manager", plan["title"]),
+           ("Approved by", CO[0], f"{CO[1]}, {D['approver_office']}")]
     signatures = ruled([[w[0] for w in who], *[[f"{field}: {w[i]}" for w in who] for field, i in (("Name", 1), ("Title", 2))],
                         ["Signature:<br/><br/>______________________"] * 3, ["Date: ______________"] * 3], [6.8 * inch / 3] * 3)
     story = [
@@ -65,17 +69,12 @@ def render_igce(path: Path):
         Paragraph("1. PURPOSE", H),
         Paragraph("This Independent Government Cost Estimate supports the evaluation of price reasonableness for the requirement above under FAR 15.404-1. It was prepared by the requiring activity without input from any prospective offeror.", BODY),
         Paragraph("2. BASIS OF ESTIMATE", H),
-        Paragraph("Labor hours are drawn from the Veterans Benefits Administration document intake pilot (2023 to 2025) and scaled to national claim volumes of roughly 1.6 million claims a year. Labor rates use GSA Multiple Award Schedule ceiling rates for comparable categories, escalated 2.5 percent a year. The base year includes one-time platform build and transition-in costs that do not recur in the option years.", BODY),
+        Paragraph(D["basis"], BODY),
         Paragraph("3. ESTIMATE BY CLIN AND PERIOD", H),
         table, Spacer(1, 6),
         Paragraph(f"All amounts are firm-fixed-price estimates in U.S. dollars and include labor, travel and other direct costs. The total estimate for the base year and all four option years is {money(sum(totals))}.", BODY),
         Paragraph("4. ASSUMPTIONS", H),
-        *[Paragraph(f"{chr(97 + i)}. {t}", BODY.clone(f"as{i}", leftIndent=14, spaceAfter=3)) for i, t in enumerate([
-            "Performance begins within 30 days of award; the base year carries the transition-in and platform build.",
-            "Option years are priced at steady-state operations with 2.5 percent annual escalation already applied.",
-            "Government-furnished cloud hosting under the VA Enterprise Cloud; no hosting costs are included.",
-            "Travel is limited to quarterly program reviews at the Technology Acquisition Center.",
-        ])],
+        *[Paragraph(f"{chr(97 + i)}. {t}", BODY.clone(f"as{i}", leftIndent=14, spaceAfter=3)) for i, t in enumerate(D["assumptions"])],
         KeepTogether([Paragraph("5. CERTIFICATION", H),
                       Paragraph("The undersigned certify that this estimate was developed independently by Government personnel, without the assistance of any prospective offeror, and represents the Government's best estimate of the cost of the requirement.", BODY),
                       signatures]),
@@ -98,7 +97,6 @@ def render_solicitation(path: Path):
     from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
     from official_docs import BODY, CELL, H, LABEL, RULE, SHADE, SUBTITLE, TITLE, VALUE, VALUE_B, numbered_canvas, ruled
     plan, labels = sc.PLAN, sc.CLIN_LABELS[sc.SOLICITATION_ID]
-    office = plan["office"].split(",")[0]
     box = lambda label, value="", bold=False: [Paragraph(label, LABEL), Paragraph(value or "&nbsp;", VALUE_B if bold else VALUE)]
     band = lambda text: Paragraph(f"<b>{text}</b>", VALUE.clone("band", alignment=1))
     X = "<b>X</b>"
@@ -132,8 +130,8 @@ def render_solicitation(path: Path):
          (8, 9, box("1. THIS CONTRACT IS A RATED ORDER UNDER DPAS (15 CFR 700)", "No")), (10, 10, box("RATING", "N/A")), (11, 11, box("PAGE OF PAGES", "1 &nbsp; &nbsp; 2"))], None)
     add([(0, 1, box("2. CONTRACT NUMBER")), (2, 4, box("3. SOLICITATION NUMBER", plan["solicitationId"], True)),
          (5, 7, box("4. TYPE OF SOLICITATION", "[ &nbsp;] SEALED BID (IFB)<br/>[X] NEGOTIATED (RFP)")),
-         (8, 9, box("5. DATE ISSUED", "September 15, 2026")), (10, 11, box("6. REQUISITION/PURCHASE NUMBER", "36C10B-27-0193"))], None)
-    add([(0, 5, box("7. ISSUED BY &nbsp; &nbsp; CODE 36C10B", f"{plan['agency']}<br/>{office}<br/>Building 2, Eatontown, NJ 07724")),
+         (8, 9, box("5. DATE ISSUED", "September 15, 2026")), (10, 11, box("6. REQUISITION/PURCHASE NUMBER", D["requisition"]))], None)
+    add([(0, 5, box(f"7. ISSUED BY &nbsp; &nbsp; CODE {D['office_code']}", f"{plan['agency']}<br/>{D['office_name']}<br/>{D['office_address']}")),
          (6, 11, box("8. ADDRESS OFFER TO (If other than Item 7)", "Same as Item 7. Offers are submitted electronically as stated in Section L."))], None)
     add([(0, 11, Paragraph('NOTE: In sealed bid solicitations "offer" and "offeror" mean "bid" and "bidder".', LABEL))], None)
     add([(0, 11, band("SOLICITATION"))], None, shade=True)
@@ -185,7 +183,7 @@ def render_solicitation(path: Path):
         Paragraph("SECTION B — SUPPLIES OR SERVICES AND PRICES/COSTS", TITLE),
         Paragraph(f"Solicitation No. {plan['solicitationId']} · {plan['title']}", SUBTITLE),
         Paragraph("B.1 DESCRIPTION OF REQUIREMENT", H),
-        Paragraph(f"{plan['title']}. The contractor shall modernize intake of Veterans' benefits claims: classifying and extracting incoming claim evidence, routing established claims to the right work queue, and delivering a Section 508 conformant experience for Veterans and VA staff, in accordance with the Performance Work Statement in Section C.", BODY),
+        Paragraph(D["description"], BODY),
         Paragraph("B.2 CONTRACT TYPE", H),
         Paragraph(f"This requirement will be awarded as a {plan['contractType'][0].lower() + plan['contractType'][1:]}.", BODY),
         Paragraph("B.3 SCHEDULE OF SUPPLIES OR SERVICES", H),

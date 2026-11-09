@@ -10,8 +10,10 @@
 | [`source-selection-demo.srt`](source-selection-demo.srt), [`.vtt`](source-selection-demo.vtt) | English captions for the video |
 | [`source-selection-demo-thumbnail.png`](source-selection-demo-thumbnail.png) | The video's thumbnail (1920×1080), also its first frame |
 
-The test documents the solution kit links to are in [`samples/36C10B-27-R-0060`](../../samples/36C10B-27-R-0060) (federal,
-VA) and [`samples/WUSD-RFP-27-021`](../../samples/WUSD-RFP-27-021) (State & Local, K-12).
+The test documents the solution kit links to are in [`samples/36C10B-27-R-0060`](../../samples/36C10B-27-R-0060) (civilian,
+VA), [`samples/W56KGU-27-R-0041`](../../samples/W56KGU-27-R-0041) (DoD, Army) and
+[`samples/WUSD-RFP-27-021`](../../samples/WUSD-RFP-27-021) (State & Local, K-12). The two federal packages come from
+`tools/generate_sample.py` (`--package army` for the DoD one).
 
 ## Hosting the solution kit
 

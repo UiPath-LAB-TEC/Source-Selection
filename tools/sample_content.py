@@ -66,6 +66,28 @@ CLIN_LABELS = {
     },
 }
 
+# The solicitation and IGCE text that differs between packages (generate_sample.py reads it; dod_sample_content.py
+# has the DoD one).
+DOCS = {
+    "co": ("Dana Whitfield", "Contracting Officer", "(555) 010-4417", "dana.whitfield@tac.example"),
+    "office_code": "36C10B",
+    "office_name": "Technology Acquisition Center (TAC)",
+    "office_address": "Building 2, Eatontown, NJ 07724",
+    "requisition": "36C10B-27-0193",
+    "description": "Veterans Claims Intake Modernization. The contractor shall modernize intake of Veterans' benefits claims: classifying and extracting incoming claim evidence, routing established claims to the right work queue, and delivering a Section 508 conformant experience for Veterans and VA staff, in accordance with the Performance Work Statement in Section C.",
+    "requiring_activity": "Veterans Benefits Administration, Office of Business Integration",
+    "estimate_date": "August 28, 2026",
+    "basis": "Labor hours are drawn from the Veterans Benefits Administration document intake pilot (2023 to 2025) and scaled to national claim volumes of roughly 1.6 million claims a year. Labor rates use GSA Multiple Award Schedule ceiling rates for comparable categories, escalated 2.5 percent a year. The base year includes one-time platform build and transition-in costs that do not recur in the option years.",
+    "assumptions": [
+        "Performance begins within 30 days of award; the base year carries the transition-in and platform build.",
+        "Option years are priced at steady-state operations with 2.5 percent annual escalation already applied.",
+        "Government-furnished cloud hosting under the VA Enterprise Cloud; no hosting costs are included.",
+        "Travel is limited to quarterly program reviews at the Technology Acquisition Center.",
+    ],
+    "preparer": ("Marisol Grant", "Cost/Price Analyst, VBA Office of Business Integration"),
+    "approver_office": "Technology Acquisition Center (TAC)",
+}
+
 # Answer key: what an evaluator (and the agent) should find.
 PLANTED = {
     "TALLGRASS": [

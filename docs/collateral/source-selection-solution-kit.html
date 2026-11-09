@@ -124,7 +124,7 @@ footer .wrap { padding-block: 18px 28px; display: flex; flex-wrap: wrap; justify
 
     <section id="stage">
       <h2><span class="n">2</span>Stage a new evaluation</h2>
-      <p>The live demo starts three weeks into an evaluation: intake done and two of the three evaluators submitted, so the audience watches Tom finish his worksheet and the evaluation run on to award. Staging takes about ten minutes with the federal VA package below.</p>
+      <p>The live demo starts three weeks into an evaluation: intake done and two of the three evaluators submitted, so the audience watches Tom finish his worksheet and the evaluation run on to award. Staging takes about ten minutes with either federal package below: the civilian VA one or the DoD Army one.</p>
       <ol class="steps">
         <li><div><span class="who">As Dana Whitfield,</span> open <b>New source selection</b> and upload <code>Solicitation.pdf</code>, <code>IGCE.pdf</code> and <code>Section-M.pdf</code>. The agents fill in the plan; check it against the expected values below.</div></li>
         <li><div>Assign the evaluation board (who rates which factor), add all 15 proposal volumes (they match to each offeror by file name), check the plan and <b>start</b> the source selection. Robots ingest and screen the proposals in a minute or two.</div></li>
@@ -134,14 +134,15 @@ footer .wrap { padding-block: 18px 28px; display: flex; flex-wrap: wrap; justify
       </ol>
       <div class="tablebox">
         <table>
-          <thead><tr><th>What the agents should fill in</th><th>Expected</th></tr></thead>
+          <thead><tr><th>What the agents should fill in</th><th>Civilian · VA (36C10B-27-R-0060)</th><th>DoD · Army (W56KGU-27-R-0041)</th></tr></thead>
           <tbody>
-            <tr><td>Title and agency</td><td>Veterans Claims Intake Modernization · Department of Veterans Affairs</td></tr>
-            <tr><td>Contract type</td><td>Firm-fixed-price task order, one base year and four option years</td></tr>
-            <tr><td>Price lines</td><td>4 CLINs totalling $14,000,000</td></tr>
-            <tr><td>Evaluation factors</td><td>Technical Approach, Management Approach, Past Performance, Price, in descending order of importance</td></tr>
-            <tr><td>Page limits</td><td>Technical 25 · Management 15 · Past Performance 10</td></tr>
-            <tr><td>Offerors</td><td>Tallgrass Federal Group LLC · Orinoco Digital Inc · Brightwater Systems Corp</td></tr>
+            <tr><td>Title and agency</td><td>Veterans Claims Intake Modernization · Department of Veterans Affairs</td><td>Army Maintenance Records Modernization · Department of the Army</td></tr>
+            <tr><td>Template and ratings</td><td>Civilian best-value tradeoff · adjectival</td><td>DoD best-value tradeoff · color (Blue to Red)</td></tr>
+            <tr><td>Contract type</td><td>Firm-fixed-price task order, one base year and four option years</td><td>Firm-fixed-price contract, one 12-month base year and four 12-month option years</td></tr>
+            <tr><td>Price lines</td><td>4 CLINs totalling $14,000,000</td><td>4 CLINs totalling $16,000,000</td></tr>
+            <tr><td>Evaluation factors</td><td colspan="2">Technical Approach, Management Approach, Past Performance, Price, in descending order of importance</td></tr>
+            <tr><td>Page limits</td><td colspan="2">Technical 25 · Management 15 · Past Performance 10</td></tr>
+            <tr><td>Offerors</td><td>Tallgrass Federal Group LLC · Orinoco Digital Inc · Brightwater Systems Corp</td><td>Sentryline Defense Group LLC · Corvane Digital Inc · Ashgrove Mission Systems Corp</td></tr>
           </tbody>
         </table>
       </div>
@@ -149,10 +150,10 @@ footer .wrap { padding-block: 18px 28px; display: flex; flex-wrap: wrap; justify
 
     <section id="data">
       <h2><span class="n">3</span>Test data and documents</h2>
-      <p>Every document is fictional and carries a synthetic-demo banner. Each solicitation number can be staged once; to stage it again, delete the evaluation first (section 4) or generate a fresh package with <code>tools/generate_sample.py --id &lt;number&gt;</code>.</p>
+      <p>Every document is fictional and carries a synthetic-demo banner. Each solicitation number can be staged once; to stage it again, delete the evaluation first (section 4) or generate a fresh package with <code>tools/generate_sample.py --id &lt;number&gt;</code> (add <code>--package army</code> for the DoD one).</p>
 
       <div class="pkg">
-        <div class="pkg-head"><h3>VA · Veterans Claims Intake Modernization</h3><span class="tag">Federal · 36C10B-27-R-0060</span></div>
+        <div class="pkg-head"><h3>VA · Veterans Claims Intake Modernization</h3><span class="tag">Civilian · 36C10B-27-R-0060</span></div>
         <div class="pkg-body">
           <div class="files">
             <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/36C10B-27-R-0060/Solicitation.pdf" target="_blank" rel="noopener">Solicitation</a>
@@ -170,6 +171,28 @@ footer .wrap { padding-block: 18px 28px; display: flex; flex-wrap: wrap; justify
             </table>
           </div>
           <p><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/tree/main/samples/36C10B-27-R-0060" target="_blank" rel="noopener">Open the whole package folder on GitHub</a></p>
+        </div>
+      </div>
+
+      <div class="pkg">
+        <div class="pkg-head"><h3>Army · Maintenance Records Modernization</h3><span class="tag">DoD · W56KGU-27-R-0041</span></div>
+        <div class="pkg-body">
+          <div class="files">
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/Solicitation.pdf" target="_blank" rel="noopener">Solicitation</a>
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/IGCE.pdf" target="_blank" rel="noopener">IGCE (cost estimate)</a>
+            <a class="file" href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/Section-M.pdf" target="_blank" rel="noopener">Section M (evaluation criteria)</a>
+          </div>
+          <div class="tablebox">
+            <table class="vol">
+              <thead><tr><th>Offeror</th><th>Cover</th><th>Technical</th><th>Management</th><th>Past performance</th><th>Price</th></tr></thead>
+              <tbody>
+                <tr><td>Sentryline</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/SENTRYLINE/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/SENTRYLINE/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/SENTRYLINE/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/SENTRYLINE/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/SENTRYLINE/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+                <tr><td>Corvane</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/CORVANE/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/CORVANE/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/CORVANE/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/CORVANE/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/CORVANE/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+                <tr><td>Ashgrove</td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/ASHGROVE/cover.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/ASHGROVE/technical.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/ASHGROVE/management.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/ASHGROVE/pastPerformance.pdf" target="_blank" rel="noopener">PDF</a></td><td><a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/ASHGROVE/price.pdf" target="_blank" rel="noopener">PDF</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Same steps as the civilian package: the agents pick the <b>DoD best-value tradeoff</b> template from the issuing agency, and Section M brings in the color ratings (Blue to Red) of the DoD Source Selection Procedures. The <a href="https://github.com/UiPath-LAB-TEC/Source-Selection/blob/main/samples/W56KGU-27-R-0041/README.md" target="_blank" rel="noopener">package README</a> has every expected value and the answer key, or <a href="https://github.com/UiPath-LAB-TEC/Source-Selection/tree/main/samples/W56KGU-27-R-0041" target="_blank" rel="noopener">open the whole folder on GitHub</a>.</p>
         </div>
       </div>
 
@@ -232,7 +255,7 @@ footer .wrap { padding-block: 18px 28px; display: flex; flex-wrap: wrap; justify
       <ol class="steps">
         <li><div>Clone the repo and sign in: <code>uip login</code>.</div></li>
         <li><div>Create a folder with the <code>SS-Proposals</code> and <code>SS-Records</code> storage buckets (keys go in <code>tools/schema/bucket-keys.json</code>).</div></li>
-        <li><div>Create the Data Fabric entities from <code>tools/schema/*.json</code> and record their IDs in <code>tools/schema/entity-ids.json</code>, then load the vendor reference data and demo evaluations with <code>python3 tools/seed.py</code>.</div></li>
+        <li><div>Create the Data Fabric entities from <code>tools/schema/*.json</code> and record their IDs in <code>tools/schema/entity-ids.json</code>, then load the vendor reference data and demo evaluations with <code>python3 tools/seed.py</code>. Register the wizard packages' offerors too, so they screen Compliant: <code>tools/generate_sample.py --seed-vendors</code> (civilian VA) and <code>tools/generate_sample.py --package army --seed-vendors</code> (DoD Army).</div></li>
         <li><div>Create the three IXP projects (proposal cover, price schedule, past performance), train them on the corpus from <code>tools/generate_ixp_corpus.py</code> and publish each with the <code>live</code> tag.</div></li>
         <li><div>Pack, publish and deploy the solution (Maestro process, six agents and the robots):
           <pre>cd SourceSelection

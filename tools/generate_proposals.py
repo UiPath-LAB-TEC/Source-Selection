@@ -154,6 +154,7 @@ RESTRICTION = ("This proposal includes data that shall not be disclosed outside 
 DUE = "October 30, 2026"
 OFFICE = {
     "Department of Veterans Affairs": ("Technology Acquisition Center (TAC)", "Building 2, Eatontown, NJ 07724", "Dana Whitfield, Contracting Officer"),
+    "Department of the Army": ("Army Contracting Command – Aberdeen Proving Ground (ACC-APG)", "6001 Combat Drive, Aberdeen Proving Ground, MD 21005", "Dana Whitfield, Contracting Officer"),
     "Willowmere Unified School District": ("Purchasing Department", "410 Orchard Avenue, Willowmere, OR 97000", "Dana Whitfield, Procurement Officer"),
 }
 # A District RFP has no FAR 52.215-1(e) legend; proposers mark trade secrets under the state public records law instead.
