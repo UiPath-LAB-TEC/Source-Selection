@@ -16,7 +16,7 @@ import { REQ_PERSONAS, storedReqPersona, TEAM } from '../hooks/usePersona'
 import { cachedProfiles, rememberRequester, requesterLine, requesterPersona, requestersFor, storedRequester } from '../lib/profiles'
 
 /** One entry in the sign-in list: a requester profile (as the Program Manager) or a role. */
-interface Signer { key: string; id: PersonaId; name: string; short: string; label: string; group: string; profileId?: string }
+interface Signer { key: string; id: PersonaId; name: string; short: string; label: string; group: string; profileId?: string; photo?: string }
 
 /** The UiPath products the Requirements phase runs on, circling the robot as on the other apps' sign-in. */
 const PRODUCTS: OrbitProduct[] = [
@@ -104,7 +104,7 @@ export function LoginScreen({ onLogin, error, busy = false, still = false, statu
               <PopoverTrigger asChild>
                 <button type="button" disabled={busy} aria-labelledby="rq-signin-as"
                   className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-2.5 text-left hover:bg-muted/60 disabled:opacity-60">
-                  <PersonaAvatar id={signer.id} short={signer.short} size={34} />
+                  <PersonaAvatar id={signer.id} short={signer.short} size={34} photo={signer.photo} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-semibold">{signer.name}</span>
                     <span className="block truncate text-xs text-muted-foreground">{signer.label}</span>
@@ -118,7 +118,7 @@ export function LoginScreen({ onLogin, error, busy = false, still = false, statu
                     {p.group !== people[i - 1]?.group && <p className="px-2 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{p.group}</p>}
                     <button type="button" onClick={() => choose(p)}
                       className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-muted ${p.key === as ? 'bg-muted' : ''}`}>
-                      <PersonaAvatar id={p.id} short={p.short} size={28} />
+                      <PersonaAvatar id={p.id} short={p.short} size={28} photo={p.photo} />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-medium">{p.name}</span>
                         <span className="block truncate text-xs text-muted-foreground">{p.label}</span>

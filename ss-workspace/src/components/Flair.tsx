@@ -13,12 +13,15 @@ const PERSONA_COLOR: Record<PersonaId, string> = {
  * A photo (jpg/png/webp) takes precedence over the illustrated SVG from tools/generate_headshots.js.
  */
 const HEADSHOTS = import.meta.glob<string>('../assets/people/*.{jpg,jpeg,png,webp,svg}', { eager: true, query: '?url', import: 'default' })
-const headshot = (id: PersonaId) =>
-  ['jpg', 'jpeg', 'png', 'webp', 'svg'].map((x) => HEADSHOTS[`../assets/people/${id}.${x}`]).find(Boolean)
+const headshot = (key: string) =>
+  ['jpg', 'jpeg', 'png', 'webp', 'svg'].map((x) => HEADSHOTS[`../assets/people/${key}.${x}`]).find(Boolean)
 
-/** Headshot; with a `title` ("Name · Role") it shows a hover caption. */
-export function PersonaAvatar({ id, short, size = 28, title }: { id: PersonaId; short: string; size?: number; title?: string }) {
-  const src = headshot(id)
+/**
+ * Headshot; with a `title` ("Name · Role") it shows a hover caption. `photo` names the picture when several people
+ * share a persona (the Requirements app's requesters, by ProfileId); with no picture under that name, initials show.
+ */
+export function PersonaAvatar({ id, short, size = 28, title, photo }: { id: PersonaId; short: string; size?: number; title?: string; photo?: string }) {
+  const src = headshot(photo ?? id)
   const face = src
     ? <img src={src} alt={title ?? ''} width={size} height={size} className="shrink-0 rounded-full object-cover ring-2 ring-white/70" style={{ width: size, height: size, background: PERSONA_COLOR[id] }} />
     : (

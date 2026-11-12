@@ -73,7 +73,7 @@ export function Home() {
         <div className="relative z-10 flex flex-col items-center gap-8 lg:flex-row lg:items-center">
           <div className="min-w-0 flex-1 space-y-4">
             <div className="ss-rise flex items-center gap-3" style={{ ['--d' as string]: '0.05s' }}>
-              <PersonaAvatar id={persona.id} short={persona.short} size={60} />
+              <PersonaAvatar id={persona.id} short={persona.short} size={60} photo={persona.photo} />
               <div className="min-w-0">
                 <p className="text-sm text-white/80">{greeting()} · My workspace</p>
                 <h1 className="truncate text-2xl font-semibold tracking-tight md:text-3xl">{persona.name}</h1>

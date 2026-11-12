@@ -72,7 +72,7 @@ export function Settings() {
         <ul className="divide-y divide-border rounded-xl border border-border">
           {profiles.map((p) => (
             <li key={p.ProfileId} className={`flex flex-wrap items-start gap-4 p-4 ${p.Active ? '' : 'opacity-60'}`}>
-              <PersonaAvatar id="pm" short={initials(p.Name)} size={38} />
+              <PersonaAvatar id="pm" short={initials(p.Name)} size={38} photo={p.ProfileId} />
               <div className="min-w-0 flex-1 basis-72 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-semibold">{p.Name}</span>

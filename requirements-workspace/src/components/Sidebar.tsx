@@ -15,10 +15,10 @@ const REQ_PM = REQ_PERSONAS[0]
 import { useScopedData } from '../lib/data'
 import { initials, requesterLine } from '../lib/profiles'
 
-function PersonRow({ id, short, name, sub, on, onClick }: { id: PersonaId; short: string; name: string; sub: string; on: boolean; onClick: () => void }) {
+function PersonRow({ id, short, name, sub, on, onClick, photo }: { id: PersonaId; short: string; name: string; sub: string; on: boolean; onClick: () => void; photo?: string }) {
   return (
     <button onClick={onClick} className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-muted ${on ? 'bg-muted' : ''}`}>
-      <PersonaAvatar id={id} short={short} size={28} />
+      <PersonaAvatar id={id} short={short} size={28} photo={photo} />
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-medium">{name}</span>
         <span className="block truncate text-xs text-muted-foreground">{sub}</span>
@@ -43,7 +43,7 @@ function PersonaCard() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-2.5 text-left hover:bg-muted/60" aria-label="Switch persona">
-          <PersonaAvatar id={persona.id} short={persona.short} size={34} />
+          <PersonaAvatar id={persona.id} short={persona.short} size={34} photo={persona.photo} />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-semibold">{persona.name}</span>
             <span className="block truncate text-[11px] text-muted-foreground">{persona.label}</span>
@@ -55,7 +55,7 @@ function PersonaCard() {
         <p className="px-2 pb-1 pt-1 text-xs text-muted-foreground">One demo user plays every role. Switch to see each person's view.</p>
         <p className={groupLabel}>Program offices</p>
         {requesters.map((r) => (
-          <PersonRow key={r.ProfileId} id="pm" short={initials(r.Name)} name={r.Name} sub={requesterLine(r, titled(REQ_PM, fw).label)}
+          <PersonRow key={r.ProfileId} id="pm" photo={r.ProfileId} short={initials(r.Name)} name={r.Name} sub={requesterLine(r, titled(REQ_PM, fw).label)}
             on={persona.id === 'pm' && r.ProfileId === requester.ProfileId} onClick={() => { setRequester(r.ProfileId); setOpen(false) }} />
         ))}
         <p className={groupLabel}>Acquisition team</p>

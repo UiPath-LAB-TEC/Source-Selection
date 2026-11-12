@@ -39,7 +39,7 @@ export function RequirementCard({ r, docs, n = 0 }: { r: RequirementRow; docs: D
   // A Program Manager requirement shows the requester who owns it.
   const role = REQ_PERSONAS.find((p) => p.id === (r.OwnerPersona || 'pm'))
   const who = role?.id === 'pm' ? profileFor(r.RequestedBy) : undefined
-  const owner = role && (who ? { ...role, name: who.Name, short: initials(who.Name), label: who.Title || role.label } : role)
+  const owner = role && (who ? { ...role, name: who.Name, short: initials(who.Name), label: who.Title || role.label, photo: who.ProfileId } : role)
   const draft = r.Status === 'Draft' || r.Status === 'Returned'
   return (
     <article style={{ animationDelay: `${80 + n * 70}ms` }} className="ss-in ss-lift relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card">
@@ -62,7 +62,7 @@ export function RequirementCard({ r, docs, n = 0 }: { r: RequirementRow; docs: D
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            {owner && <PersonaAvatar id={owner.id} short={owner.short} size={30} title={`${owner.name} · ${owner.label}`} />}
+            {owner && <PersonaAvatar id={owner.id} short={owner.short} size={30} title={`${owner.name} · ${owner.label}`} photo={owner.photo} />}
             {r.SolicitationId && (
               <Button size="sm" variant="outline" asChild><a href={appUrl('source-selection', `/s/${encodeURIComponent(r.SolicitationId)}`)}>Open in Source Selection<ArrowUpRight className="ml-1.5 h-3.5 w-3.5" /></a></Button>
             )}

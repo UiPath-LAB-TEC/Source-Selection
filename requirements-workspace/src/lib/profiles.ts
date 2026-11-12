@@ -44,6 +44,7 @@ export function requesterPersona(p: RequesterProfile, base: Persona): Persona {
     short: initials(p.Name) || base.short,
     label: p.Title || base.label,
     role: [p.Office, p.Agency].filter(Boolean).join(' · ') || base.role,
+    photo: p.ProfileId,
   }
 }
 

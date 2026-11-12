@@ -170,6 +170,8 @@ export interface Persona {
   slot?: number
   /** Action Center task label that routes work to this persona. */
   taskLabel: string
+  /** The picture's name when it isn't the persona id: a Requirements requester's ProfileId. */
+  photo?: string
 }
 
 /**
