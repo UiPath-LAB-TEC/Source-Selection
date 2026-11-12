@@ -22,6 +22,7 @@ import type { Event } from '../lib/save'
 import { analysisOf, isProduct, isService, parse, specOf, STAGES } from '../lib/types'
 import type { Analysis, DocRow, Item, RequesterProfile, RequirementRow, Spec, Stage } from '../lib/types'
 import { buildPath, reqPath } from '../components/RequirementCard'
+import { DocEditor } from '../components/DocEditor'
 
 const STEPS = [
   { title: 'Need', description: 'In your own words' },
@@ -624,11 +625,10 @@ function DocItem({ it, n, w, doc }: { it: PackageItem; n: number; w: Work; doc?:
               </div>
             </div>
           )}
-          <label htmlFor={`rq-doc-${it.kind}`} className="sr-only">{it.label}</label>
-          <Textarea id={`rq-doc-${it.kind}`} value={text} onChange={(e) => setText(e.target.value)} rows={16} className="font-mono text-[13px] leading-relaxed"
-            placeholder={it.producer === 'person' ? `Write the ${it.label.toLowerCase()} here. Start each section with "## ".` : 'Draft it with the agent, or write it here.'} />
+          <DocEditor id={`rq-doc-${it.kind}`} label={it.label} value={text} onChange={setText}
+            placeholder={it.producer === 'person' ? `Write the ${it.label.toLowerCase()} here.` : 'Draft it with the agent, or write it here.'} />
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className={hint}>{doc?.DraftedBy === 'RQ_Drafter' ? `Drafted by the ${AGENT_LABEL}${doc.EditedBy ? `, edited by ${doc.EditedBy}` : ''}. Both are on the record.` : 'Sections start with "## ".'}</p>
+            <p className={hint}>{doc?.DraftedBy === 'RQ_Drafter' ? `Drafted by the ${AGENT_LABEL}${doc.EditedBy ? `, edited by ${doc.EditedBy}` : ''}. Both are on the record.` : 'Each section is a heading and its text. Start a line with "- " for a list.'}</p>
             <div className="flex gap-2">
               <Button size="sm" variant="outline" onClick={() => save()} disabled={!!busy || (!changed && !!doc) || !text.trim()}>{busy === 'save' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Save className="mr-1.5 h-3.5 w-3.5" />}Save</Button>
               <Button size="sm" onClick={() => save(true)} disabled={!!busy || !text.trim() || (doc?.Status === 'Final' && !changed)}>{busy === 'final' ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-1.5 h-3.5 w-3.5" />}Mark final</Button>
