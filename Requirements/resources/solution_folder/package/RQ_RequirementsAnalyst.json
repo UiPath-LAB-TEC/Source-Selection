@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "RQ_RequirementsAnalyst",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "b6095f74-2785-4ed6-b860-a0f48579bbf2",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "RQ_RequirementsAnalyst"
+    },
+    "locks": [],
+    "key": "7a058931-3e14-446a-84da-1fb5a0404570",
+    "files": []
+  }
+}

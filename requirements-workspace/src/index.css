@@ -1,0 +1,20 @@
+/* Source Selection's stylesheet (Tailwind, Apollo tokens, the ss- look), so every phase app looks like one system. */
+@import '../../ss-workspace/src/index.css';
+
+@source './';
+/* Shell pieces Requirements renders from Source Selection's source, and the shared form bits. */
+@source '../../ss-workspace/src/components';
+@source '../../ss-workspace/src/hooks';
+@source '../../ss-task-forms/src/components';
+
+/*
+ * Requirements' own accent: deep crimson where Source Selection is blue and Contract Management teal, warming to orange
+ * at the end of the gradient. Not alarm red: errors, the Unacceptable rating and --ss-critical stay their own colors.
+ * Buttons, ratings and status colors stay shared (one system). White text on --ss-brand-2 is 6.3:1.
+ */
+:root { --ss-brand-1: #4c0519; --ss-brand-2: #be123c; --ss-brand-3: #fb923c; --ss-glow: rgba(190, 18, 60, 0.14); }
+.dark { --ss-glow: rgba(225, 29, 72, 0.2); }
+.rq-step-current { background: color-mix(in srgb, var(--ss-brand-2) 14%, transparent); color: var(--ss-brand-2); }
+.dark .rq-step-current { color: #fda4af; }
+.rq-brand-text { color: var(--ss-brand-2); }
+.dark .rq-brand-text { color: #fda4af; }

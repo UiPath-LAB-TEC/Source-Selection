@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "RQ_SpecWriter",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "8acd279a-7775-4b72-902a-64c1bccdfd72",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "RQ_SpecWriter"
+    },
+    "locks": [],
+    "key": "5cbc5cfe-834a-48ba-922f-814bb05a3803",
+    "files": []
+  }
+}

@@ -1,0 +1,22 @@
+{
+    "DocVersion": "1.0.0",
+    "StudioMinVersion": "2025.10.0",
+    "SolutionId": "7cdfa4ed-e73d-429c-6091-08df3fe2c9ce",
+    "Projects": [
+        {
+            "Type": "Agent",
+            "ProjectRelativePath": "RQ_RequirementsAnalyst/project.uiproj",
+            "Id": "b6095f74-2785-4ed6-b860-a0f48579bbf2"
+        },
+        {
+            "Type": "Agent",
+            "ProjectRelativePath": "RQ_Drafter/project.uiproj",
+            "Id": "03b42054-d596-4c34-a69d-bede00649986"
+        },
+        {
+            "Type": "Agent",
+            "ProjectRelativePath": "RQ_SpecWriter/project.uiproj",
+            "Id": "8acd279a-7775-4b72-902a-64c1bccdfd72"
+        }
+    ]
+}

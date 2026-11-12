@@ -1,10 +1,10 @@
-import { Check, ChevronsUpDown, Gavel, Landmark } from 'lucide-react'
+import { Check, ChevronsUpDown, ClipboardList, Gavel, Landmark } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from '@uipath/apollo-wind/components/ui/popover'
 import { useTerms } from '@forms/lib/terms'
 import { APPS, appUrl } from '../lib/apps'
 import type { AppId, AppInfo } from '../lib/apps'
 
-const ICON: Record<AppId, typeof Landmark> = { 'source-selection': Landmark, award: Gavel }
+const ICON: Record<AppId, typeof Landmark> = { requirements: ClipboardList, 'source-selection': Landmark, award: Gavel }
 
 /** The brand block at the top of every app's sidebar: the app in use, and a switch to the other phase apps. */
 export function AppSwitcher({ current }: { current: AppId }) {

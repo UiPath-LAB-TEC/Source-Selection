@@ -5,6 +5,7 @@ import type { PersonaId } from '../lib/types'
 const PERSONA_COLOR: Record<PersonaId, string> = {
   co: '#1d3a8a', evaluator1: '#2a78d6', evaluator2: '#0e7490', evaluator3: '#7c3aed', chair: '#b45309', ssa: '#be123c', admin: '#475467', counsel: '#0f766e',
   cor: '#4d7c0f', rm: '#9333ea',
+  pm: '#9f1239', sbp: '#c2410c',
 }
 
 /**
@@ -69,10 +70,14 @@ export function AvatarStack({ names }: { names: string[] }) {
 
 export function agencyMark(agency: string) {
   if (/Air Force/i.test(agency)) return 'DAF'
+  if (/\bArmy\b/i.test(agency)) return 'ARMY'
+  if (/Veterans Affairs/i.test(agency)) return 'VA'
+  if (/Customs and Border Protection/i.test(agency)) return 'CBP'
+  if (/Homeland Security/i.test(agency)) return 'DHS'
   if (/National Institutes of Health/i.test(agency)) return 'NIH'
   // School districts go by their initials in full, e.g. Willowmere Unified School District → WUSD.
   if (/School District/i.test(agency)) return agency.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 4).map((w) => w[0]).join('')
-  return agency.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 3).map((w) => w[0]).join('')
+  return agency.replace(/^U\.S\.\s+/, '').split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 3).map((w) => w[0]).join('')
 }
 
 export function AgencyMark({ agency, size = 44 }: { agency: string; size?: number }) {

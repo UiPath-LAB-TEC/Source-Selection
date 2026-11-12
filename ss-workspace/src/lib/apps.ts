@@ -3,7 +3,7 @@
  * is its own coded web app with its own route (its own dev server locally), so a link to another app is a full page
  * load; the persona and framework travel with it in localStorage on the shared origin.
  */
-export type AppId = 'source-selection' | 'award'
+export type AppId = 'requirements' | 'source-selection' | 'award'
 
 export interface AppInfo {
   id: AppId
@@ -19,7 +19,10 @@ export interface AppInfo {
   accent: string
 }
 
+/** In the order the phases run: the need, then the evaluation, then the contract. */
 export const APPS: AppInfo[] = [
+  { id: 'requirements', name: 'Requirements', sledName: 'Requirements', blurb: 'Define the need and build the requirements package',
+    sledBlurb: 'Scope the need and build the requisition', route: 'requirements', devPort: 5177, accent: '#be123c' },
   { id: 'source-selection', name: 'Source Selection', sledName: 'RFP Evaluation', blurb: 'Evaluate proposals and make the award decision',
     sledBlurb: 'Score proposals and recommend the award', route: 'source-selection', devPort: 5173, accent: '#2a78d6' },
   { id: 'award', name: 'Contract Management', sledName: 'Contract Management', blurb: 'Contract award through administration and closeout',
@@ -42,6 +45,12 @@ export const AWARD_ENTITY = {
   awards: 'SSAward', correspondence: 'SSCorrespondence', protests: 'SSProtest', schedule: 'SSSchedule', funding: 'SSFunding', alerts: 'SSAlert',
   modifications: 'SSModification',
 } as const
+
+/**
+ * The Requirements app's own entities: one row per requirement, one per document in its package. The audit trail is
+ * Source Selection's (SSAuditEvent, keyed by the requirement number until a solicitation exists).
+ */
+export const REQUIREMENT_ENTITY = { requirements: 'SSRequirement', docs: 'SSRequirementDoc', profiles: 'SSRequesterProfile' } as const
 
 /** The Award solution's deployment folder (AMER Presales/Public Sector/Source Selection/Award), where its runs live. By key, as every folder here. */
 export const AWARD_PROCESS_FOLDER = { folderKey: '81e14639-e758-4614-a76b-305416269c98' }

@@ -1,0 +1,50 @@
+{
+ "displayName": "SS Requirement Doc",
+ "description": "A document in a requirements package: purchase description or PWS, QASP, market research, IGCE, strategy, justifications",
+ "fields": [
+  {
+   "name": "DocId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "RequirementId",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "Title",
+   "type": "STRING"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "Text",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "DataJson",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "DraftedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "EditedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "UpdatedAt",
+   "type": "DATETIME_WITH_TZ"
+  }
+ ]
+}

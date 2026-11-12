@@ -1,0 +1,70 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "f9992bd5-5f0f-4ca6-ad6b-eee148882f87",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "docKind": {
+            "type": "string",
+            "description": "The document to draft: purchaseDescription, pws, qasp, brandName or section508"
+          },
+          "requirement": {
+            "type": "string",
+            "description": "JSON: title, kind, agency, office, neededBy, the need, the analyst's summary, codes and flags, and the structured requirement (spec)"
+          }
+        },
+        "required": [
+          "docKind",
+          "requirement"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "The document's title, e.g. 'Purchase description: Rugged tablets'"
+          },
+          "sections": {
+            "type": "array",
+            "description": "The document, in order",
+            "items": {
+              "type": "object",
+              "properties": {
+                "heading": {
+                  "type": "string",
+                  "description": "Numbered heading, e.g. '3. Salient characteristics'"
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Plain text. Lists as lines starting '- '. No headings inside"
+                }
+              },
+              "required": [
+                "heading",
+                "text"
+              ]
+            }
+          },
+          "openQuestions": {
+            "type": "array",
+            "description": "What the program office must still supply, one per entry. Empty when nothing is missing",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "sections",
+          "openQuestions"
+        ]
+      }
+    }
+  ]
+}

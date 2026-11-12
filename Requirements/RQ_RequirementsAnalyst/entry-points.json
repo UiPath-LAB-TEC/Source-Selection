@@ -1,0 +1,176 @@
+{
+  "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
+  "$id": "entry-points.json",
+  "entryPoints": [
+    {
+      "filePath": "/content/agent.json",
+      "uniqueId": "4c3c2e5b-e2ca-4ede-83d3-edd5607ecdae",
+      "type": "agent",
+      "input": {
+        "type": "object",
+        "properties": {
+          "need": {
+            "type": "string",
+            "description": "The need in the program office's own words"
+          },
+          "context": {
+            "type": "string",
+            "description": "JSON: agency, requiring office, neededBy (yyyy-mm-dd or null), budget (dollars or null), kindHint"
+          },
+          "answers": {
+            "type": "string",
+            "description": "JSON array of {question, answer} from earlier rounds. An answer starting '(skipped' means the program office doesn't know yet"
+          },
+          "draft": {
+            "type": "string",
+            "description": "JSON: the structured requirement so far, as the program office last saved it"
+          }
+        },
+        "required": [
+          "need",
+          "context",
+          "answers",
+          "draft"
+        ]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "One of: Product, Service, Product and service"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short title, at most 8 words, no agency name"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Two or three sentences: what is being bought, for whom, and anything a Contracting Officer will notice first"
+          },
+          "pscCode": {
+            "type": "string",
+            "description": "Suggested product and service code, or ''"
+          },
+          "pscName": {
+            "type": "string",
+            "description": "Its name, or ''"
+          },
+          "naicsCode": {
+            "type": "string",
+            "description": "Suggested NAICS code, or ''"
+          },
+          "naicsName": {
+            "type": "string",
+            "description": "Its name, or ''"
+          },
+          "sizeStandard": {
+            "type": "string",
+            "description": "The SBA size standard for that NAICS code, e.g. '1,250 employees' or '$34.0M', or ''"
+          },
+          "commercialLikely": {
+            "type": "boolean",
+            "description": "Whether this is likely a commercial product or commercial service"
+          },
+          "commercialReason": {
+            "type": "string",
+            "description": "One sentence on why"
+          },
+          "valueLow": {
+            "type": "number",
+            "description": "Low end of the likely total value in dollars, or 0 when there isn't enough to estimate"
+          },
+          "valueHigh": {
+            "type": "number",
+            "description": "High end, or 0"
+          },
+          "valueBasis": {
+            "type": "string",
+            "description": "One sentence: the quantities and unit prices or rates the range comes from"
+          },
+          "flags": {
+            "description": "Facts in the need or answers that change the package. Empty when none",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "One of: brandName, ict, cui, classified, onBase, soleSource, urgent, hazmat"
+                    },
+                    "label": {
+                      "type": "string",
+                      "description": "Short label, e.g. 'A brand is named'"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "description": "One sentence quoting or naming what in the need triggers it"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "label",
+                    "reason"
+                  ]
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "questions": {
+            "description": "Up to 6 questions a Contracting Officer would otherwise send the package back for. Empty when nothing important is missing",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "A short id, e.g. 'delivery'"
+                    },
+                    "question": {
+                      "type": "string",
+                      "description": "One plain question"
+                    },
+                    "why": {
+                      "type": "string",
+                      "description": "One sentence on why it matters to the package"
+                    },
+                    "options": {
+                      "type": "array",
+                      "description": "Two or three likely answers of at most 6 words each, or [] when the answer is free text",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "question",
+                    "why",
+                    "options"
+                  ]
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "title",
+          "summary",
+          "flags",
+          "questions"
+        ]
+      }
+    }
+  ]
+}
