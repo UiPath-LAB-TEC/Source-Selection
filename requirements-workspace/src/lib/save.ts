@@ -20,7 +20,14 @@ export interface Writer { sdk: UiPath; preview: boolean; patch: (fn: (d: Dataset
 /** One audit row: who did what. The actor is a person's name, or an agent's process name (shown as "… (agent)"). */
 export interface Event { action: string; actor: string; detail?: string; ref?: string }
 
-const strip = <T extends { Id?: string }>(row: T) => { const { Id: _id, ...rest } = row; void _id; return rest }
+/**
+ * Data Fabric's own fields on every row it returns. A write must not send them back: since 2026-11-12 one that
+ * includes Children fails ("The field 'Children' collides with a reserved response field"), and the rest are read-only.
+ */
+const SYSTEM = new Set(['id', 'children', 'createdby', 'createtime', 'updatedby', 'updatetime', 'recordowner'])
+/** The row as a write sends it: the entity's own fields only. */
+export const strip = <T extends { Id?: string }>(row: T) =>
+  Object.fromEntries(Object.entries(row).filter(([k]) => !SYSTEM.has(k.toLowerCase()))) as Omit<T, 'Id'>
 
 function auditRows(requirementId: string, ref: string, events: Event[]): AuditRow[] {
   const now = Date.now()
