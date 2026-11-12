@@ -359,3 +359,52 @@ def test_the_watch_leaves_a_dismissed_extension_alone(emails, monkeypatch):
     monkeypatch.setattr(main, "_start_package", lambda *a: started.append(a) or "x")
     main.run(main.RobotInput(step="WatchContracts", asOf="2026-10-27"))
     assert started == []
+
+
+# ── Alert emails ────────────────────────────────────────────────────────────
+
+def test_the_digest_goes_to_each_owner_once_with_only_new_or_worse_items():
+    contract = {"SolicitationId": OLD, "ContractNumber": "W52P1J-22-C-0011", "Title": "Army Logistics Data Analytics Support",
+                "AwardeeName": "Ostrander Analytics Group Inc", "CoEmail": "co@agency.example", "RmEmail": "co@agency.example", "CorEmail": "cor@agency.example"}
+    existing = {"A-old": {"AlertId": "A-old", "Status": "Acknowledged", "Severity": "Upcoming"},
+                "A-same": {"AlertId": "A-same", "Status": "Open", "Severity": "Due soon"}}
+    writes = [
+        {"AlertId": "A-new", "Status": "Open", "Severity": "Upcoming", "Title": "Funds on line item 0002 run out around Nov 26", "Owner": "resource-manager,contracting-officer", "DueDay": "2026-11-26", "Rule": "r"},
+        {"AlertId": "A-old", "Status": "Open", "Severity": "Overdue", "Title": "Transition-out plan is late", "Owner": "cor", "DueDay": "2026-10-02", "Rule": "r"},
+        {"AlertId": "A-same", "Status": "Open", "Severity": "Due soon", "Title": "Invoice due", "Owner": "cor", "Detail": "changed text"},
+        {"AlertId": "A-gone", "SolicitationId": OLD, "Status": "Resolved"},
+    ]
+    changed = admin.changed_alerts(writes, existing)
+    assert [(a["AlertId"], c) for a, c in changed] == [("A-new", "new"), ("A-old", "more urgent")]
+    mails = {m["to"]: m for m in admin.alert_digests([(contract, changed)], "2026-11-10", "https://example.test/award")}
+    assert set(mails) == {"co@agency.example", "cor@agency.example"}
+    co = mails["co@agency.example"]                                   # the CO and the RM share an address: one email, both roles
+    assert co["items"] == 1 and co["contracts"][OLD]["roles"] == ["Resource Manager", "Contracting Officer"]
+    assert co["subject"] == "Contract Management: 1 new item coming up (Nov 10, 2026)"
+    cor = mails["cor@agency.example"]
+    assert cor["subject"].startswith("Contract Management: 1 item needs action") and "(more urgent)" in cor["html"]
+    assert "https://example.test/award/#/a/W52P1J-22-R-0011" in cor["html"] and "fictional" in cor["html"]
+    assert admin.alert_digests([({**contract, "CorEmail": None}, changed)], "2026-11-10", "x")[0]["to"] == "co@agency.example"   # no address, no email
+
+
+def test_the_watch_emails_the_team_and_puts_it_on_the_record(emails, monkeypatch):
+    sent = []
+    monkeypatch.setattr(main, "_start_package", lambda *a: "instance-9")
+    monkeypatch.setattr(main, "_mail_connection", lambda: type("C", (), {"id": "conn-1"})())
+    monkeypatch.setattr(main, "_send_mail", lambda cid, to, subject, body: sent.append((cid, to, subject)))
+    out = json.loads(main.run(main.RobotInput(step="WatchContracts", asOf="2026-10-27")).content)
+    assert {to for _, to, _ in sent} == {"co@agency.example", "rm@agency.example"} and all(cid == "conn-1" for cid, _, _ in sent)
+    assert all(e["sent"] for e in out["emails"])
+    rows = [d for a, d in emails["audit"] if a == "AlertEmailSent"]
+    assert rows and all(d.startswith("Alert email sent to the ") for d in rows)
+    assert any("Resource Manager" in d and "Funds on line item 0002" in d for d in rows)
+    sent.clear()
+    main.run(main.RobotInput(step="WatchContracts", asOf="2026-10-27"))                     # nothing new the second time: no email
+    assert sent == []
+
+
+def test_without_a_mail_connection_the_watch_runs_and_says_so(emails, monkeypatch):
+    monkeypatch.setattr(main, "_start_package", lambda *a: "instance-9")
+    out = json.loads(main.run(main.RobotInput(step="WatchContracts", asOf="2026-10-27")).content)
+    assert out["emails"] and not any(e["sent"] for e in out["emails"]) and "No enabled Outlook 365 connection" in out["emails"][0]["error"]
+    assert "AlertEmailSent" not in [a for a, _ in emails["audit"]]

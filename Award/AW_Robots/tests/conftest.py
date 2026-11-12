@@ -62,5 +62,7 @@ def record(monkeypatch):
     monkeypatch.setattr(repo, "upload", lambda bucket, path, content, content_type="application/pdf": state["uploads"].__setitem__(path, content))
     monkeypatch.setattr(repo, "now", lambda: "2026-10-22T16:00:00+00:00")
     monkeypatch.setattr(main.records, "render", lambda title, header, sections, sled=False, banner=None: f"{title}|{banner}|{sections[0][1]}".encode())
+    # No mail connection unless a test gives one: the watch sends nothing and stays offline.
+    monkeypatch.setattr(main, "_mail_connection", lambda: None)
     state["keys"] = keys
     return state

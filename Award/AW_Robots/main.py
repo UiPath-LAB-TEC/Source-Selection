@@ -9,6 +9,7 @@ same way.
 from __future__ import annotations
 
 import json
+import os
 import re
 import tempfile
 from datetime import date, datetime, time
@@ -29,6 +30,10 @@ LETTERS = "SSCorrespondence"
 SCHEDULE, FUNDING, ALERTS, MODS, VENDORS = "SSSchedule", "SSFunding", "SSAlert", "SSModification", "SSRefVendor"
 REVIEW_PROCESS = "DeliverableReviewProcess"
 OPTION_PROCESS = "OptionExerciseProcess"
+# Alert emails go out through an Outlook 365 connection in the Source Selection folder (where SS-Records lives, so the
+# robot can already reach it). With none there, the watch still runs; it just sends nothing.
+MAIL_CONNECTOR = "uipath-microsoft-outlook365"
+APP_URL = os.environ.get("AW_APP_URL", "https://uipathlabs.uipath.host/award")
 AWARD_NOTICE, NOTICE = "AwardNotice", "UnsuccessfulNotice"
 
 # The Award phase's steps, as the Award app's tracker names them (award-task-forms/src/lib/record.ts). A district's
@@ -408,7 +413,7 @@ def _start_package(sol: str, row: dict, co: str, rm: str) -> str:
 
 
 def _watch_one(a: dict, as_of: str, now: str, schedule: list[dict], funding: list[dict], letters_: list[dict], alerts_: list[dict],
-               by_id: dict[str, dict], start: bool = True) -> dict:
+               by_id: dict[str, dict], start: bool = True, changes: list | None = None) -> dict:
     """The watch for one contract: the next recurring deliverables, the rules as of `as_of`, the alerts and the funds
     forecast. With `start`, it also starts the work nobody has started: a review for a deliverable on file, and the
     package for an option or extension that needs action."""
@@ -433,6 +438,8 @@ def _watch_one(a: dict, as_of: str, now: str, schedule: list[dict], funding: lis
     existing = {x["AlertId"]: x for x in alerts_ if x.get("SolicitationId") == sol}
     writes = admin.reconcile(list(existing.values()), fresh, now)
     repo.upsert(ALERTS, "AlertId", writes)
+    if changes is not None:
+        changes.append((a, admin.changed_alerts(writes, existing)))
     # An option or extension that needs action and has no package running gets one, unless someone dismissed it.
     packages = []
     if start and a.get("CoEmail") and a.get("RmEmail"):
@@ -473,6 +480,51 @@ def _refresh(sol: str) -> None:
                {x["AwardId"]: x for x in repo.rows(AWARD)}, start=False)
 
 
+def _mail_connection():
+    """The Outlook 365 connection the alert emails go out through: an enabled one in the Source Selection folder."""
+    conns = repo.retry(lambda: repo.sdk().connections.list(folder_key=repo.FOLDER_KEY, connector_key=MAIL_CONNECTOR))
+    return next((c for c in conns if str(c.state or "").lower() == "enabled"), None)
+
+
+def _send_mail(connection_id: str, to: str, subject: str, body_html: str) -> None:
+    """Send one email through the connection's Send Email activity. It saves a draft unless told not to."""
+    from uipath.platform.connections.connections import ActivityMetadata, ActivityParameterLocationInfo
+    meta = ActivityMetadata(object_path="/hubs/productivity/send-mail-v2", method_name="POST", content_type="multipart/form-data",
+                            json_body_section="body", parameter_location_info=ActivityParameterLocationInfo(
+                                query_params=["saveAsDraft", "includeMessageDetails"], multipart_params=["body"],
+                                body_fields=["message", "saveToSentItems"]))
+    repo.retry(lambda: repo.sdk().connections.invoke_activity(meta, connection_id, {
+        "saveAsDraft": False, "includeMessageDetails": False, "saveToSentItems": True,
+        "message": {"toRecipients": to, "subject": subject, "importance": "normal", "body": {"contentType": "HTML", "content": body_html}}}))
+
+
+def _email_team(digests: list[dict], as_of: str) -> list[dict]:
+    """Send the day's alert emails, and put each one on the record of every contract it covered: who it went to (by
+    role) and what it listed. A failed or skipped send is reported in the watch's summary, never on the record."""
+    if not digests:
+        return []
+    try:
+        conn = _mail_connection()
+    except Exception as exc:
+        return [{"items": d["items"], "sent": False, "error": f"No connection list: {type(exc).__name__}: {exc}"[:300]} for d in digests]
+    if conn is None:
+        return [{"items": d["items"], "sent": False, "error": "No enabled Outlook 365 connection in the Source Selection folder"} for d in digests]
+    report = []
+    for n, d in enumerate(digests, 1):
+        try:
+            _send_mail(conn.id, d["to"], d["subject"], d["html"])
+        except Exception as exc:  # one email failing doesn't stop the others
+            report.append({"items": d["items"], "sent": False, "error": f"{type(exc).__name__}: {exc}"[:300]})
+            continue
+        for sol, c in d["contracts"].items():
+            titles = c["titles"]
+            repo.audit(sol, f"alert-email-{repo.now()}-{n}", "AlertEmailSent",
+                       f"Alert email sent to the {' and the '.join(c['roles'])}: {len(titles)} item{'s' if len(titles) != 1 else ''} "
+                       f"new or more urgent: {'; '.join(titles)}"[:3000], actor="Contract watch")
+        report.append({"items": d["items"], "sent": True, "contracts": sorted(d["contracts"])})
+    return report
+
+
 @traced(name="WatchContracts", run_type="uipath")
 def watch_contracts(input: WatchInput) -> WatchOutput:
     """The daily contract watch: open administration on any contract signed since the last run, then for every contract
@@ -494,13 +546,14 @@ def watch_contracts(input: WatchInput) -> WatchOutput:
         awards = repo.rows(AWARD)
         by_id = {a["AwardId"]: a for a in awards}
         schedule, funding, letters_, alerts_ = repo.rows(SCHEDULE), repo.rows(FUNDING), repo.rows(LETTERS), repo.rows(ALERTS)
-        report = []
+        report, changes = [], []
         for a in (a for a in awards if a.get("Phase") == "Administration"):
             try:
-                report.append(_watch_one(a, as_of, now, schedule, funding, letters_, alerts_, by_id))
+                report.append(_watch_one(a, as_of, now, schedule, funding, letters_, alerts_, by_id, changes=changes))
             except Exception as exc:  # one contract failing doesn't stop the others
                 failed.append(f"{a['SolicitationId']}: {type(exc).__name__}: {exc}")
-        out.summary = json.dumps({"asOf": as_of, "opened": opened, "contracts": report})
+        emails = _email_team(admin.alert_digests([c for c in changes if c[1]], as_of, APP_URL), as_of)
+        out.summary = json.dumps({"asOf": as_of, "opened": opened, "contracts": report, "emails": emails})
         if failed:
             raise RuntimeError("; ".join(failed))
     except Exception as exc:
