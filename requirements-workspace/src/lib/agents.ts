@@ -6,6 +6,7 @@ import type { UiPath } from '@uipath/uipath-typescript/core'
 import { Jobs } from '@uipath/uipath-typescript/jobs'
 import { Processes } from '@uipath/uipath-typescript/processes'
 import { camel } from '@ss/lib/intake'
+import { unitOf } from './units'
 import type { Analysis, DocKind, Flag, Kind, Question, RequirementRow, Section, Spec } from './types'
 import { emptySpec } from './types'
 import { mockAnalysis, mockDraft } from './mock'
@@ -148,7 +149,7 @@ export function specAnswer(raw: unknown): Partial<Spec> {
     if (v == null || Array.isArray(v) !== Array.isArray(blank[k])) continue
     spec[k] = !Array.isArray(v) ? String(v)
       : TEXT_LISTS.has(k) ? v.filter((x) => typeof x === 'string' && x.trim())
-        : v.filter((x) => x && typeof x === 'object')
+        : v.filter((x) => x && typeof x === 'object').map((x) => (k === 'items' ? { ...x, unit: unitOf(x.unit) } : x))
   }
   if (!Object.keys(spec).length) throw new ShapeError(`The ${AGENT_LABEL} returned a requirement the app couldn't read.`)
   return spec as Partial<Spec>

@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { Button } from '@uipath/apollo-wind/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@uipath/apollo-wind/components/ui/dialog'
 import { Input } from '@uipath/apollo-wind/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@uipath/apollo-wind/components/ui/select'
 import { Stepper } from '@uipath/apollo-wind/components/ui/stepper'
 import { Textarea } from '@uipath/apollo-wind/components/ui/textarea'
 import { Info } from '@forms/components/Bits'
@@ -21,6 +22,7 @@ import { blankRequirement, nextRequirementId, saveDoc, saveRequirement } from '.
 import type { Event } from '../lib/save'
 import { analysisOf, isProduct, isService, parse, specOf, STAGES } from '../lib/types'
 import type { Analysis, DocRow, Item, RequesterProfile, RequirementRow, Spec, Stage } from '../lib/types'
+import { UNITS, unitOf } from '../lib/units'
 import { buildPath, reqPath } from '../components/RequirementCard'
 import { DocEditor } from '../components/DocEditor'
 
@@ -412,6 +414,20 @@ function TextField({ id, title, value, onChange, rows, placeholder, info }: { id
   )
 }
 
+/** The unit of issue, picked from the standard ones; a unit the agent wrote that isn't one of them stays as a choice. */
+function UnitField({ id, value, onChange }: { id: string; value: string; onChange: (v: string) => void }) {
+  const v = unitOf(value)
+  const units: string[] = (UNITS as readonly string[]).includes(v) ? [...UNITS] : [v, ...UNITS]
+  return (
+    <Field id={id} title="Unit">
+      <Select value={v} onValueChange={onChange}>
+        <SelectTrigger id={id}><SelectValue /></SelectTrigger>
+        <SelectContent>{units.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
+      </Select>
+    </Field>
+  )
+}
+
 /** A list edited one entry per line, kept as typed until the field loses focus (so blank lines can be added). */
 function LinesField({ id, title, value, onChange, rows = 4, placeholder, info }: { id: string; title: string; value: string[]; onChange: (v: string[]) => void; rows?: number; placeholder?: string; info?: ReactNode }) {
   const [text, setText] = useState(lines(value))
@@ -439,7 +455,7 @@ function RequirementStep({ w, setSpec }: { w: Work; setSpec: (p: Partial<Spec>) 
                 <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_120px_120px_auto] sm:items-end">
                   <TextField id={`rq-item-${i}`} title="Item" value={it.name} onChange={(v) => setItem(i, { name: v })} />
                   <Field id={`rq-qty-${i}`} title="Quantity"><Input id={`rq-qty-${i}`} inputMode="numeric" value={String(it.quantity || '')} onChange={(e) => setItem(i, { quantity: Number(e.target.value.replace(/\D/g, '')) || 0 })} /></Field>
-                  <TextField id={`rq-unit-${i}`} title="Unit" value={it.unit} onChange={(v) => setItem(i, { unit: v })} />
+                  <UnitField id={`rq-unit-${i}`} value={it.unit} onChange={(v) => setItem(i, { unit: v })} />
                   <Button variant="ghost" size="icon" aria-label={`Remove ${it.name || 'item'}`} onClick={() => setSpec({ items: s.items.filter((_, n) => n !== i) })}><Trash2 className="h-4 w-4" /></Button>
                 </div>
                 <LinesField id={`rq-chars-${i}`} title="Salient characteristics" value={it.characteristics} onChange={(v) => setItem(i, { characteristics: v })} rows={5}
