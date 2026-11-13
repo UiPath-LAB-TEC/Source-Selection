@@ -159,7 +159,7 @@ export interface Dataset {
 
 export const STAGES = ['Proposal Intake', 'Individual Evaluation', 'Consensus', 'Price Evaluation', 'Award Decision'] as const
 
-export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'admin' | 'counsel' | 'cor' | 'rm'
+export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'admin' | 'counsel' | 'cor' | 'rm' | 'pm' | 'sbp'
 
 export interface Persona {
   id: PersonaId
@@ -170,6 +170,8 @@ export interface Persona {
   slot?: number
   /** Action Center task label that routes work to this persona. */
   taskLabel: string
+  /** The picture's name when it isn't the persona id: a Requirements requester's ProfileId. */
+  photo?: string
 }
 
 /**
@@ -218,8 +220,9 @@ export function actorName(actor: string) {
   const byLabel = PERSONAS.find((p) => p.label === actor || titled(p, 'sled').label === actor || (actor === 'Contracting Officer' && p.id === 'co') || (actor === 'Source Selection Authority' && p.id === 'ssa'))
   if (byLabel) return byLabel.name
   // Robots are robots; every other internal actor is an agent (e.g. SS_EvaluationAssistant → Evaluation Assistant (agent)).
-  if (actor === 'SS_Robots') return 'UiPath Robot'
-  if (actor.startsWith('SS_')) return actor.replace(/^SS_/, '').replace(/([a-z])([A-Z])/g, '$1 $2') + ' (agent)'
+  // The same for every phase app's robots and agents (SS_, AW_, RQ_).
+  if (/^(SS|AW|RQ)_Robots$/.test(actor)) return 'UiPath Robot'
+  if (/^(SS|AW|RQ)_/.test(actor)) return actor.replace(/^(SS|AW|RQ)_/, '').replace(/([a-z])([A-Z])/g, '$1 $2') + ' (agent)'
   return actor
 }
 

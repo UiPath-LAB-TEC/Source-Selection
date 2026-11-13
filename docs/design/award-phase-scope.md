@@ -1374,3 +1374,37 @@ Dana.
   weren't edited before signing. A signed record isn't rewritten. A clean demo run needs a fresh seed of the incumbent
   (`tools/generate_incumbent.py --reset`, then a seed; the user runs the reset), after which packages get the 1.4.1
   writer.
+
+## 22. Alert emails (2026-11-10): the daily check emails the contract team
+
+**Ask:** email the contract team when funds run low or dates come near, and show on the record that the email went
+out.
+
+**Built (Award 1.4.2, robot only; packed, not deployed):**
+- **What's sent:** after the daily check (or Run check now), one email per address. It lists, for each contract the
+  person is on, the items that are new or more urgent since the last run (`admin.changed_alerts`), most urgent first.
+  - Each item shows its severity as a word and a color, the due day, the detail cut at a whole sentence, the rule, and a
+    link to the contract in Contract Management (`#/a/<sol>`). The subject reads "N items need action" or "N new items
+    coming up", with the date.
+  - Nothing new means no email. The same item is never emailed twice for the same severity.
+  - Items raised when a decision is filed (the refresh after an option is exercised) aren't emailed: the person who
+    filed it already knows.
+- **Who it goes to:** each item's owners, mapped to the contract's own addresses: Contracting Officer → CoEmail,
+  COR → CorEmail, Resource Manager → RmEmail. Several roles at one address get one email, naming both roles.
+- **How:** the robot sends through Outlook 365's Send Email activity (`send-mail-v2`, with `saveAsDraft=false`, which
+  otherwise defaults to a draft) via `sdk.connections.invoke_activity`. It uses the first enabled Outlook 365
+  connection in the Source Selection folder, which the robot already reaches for SS-Records.
+  - No connection is added to the solution: a connection resource that can't be resolved can leave a deployment
+    waiting on setup.
+  - With no connection, the check runs as before and its summary says why nothing was sent.
+- **On the record:** each sent email adds an "Alert Email Sent" row to the audit trail of every contract it covered:
+  the roles it went to, the count and the items' titles. The actor is "Contract watch". A failed or skipped send goes
+  in the watch's summary, never on the record.
+- **Tests:** 86 pass, 3 new: one email per address with only new or worse items; the watch sends, audits, and sends
+  nothing on a second run; and no connection means no email and no audit row. A sample digest was rendered and checked
+  in the browser.
+
+**To turn it on:**
+1. The user creates an Outlook 365 connection in the Source Selection folder (sign-in needed).
+2. The user deploys 1.4.2.
+3. The first run confirms that the robot's identity can use the connection. If it can't, the watch summary says so.

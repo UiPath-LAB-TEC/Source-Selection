@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "RQ_RequirementsAnalyst",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "b6095f74-2785-4ed6-b860-a0f48579bbf2",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "RQ_RequirementsAnalyst"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "RQ_RequirementsAnalyst",
+      "package": {
+        "key": "7a058931-3e14-446a-84da-1fb5a0404570"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"4c3c2e5b-e2ca-4ede-83d3-edd5607ecdae\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"need\": {\n            \"type\": \"string\",\n            \"description\": \"The need in the program office's own words\"\n          },\n          \"context\": {\n            \"type\": \"string\",\n            \"description\": \"JSON: agency, requiring office, neededBy (yyyy-mm-dd or null), budget (dollars or null), kindHint\"\n          },\n          \"answers\": {\n            \"type\": \"string\",\n            \"description\": \"JSON array of {question, answer} from earlier rounds. An answer starting '(skipped' means the program office doesn't know yet\"\n          },\n          \"draft\": {\n            \"type\": \"string\",\n            \"description\": \"JSON: the structured requirement so far, as the program office last saved it\"\n          }\n        },\n        \"required\": [\n          \"need\",\n          \"context\",\n          \"answers\",\n          \"draft\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"kind\": {\n            \"type\": \"string\",\n            \"description\": \"One of: Product, Service, Product and service\"\n          },\n          \"title\": {\n            \"type\": \"string\",\n            \"description\": \"A short title, at most 8 words, no agency name\"\n          },\n          \"summary\": {\n            \"type\": \"string\",\n            \"description\": \"Two or three sentences: what is being bought, for whom, and anything a Contracting Officer will notice first\"\n          },\n          \"pscCode\": {\n            \"type\": \"string\",\n            \"description\": \"Suggested product and service code, or ''\"\n          },\n          \"pscName\": {\n            \"type\": \"string\",\n            \"description\": \"Its name, or ''\"\n          },\n          \"naicsCode\": {\n            \"type\": \"string\",\n            \"description\": \"Suggested NAICS code, or ''\"\n          },\n          \"naicsName\": {\n            \"type\": \"string\",\n            \"description\": \"Its name, or ''\"\n          },\n          \"sizeStandard\": {\n            \"type\": \"string\",\n            \"description\": \"The SBA size standard for that NAICS code, e.g. '1,250 employees' or '$34.0M', or ''\"\n          },\n          \"commercialLikely\": {\n            \"type\": \"boolean\",\n            \"description\": \"Whether this is likely a commercial product or commercial service\"\n          },\n          \"commercialReason\": {\n            \"type\": \"string\",\n            \"description\": \"One sentence on why\"\n          },\n          \"valueLow\": {\n            \"type\": \"number\",\n            \"description\": \"Low end of the likely total value in dollars, or 0 when there isn't enough to estimate\"\n          },\n          \"valueHigh\": {\n            \"type\": \"number\",\n            \"description\": \"High end, or 0\"\n          },\n          \"valueBasis\": {\n            \"type\": \"string\",\n            \"description\": \"One sentence: the quantities and unit prices or rates the range comes from\"\n          },\n          \"flags\": {\n            \"description\": \"Facts in the need or answers that change the package. Empty when none\",\n            \"anyOf\": [\n              {\n                \"type\": \"array\",\n                \"items\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"id\": {\n                      \"type\": \"string\",\n                      \"description\": \"One of: brandName, ict, cui, classified, onBase, soleSource, urgent, hazmat\"\n                    },\n                    \"label\": {\n                      \"type\": \"string\",\n                      \"description\": \"Short label, e.g. 'A brand is named'\"\n                    },\n                    \"reason\": {\n                      \"type\": \"string\",\n                      \"description\": \"One sentence quoting or naming what in the need triggers it\"\n                    }\n                  },\n                  \"required\": [\n                    \"id\",\n                    \"label\",\n                    \"reason\"\n                  ]\n                }\n              },\n              {\n                \"type\": \"string\"\n              }\n            ]\n          },\n          \"questions\": {\n            \"description\": \"Up to 6 questions a Contracting Officer would otherwise send the package back for. Empty when nothing important is missing\",\n            \"anyOf\": [\n              {\n                \"type\": \"array\",\n                \"items\": {\n                  \"type\": \"object\",\n                  \"properties\": {\n                    \"id\": {\n                      \"type\": \"string\",\n                      \"description\": \"A short id, e.g. 'delivery'\"\n                    },\n                    \"question\": {\n                      \"type\": \"string\",\n                      \"description\": \"One plain question\"\n                    },\n                    \"why\": {\n                      \"type\": \"string\",\n                      \"description\": \"One sentence on why it matters to the package\"\n                    },\n                    \"options\": {\n                      \"type\": \"array\",\n                      \"description\": \"Two or three likely answers of at most 6 words each, or [] when the answer is free text\",\n                      \"items\": {\n                        \"type\": \"string\"\n                      }\n                    }\n                  },\n                  \"required\": [\n                    \"id\",\n                    \"question\",\n                    \"why\",\n                    \"options\"\n                  ]\n                }\n              },\n              {\n                \"type\": \"string\"\n              }\n            ]\n          }\n        },\n        \"required\": [\n          \"kind\",\n          \"title\",\n          \"summary\",\n          \"flags\",\n          \"questions\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "4c3c2e5b-e2ca-4ede-83d3-edd5607ecdae"
+    },
+    "locks": [],
+    "key": "4a0ca31f-9bfe-4604-90bf-205a173e286f",
+    "files": []
+  }
+}

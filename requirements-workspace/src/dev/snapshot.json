@@ -1,0 +1,422 @@
+{
+ "requirements": [
+  {
+   "Id": "preview-RQ-26-0041",
+   "RequirementId": "RQ-26-0041",
+   "Title": "Enterprise IT Modernization Services",
+   "Kind": "Service",
+   "Framework": "federal",
+   "Status": "Accepted",
+   "Stage": "Accepted",
+   "Agency": "Department of the Air Force",
+   "Office": "Air Force Life Cycle Management Center, Enterprise IT",
+   "ContractingOffice": "AFLCMC/PZI",
+   "Need": "We have to move 140 mission applications out of two data centers that close in FY28 into the Air Force cloud, keep every one of them authorized to operate during the move, and retire the ones we don't need anymore. We need a contractor for the migration and five years of operations.",
+   "NeedBy": "2027-03-31",
+   "Budget": 25000000,
+   "EstimatedValue": 23800000,
+   "Psc": "DA01",
+   "Naics": "541512",
+   "RequirementJson": "{\"items\": [], \"standards\": [], \"deliveryPlace\": \"\", \"deliveryDate\": \"\", \"warranty\": \"\", \"packaging\": \"\", \"inspection\": \"\", \"support\": \"\", \"objective\": \"Move 140 mission applications from on-premises data centers to the Air Force cloud environment, keep each one authorized to operate throughout, and retire the applications that are no longer needed.\", \"background\": \"The applications run in two government data centers scheduled to close in FY28. Their hosting contract ends with the move. About a third have had no significant change in five years.\", \"scope\": \"Rationalization, migration, platform engineering, cybersecurity and continuous ATO support, and program management, for a base year and four option years, with a 60-day transition-in.\", \"tasks\": [\"Rationalize the portfolio: recommend retire, rehost, replatform or refactor for each application, with the evidence\", \"Migrate each application approved for migration, in waves the government approves\", \"Build and run the landing zone and DevSecOps pipelines the migrated applications use\", \"Keep every application authorized to operate: RMF packages, continuous monitoring, and POA&M closure\", \"Run a 60-day transition-in from the incumbent without a gap in hosting\", \"Manage the program: schedule, risks, monthly status and an integrated master schedule\"], \"deliverables\": [{\"name\": \"Rationalization report\", \"due\": \"90 days after award\", \"format\": \"Report and portfolio workbook\"}, {\"name\": \"Wave migration plan\", \"due\": \"30 days before each wave\", \"format\": \"Plan\"}, {\"name\": \"Monthly status report\", \"due\": \"10th of each month\", \"format\": \"Report\"}, {\"name\": \"Transition-in plan\", \"due\": \"10 days after award\", \"format\": \"Plan\"}], \"performanceStandards\": [{\"standard\": \"Migrated applications available during mission hours\", \"aql\": \"99.9% each month\", \"method\": \"Monitoring data, monthly\"}, {\"standard\": \"Applications keep their ATO through the move\", \"aql\": \"No lapse\", \"method\": \"100% inspection of each wave\"}, {\"standard\": \"Critical vulnerabilities fixed\", \"aql\": \"Within 15 days, 95% of the time\", \"method\": \"Scan data, monthly\"}, {\"standard\": \"Deliverables on time and accepted on first submission\", \"aql\": \"90%\", \"method\": \"COR review of each deliverable\"}], \"placeOfPerformance\": \"Contractor site, with on-site support at Maxwell AFB-Gunter Annex as needed\", \"periodOfPerformance\": \"Base year and four 12-month options\", \"security\": \"Secret facility clearance; CUI throughout; DFARS 252.204-7012 and CMMC Level 2\", \"gfp\": \"Government cloud environment accounts and tooling licenses\", \"keyPersonnel\": \"Program manager, cloud architect, cybersecurity lead\"}",
+   "AnalysisJson": "{\"kind\": \"Service\", \"title\": \"Enterprise IT Modernization Services\", \"summary\": \"Cloud migration of 140 mission applications with continuous ATO support over five years. Commercial services sold widely; several small businesses perform this work.\", \"psc\": {\"code\": \"DA01\", \"name\": \"IT and telecom, business application and application development support\"}, \"naics\": {\"code\": \"541512\", \"name\": \"Computer systems design services\", \"sizeStandard\": \"$34.0M\"}, \"commercial\": {\"likely\": true, \"reason\": \"Cloud migration services are sold commercially in the form required.\"}, \"value\": {\"low\": 21000000, \"high\": 26000000, \"basis\": \"Comparable Air Force migrations, per application and per year of operations.\"}, \"flags\": [{\"id\": \"cui\", \"label\": \"Controlled information\", \"reason\": \"The applications hold CUI, so the contract needs the DoD safeguarding clauses and CMMC.\"}, {\"id\": \"ict\", \"label\": \"Information technology\", \"reason\": \"The services deliver ICT, so Section 508 applies.\"}], \"questions\": [], \"answered\": [{\"id\": \"q1-0\", \"question\": \"How many applications, and how many are likely to be retired?\", \"why\": \"Volume drives the estimate and the waves.\", \"options\": [], \"answer\": \"140 today; we expect 30 to 40 to be retired.\"}, {\"id\": \"q1-1\", \"question\": \"Must the applications keep their ATO during the move?\", \"why\": \"Continuous ATO support is its own line item and a performance standard.\", \"options\": [], \"answer\": \"Yes, no lapse is acceptable.\"}, {\"id\": \"q1-2\", \"question\": \"What happens if the move isn't done when the data centers close?\", \"why\": \"Sets the schedule risk the strategy has to cover.\", \"options\": [], \"answer\": \"Hosting lapses in FY28; the move has to finish by then.\"}], \"round\": 2, \"at\": \"2026-06-18T15:10:00Z\"}",
+   "StrategyJson": "",
+   "SolicitationId": "FA8771-27-R-0031",
+   "OwnerPersona": "pm",
+   "RequestedBy": "pm",
+   "CreatedAt": "2026-06-16T14:02:00Z",
+   "UpdatedAt": "2026-08-06T13:05:00Z"
+  },
+  {
+   "Id": "preview-RQ-27-0001",
+   "RequirementId": "RQ-27-0001",
+   "Title": "Portable ground power units",
+   "Kind": "Product",
+   "Framework": "federal",
+   "Status": "Draft",
+   "Stage": "Clarify",
+   "Agency": "Department of the Air Force",
+   "Office": "42nd Aircraft Maintenance Squadron",
+   "ContractingOffice": "",
+   "Need": "We need 12 portable ground power units to start and service aircraft on the flight line and at the alert pad. Ours are past their service life and two are down for parts. They have to be towable by our tugs and run on JP-8.",
+   "NeedBy": "2027-03-01",
+   "Budget": 700000,
+   "EstimatedValue": 660000,
+   "Psc": "4920",
+   "Naics": "335312",
+   "RequirementJson": "{\"items\": [{\"name\": \"Portable ground power unit\", \"quantity\": 12, \"unit\": \"each\", \"characteristics\": [\"400 Hz AC and 28 V DC output for the aircraft served\", \"Towable by the squadron's existing tugs\", \"Runs on JP-8\"]}], \"standards\": [\"MIL-STD-704F power quality\"], \"deliveryPlace\": \"Aircraft maintenance squadron, [installation]\", \"deliveryDate\": \"\", \"warranty\": \"\", \"packaging\": \"\", \"inspection\": \"At destination\", \"support\": \"\", \"objective\": \"\", \"background\": \"\", \"scope\": \"\", \"tasks\": [], \"deliverables\": [], \"performanceStandards\": [], \"placeOfPerformance\": \"\", \"periodOfPerformance\": \"\", \"security\": \"\", \"gfp\": \"\", \"keyPersonnel\": \"\"}",
+   "AnalysisJson": "{\"kind\": \"Product\", \"title\": \"Portable ground power units\", \"summary\": \"Twelve towable ground power units that run on JP-8 for flight line and alert pad use. Commercial items with several makers.\", \"psc\": {\"code\": \"4920\", \"name\": \"Aircraft maintenance and repair shop specialized equipment\"}, \"naics\": {\"code\": \"335312\", \"name\": \"Motor and generator manufacturing\", \"sizeStandard\": \"1,250 employees\"}, \"commercial\": {\"likely\": true, \"reason\": \"Ground power units are sold commercially in these configurations.\"}, \"value\": {\"low\": 540000, \"high\": 780000, \"basis\": \"12 units at $45,000 to $65,000 each.\"}, \"flags\": [], \"questions\": [{\"id\": \"q1-2\", \"question\": \"Which aircraft must each unit power, and at what load?\", \"why\": \"The output rating is the main salient characteristic and decides which makers can compete.\", \"options\": [\"Fighters only\", \"Fighters and tankers\", \"Not sure: list the aircraft\"]}, {\"id\": \"q1-3\", \"question\": \"Do you need training, spares or a service plan with the units?\", \"why\": \"Each becomes a line item and changes the estimate.\", \"options\": [\"Operator training only\", \"Training and a 2-year parts kit\", \"None\"]}], \"answered\": [{\"id\": \"q1-0\", \"question\": \"What fuel and towing limits must they meet?\", \"why\": \"Fuel and tow compatibility are salient characteristics.\", \"options\": [], \"answer\": \"JP-8 only; towable by our existing tugs.\"}, {\"id\": \"q1-1\", \"question\": \"How many do you need, and where?\", \"why\": \"Quantity drives the estimate.\", \"options\": [], \"answer\": \"Twelve: eight on the flight line, four at the alert pad.\"}], \"round\": 1, \"at\": \"2026-11-06T16:20:00Z\"}",
+   "StrategyJson": "",
+   "SolicitationId": "",
+   "OwnerPersona": "pm",
+   "RequestedBy": "pm",
+   "CreatedAt": "2026-11-06T16:18:00Z",
+   "UpdatedAt": "2026-11-06T16:20:00Z"
+  }
+ ],
+ "docs": [
+  {
+   "Id": "preview-RQ-26-0041-pws",
+   "DocId": "RQ-26-0041-pws",
+   "RequirementId": "RQ-26-0041",
+   "Kind": "pws",
+   "Title": "Performance work statement: Enterprise IT Modernization Services",
+   "Status": "Final",
+   "Text": "## 1. Background\nThe applications run in two government data centers scheduled to close in FY28. Their hosting contract ends with the move. About a third have had no significant change in five years.\n\n## 2. Objective\nMove 140 mission applications from on-premises data centers to the Air Force cloud environment, keep each one authorized to operate throughout, and retire the applications that are no longer needed.\n\n## 3. Scope\nRationalization, migration, platform engineering, cybersecurity and continuous ATO support, and program management, for a base year and four option years, with a 60-day transition-in.\n\n## 4. Tasks\n- Rationalize the portfolio: recommend retire, rehost, replatform or refactor for each application, with the evidence\n- Migrate each application approved for migration, in waves the government approves\n- Build and run the landing zone and DevSecOps pipelines the migrated applications use\n- Keep every application authorized to operate: RMF packages, continuous monitoring, and POA&M closure\n- Run a 60-day transition-in from the incumbent without a gap in hosting\n- Manage the program: schedule, risks, monthly status and an integrated master schedule\n\n## 5. Performance standards\n- Migrated applications available during mission hours: 99.9% each month\n- Applications keep their ATO through the move: No lapse\n- Critical vulnerabilities fixed: Within 15 days, 95% of the time\n- Deliverables on time and accepted on first submission: 90%\n\n## 6. Deliverables\n- Rationalization report, 90 days after award\n- Wave migration plan, 30 days before each wave\n- Monthly status report, 10th of each month\n- Transition-in plan, 10 days after award\n\n## 7. Place and period of performance\nContractor site, with on-site support at Maxwell AFB-Gunter Annex as needed. Base year and four 12-month options.\n\n## 8. Security\nSecret facility clearance; CUI throughout; DFARS 252.204-7012 and CMMC Level 2.",
+   "DataJson": "{\"openQuestions\": []}",
+   "DraftedBy": "RQ_Drafter",
+   "EditedBy": "Grace Lindqvist",
+   "UpdatedAt": "2026-07-28T15:00:00Z"
+  },
+  {
+   "Id": "preview-RQ-26-0041-qasp",
+   "DocId": "RQ-26-0041-qasp",
+   "RequirementId": "RQ-26-0041",
+   "Kind": "qasp",
+   "Title": "Quality assurance surveillance plan",
+   "Status": "Final",
+   "Text": "## 1. Purpose\nHow the COR checks each performance standard in the PWS, and what happens when one isn't met.\n\n## 2. Surveillance\n- Migrated applications available during mission hours: Monitoring data, monthly, acceptable quality level 99.9% each month\n- Applications keep their ATO through the move: 100% inspection of each wave, acceptable quality level No lapse\n- Critical vulnerabilities fixed: Scan data, monthly, acceptable quality level Within 15 days, 95% of the time\n- Deliverables on time and accepted on first submission: COR review of each deliverable, acceptable quality level 90%\n\n## 3. When a standard isn't met\nThe COR records it, the contractor gives a corrective action plan within 10 days, and repeated misses go into the CPARS evaluation.",
+   "DataJson": "{\"openQuestions\": []}",
+   "DraftedBy": "RQ_Drafter",
+   "EditedBy": "Owen Mercer",
+   "UpdatedAt": "2026-07-28T15:00:00Z"
+  },
+  {
+   "Id": "preview-RQ-26-0041-marketResearch",
+   "DocId": "RQ-26-0041-marketResearch",
+   "RequirementId": "RQ-26-0041",
+   "Kind": "marketResearch",
+   "Title": "Market research report",
+   "Status": "Final",
+   "Text": "## 1. Sources checked\n- SAM.gov contract opportunities and entity registrations\n- Prior Air Force and DoD awards for cloud migration (FPDS)\n- GSA Multiple Award Schedule and the OASIS+ and Alliant 2 vehicles\n- Industry day with 14 attendees, and a sources-sought notice with 11 responses\n\n## 2. Commercial availability\nCloud migration and continuous ATO support are commercial services, sold in the form the Air Force needs.\n\n## 3. Small business capability\nFive of the 11 responses came from small businesses with relevant past performance of similar size; two had done migrations of more than 100 applications.\n\n## 4. Conclusion\nFull and open competition, with a recommendation to the Small Business Professional that the five capable small businesses be considered for a set-aside.",
+   "DataJson": "{\"openQuestions\": []}",
+   "DraftedBy": "Grace Lindqvist",
+   "EditedBy": "Grace Lindqvist",
+   "UpdatedAt": "2026-07-28T15:00:00Z"
+  },
+  {
+   "Id": "preview-RQ-26-0041-igce",
+   "DocId": "RQ-26-0041-igce",
+   "RequirementId": "RQ-26-0041",
+   "Kind": "igce",
+   "Title": "Independent government cost estimate",
+   "Status": "Final",
+   "Text": "## 1. Lines\n- CLIN 0001: Application migration (140 applications), $9,200,000\n- CLIN 0002: Platform engineering and DevSecOps, $6,100,000\n- CLIN 0003: Cybersecurity and continuous ATO support, $4,300,000\n- CLIN 0004: Program management, $2,600,000\n- CLIN 0005: Transition-in and hypercare, $1,600,000\n\nTotal: $23,800,000 (base year and four options).\n\n## 2. Basis\nLabor hours by task from two comparable Air Force migrations, priced at GSA schedule rates for the labor categories, with 2% escalation each option year.",
+   "DataJson": "{\"lines\": [{\"clin\": \"0001\", \"description\": \"Application migration (140 applications)\", \"amount\": 9200000}, {\"clin\": \"0002\", \"description\": \"Platform engineering and DevSecOps\", \"amount\": 6100000}, {\"clin\": \"0003\", \"description\": \"Cybersecurity and continuous ATO support\", \"amount\": 4300000}, {\"clin\": \"0004\", \"description\": \"Program management\", \"amount\": 2600000}, {\"clin\": \"0005\", \"description\": \"Transition-in and hypercare\", \"amount\": 1600000}], \"total\": 23800000}",
+   "DraftedBy": "Grace Lindqvist",
+   "EditedBy": "Grace Lindqvist",
+   "UpdatedAt": "2026-07-28T15:00:00Z"
+  },
+  {
+   "Id": "preview-RQ-26-0041-acquisitionStrategy",
+   "DocId": "RQ-26-0041-acquisitionStrategy",
+   "RequirementId": "RQ-26-0041",
+   "Kind": "acquisitionStrategy",
+   "Title": "Acquisition strategy",
+   "Status": "Final",
+   "Text": "## 1. Contract type\nFirm-fixed-price task order on a 5-year IDIQ: the work is defined by application and wave.\n\n## 2. Competition\nFull and open, best-value tradeoff. Technical is more important than management, then past performance; non-price factors together are significantly more important than price.\n\n## 3. Set-aside\nUnrestricted, after the Small Business Professional's review: the five capable small businesses could not show capacity for 140 applications in the schedule.\n\n## 4. Schedule\nSolicitation in October 2026; award in January 2027; transition-in complete in March 2027.",
+   "DataJson": "{\"openQuestions\": []}",
+   "DraftedBy": "Dana Whitfield",
+   "EditedBy": "Dana Whitfield",
+   "UpdatedAt": "2026-07-28T15:00:00Z"
+  },
+  {
+   "Id": "preview-RQ-26-0041-section508",
+   "DocId": "RQ-26-0041-section508",
+   "RequirementId": "RQ-26-0041",
+   "Kind": "section508",
+   "Title": "Section 508 accessibility determination",
+   "Status": "Final",
+   "Text": "## 1. Determination\nThe services deliver information and communication technology. The Revised 508 Standards apply to the applications as migrated and to every deliverable.",
+   "DataJson": "{\"openQuestions\": []}",
+   "DraftedBy": "RQ_Drafter",
+   "EditedBy": "Grace Lindqvist",
+   "UpdatedAt": "2026-07-28T15:00:00Z"
+  },
+  {
+   "Id": "preview-RQ-26-0041-smallBusiness",
+   "DocId": "RQ-26-0041-smallBusiness",
+   "RequirementId": "RQ-26-0041",
+   "Kind": "smallBusiness",
+   "Title": "Small business coordination",
+   "Status": "Final",
+   "Text": "## 1. Review\nReviewed the market research and the five small business responses. Concur with the unrestricted strategy; a small business subcontracting plan with a 30% goal is required.",
+   "DataJson": "{\"openQuestions\": []}",
+   "DraftedBy": "Hector Alvarez",
+   "EditedBy": "Hector Alvarez",
+   "UpdatedAt": "2026-07-28T15:00:00Z"
+  },
+  {
+   "Id": "preview-RQ-26-0041-funds",
+   "DocId": "RQ-26-0041-funds",
+   "RequirementId": "RQ-26-0041",
+   "Kind": "funds",
+   "Title": "Funds certification",
+   "Status": "Final",
+   "Text": "## 1. Certification\nFunds certified for the base year on purchase request F2KJ7A6101A001, $4,960,000. Option years are subject to the availability of funds.",
+   "DataJson": "{\"openQuestions\": []}",
+   "DraftedBy": "Nadia Sorensen",
+   "EditedBy": "Nadia Sorensen",
+   "UpdatedAt": "2026-07-28T15:00:00Z"
+  }
+ ],
+ "audit": [
+  {
+   "Id": "preview-RQ-26-0041-RequirementStarted-00",
+   "EventId": "RQ-26-0041-RequirementStarted-00",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "RequirementStarted",
+   "Actor": "Grace Lindqvist",
+   "OccurredAt": "2026-06-16T14:02:00Z",
+   "Detail": "Move 140 mission applications to the Air Force cloud before the data centers close."
+  },
+  {
+   "Id": "preview-RQ-26-0041-NeedAnalyzed-01",
+   "EventId": "RQ-26-0041-NeedAnalyzed-01",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "NeedAnalyzed",
+   "Actor": "RQ_RequirementsAnalyst",
+   "OccurredAt": "2026-06-16T14:03:10Z",
+   "Detail": "Service: Enterprise IT Modernization Services. 3 questions."
+  },
+  {
+   "Id": "preview-RQ-26-0041-QuestionsAnswered-02",
+   "EventId": "RQ-26-0041-QuestionsAnswered-02",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "QuestionsAnswered",
+   "Actor": "Grace Lindqvist",
+   "OccurredAt": "2026-06-18T15:09:00Z",
+   "Detail": "3 answered or skipped"
+  },
+  {
+   "Id": "preview-RQ-26-0041-NeedAnalyzed-03",
+   "EventId": "RQ-26-0041-NeedAnalyzed-03",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "NeedAnalyzed",
+   "Actor": "RQ_RequirementsAnalyst",
+   "OccurredAt": "2026-06-18T15:10:00Z",
+   "Detail": "Service: Enterprise IT Modernization Services. 0 questions."
+  },
+  {
+   "Id": "preview-RQ-26-0041-DocumentDrafted-04",
+   "EventId": "RQ-26-0041-DocumentDrafted-04",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "DocumentDrafted",
+   "Actor": "RQ_Drafter",
+   "OccurredAt": "2026-06-22T13:30:00Z",
+   "Detail": "Performance work statement"
+  },
+  {
+   "Id": "preview-RQ-26-0041-DocumentEdited-05",
+   "EventId": "RQ-26-0041-DocumentEdited-05",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "DocumentEdited",
+   "Actor": "Grace Lindqvist",
+   "OccurredAt": "2026-06-24T17:45:00Z",
+   "Detail": "Performance work statement"
+  },
+  {
+   "Id": "preview-RQ-26-0041-DocumentDrafted-06",
+   "EventId": "RQ-26-0041-DocumentDrafted-06",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "DocumentDrafted",
+   "Actor": "RQ_Drafter",
+   "OccurredAt": "2026-06-25T13:00:00Z",
+   "Detail": "Quality assurance surveillance plan"
+  },
+  {
+   "Id": "preview-RQ-26-0041-DocumentEdited-07",
+   "EventId": "RQ-26-0041-DocumentEdited-07",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "DocumentEdited",
+   "Actor": "Owen Mercer",
+   "OccurredAt": "2026-06-26T16:20:00Z",
+   "Detail": "Quality assurance surveillance plan"
+  },
+  {
+   "Id": "preview-RQ-26-0041-DocumentMarkedFinal-08",
+   "EventId": "RQ-26-0041-DocumentMarkedFinal-08",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "DocumentMarkedFinal",
+   "Actor": "Grace Lindqvist",
+   "OccurredAt": "2026-07-14T19:00:00Z",
+   "Detail": "Market research report"
+  },
+  {
+   "Id": "preview-RQ-26-0041-DocumentMarkedFinal-09",
+   "EventId": "RQ-26-0041-DocumentMarkedFinal-09",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "DocumentMarkedFinal",
+   "Actor": "Grace Lindqvist",
+   "OccurredAt": "2026-07-21T18:30:00Z",
+   "Detail": "Independent government cost estimate"
+  },
+  {
+   "Id": "preview-RQ-26-0041-PackageSubmitted-10",
+   "EventId": "RQ-26-0041-PackageSubmitted-10",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "PackageSubmitted",
+   "Actor": "Grace Lindqvist",
+   "OccurredAt": "2026-07-28T15:00:00Z",
+   "Detail": "Submitted to contracting"
+  },
+  {
+   "Id": "preview-RQ-26-0041-FundsCertified-11",
+   "EventId": "RQ-26-0041-FundsCertified-11",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "FundsCertified",
+   "Actor": "Nadia Sorensen",
+   "OccurredAt": "2026-07-30T14:15:00Z",
+   "Detail": "Base year, $4,960,000"
+  },
+  {
+   "Id": "preview-RQ-26-0041-SmallBusinessReviewed-12",
+   "EventId": "RQ-26-0041-SmallBusinessReviewed-12",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "SmallBusinessReviewed",
+   "Actor": "Hector Alvarez",
+   "OccurredAt": "2026-08-04T16:40:00Z",
+   "Detail": "Concur: unrestricted, 30% subcontracting goal"
+  },
+  {
+   "Id": "preview-RQ-26-0041-PackageAccepted-13",
+   "EventId": "RQ-26-0041-PackageAccepted-13",
+   "SolicitationId": "RQ-26-0041",
+   "EntityRef": "RQ-26-0041",
+   "Action": "PackageAccepted",
+   "Actor": "Dana Whitfield",
+   "OccurredAt": "2026-08-06T13:05:00Z",
+   "Detail": "Accepted. Solicitation FA8771-27-R-0031 to follow."
+  },
+  {
+   "Id": "preview-RQ-27-0001-RequirementStarted-00",
+   "EventId": "RQ-27-0001-RequirementStarted-00",
+   "SolicitationId": "RQ-27-0001",
+   "EntityRef": "RQ-27-0001",
+   "Action": "RequirementStarted",
+   "Actor": "Grace Lindqvist",
+   "OccurredAt": "2026-11-06T16:18:00Z",
+   "Detail": "We need 12 portable ground power units to start and service aircraft on the flight line and at the alert pad. Ours are past their service life and two are down for parts. They have to be towable by our tugs and run on JP-8."
+  },
+  {
+   "Id": "preview-RQ-27-0001-NeedAnalyzed-01",
+   "EventId": "RQ-27-0001-NeedAnalyzed-01",
+   "SolicitationId": "RQ-27-0001",
+   "EntityRef": "RQ-27-0001",
+   "Action": "NeedAnalyzed",
+   "Actor": "RQ_RequirementsAnalyst",
+   "OccurredAt": "2026-11-06T16:20:00Z",
+   "Detail": "Product: Portable ground power units. 4 questions."
+  }
+ ],
+ "profiles": [
+  {
+   "Id": "preview-pm",
+   "ProfileId": "pm",
+   "Name": "Grace Lindqvist",
+   "Title": "Program Manager",
+   "Agency": "Department of the Air Force",
+   "Department": "Department of Defense",
+   "Office": "42nd Aircraft Maintenance Squadron",
+   "Location": "Building 1420, flight line, Moody Air Force Base, GA",
+   "ContractingOffice": "23rd Contracting Squadron",
+   "Framework": "federal",
+   "Active": true,
+   "UpdatedAt": "2026-11-12T18:00:00Z"
+  },
+  {
+   "Id": "preview-rq-leah-okonkwo",
+   "ProfileId": "rq-leah-okonkwo",
+   "Name": "Leah Okonkwo",
+   "Title": "Training Support Officer",
+   "Agency": "Department of the Army",
+   "Department": "Department of Defense",
+   "Office": "Training Support Center",
+   "Location": "Building 33018, Fort Cavazos, TX",
+   "ContractingOffice": "Mission and Installation Contracting Command, Fort Cavazos",
+   "Framework": "federal",
+   "Active": true,
+   "UpdatedAt": "2026-11-12T18:00:00Z"
+  },
+  {
+   "Id": "preview-rq-samuel-brandt",
+   "ProfileId": "rq-samuel-brandt",
+   "Name": "Samuel Brandt",
+   "Title": "Chief, Biomedical Engineering",
+   "Agency": "Department of Veterans Affairs",
+   "Department": "",
+   "Office": "Biomedical Engineering, Lakeshore VA Medical Center",
+   "Location": "Lakeshore VA Medical Center, Building 2, Cleveland, OH",
+   "ContractingOffice": "Network Contracting Office 10",
+   "Framework": "federal",
+   "Active": true,
+   "UpdatedAt": "2026-11-12T18:00:00Z"
+  },
+  {
+   "Id": "preview-rq-teresa-vu",
+   "ProfileId": "rq-teresa-vu",
+   "Name": "Teresa Vu",
+   "Title": "Mission Support Specialist",
+   "Agency": "U.S. Customs and Border Protection",
+   "Department": "Department of Homeland Security",
+   "Office": "Laredo Field Office, Mission Support",
+   "Location": "Laredo Field Office, Laredo, TX",
+   "ContractingOffice": "CBP Office of Acquisition",
+   "Framework": "federal",
+   "Active": true,
+   "UpdatedAt": "2026-11-12T18:00:00Z"
+  },
+  {
+   "Id": "preview-rq-ruth-halvorsen",
+   "ProfileId": "rq-ruth-halvorsen",
+   "Name": "Ruth Halvorsen",
+   "Title": "Facility Manager",
+   "Agency": "National Park Service",
+   "Department": "Department of the Interior",
+   "Office": "Facility Management Division, Glacier National Park",
+   "Location": "Park Headquarters, West Glacier, MT",
+   "ContractingOffice": "NPS Intermountain Contracting Office",
+   "Framework": "federal",
+   "Active": true,
+   "UpdatedAt": "2026-11-12T18:00:00Z"
+  }
+ ],
+ "solicitations": [
+  {
+   "SolicitationId": "FA8771-27-R-0031",
+   "Title": "Enterprise IT Modernization Services",
+   "Status": "In evaluation",
+   "Stage": "Price Evaluation"
+  },
+  {
+   "SolicitationId": "75N910-27-R-0052",
+   "Title": "Research Data Platform and Analytics Support",
+   "Status": "In evaluation",
+   "Stage": "Award Decision"
+  },
+  {
+   "SolicitationId": "W52P1J-27-R-0023",
+   "Title": "Army Logistics Data Analytics Platform",
+   "Status": "Awarded",
+   "Stage": "Awarded"
+  },
+  {
+   "SolicitationId": "WUSD-RFP-27-009",
+   "Title": "Learning Management System",
+   "Status": "In evaluation",
+   "Stage": "Award Decision"
+  }
+ ]
+}

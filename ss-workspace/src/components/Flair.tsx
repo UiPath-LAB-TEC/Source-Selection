@@ -5,6 +5,7 @@ import type { PersonaId } from '../lib/types'
 const PERSONA_COLOR: Record<PersonaId, string> = {
   co: '#1d3a8a', evaluator1: '#2a78d6', evaluator2: '#0e7490', evaluator3: '#7c3aed', chair: '#b45309', ssa: '#be123c', admin: '#475467', counsel: '#0f766e',
   cor: '#4d7c0f', rm: '#9333ea',
+  pm: '#9f1239', sbp: '#c2410c',
 }
 
 /**
@@ -12,12 +13,15 @@ const PERSONA_COLOR: Record<PersonaId, string> = {
  * A photo (jpg/png/webp) takes precedence over the illustrated SVG from tools/generate_headshots.js.
  */
 const HEADSHOTS = import.meta.glob<string>('../assets/people/*.{jpg,jpeg,png,webp,svg}', { eager: true, query: '?url', import: 'default' })
-const headshot = (id: PersonaId) =>
-  ['jpg', 'jpeg', 'png', 'webp', 'svg'].map((x) => HEADSHOTS[`../assets/people/${id}.${x}`]).find(Boolean)
+const headshot = (key: string) =>
+  ['jpg', 'jpeg', 'png', 'webp', 'svg'].map((x) => HEADSHOTS[`../assets/people/${key}.${x}`]).find(Boolean)
 
-/** Headshot; with a `title` ("Name · Role") it shows a hover caption. */
-export function PersonaAvatar({ id, short, size = 28, title }: { id: PersonaId; short: string; size?: number; title?: string }) {
-  const src = headshot(id)
+/**
+ * Headshot; with a `title` ("Name · Role") it shows a hover caption. `photo` names the picture when several people
+ * share a persona (the Requirements app's requesters, by ProfileId); with no picture under that name, initials show.
+ */
+export function PersonaAvatar({ id, short, size = 28, title, photo }: { id: PersonaId; short: string; size?: number; title?: string; photo?: string }) {
+  const src = headshot(photo ?? id)
   const face = src
     ? <img src={src} alt={title ?? ''} width={size} height={size} className="shrink-0 rounded-full object-cover ring-2 ring-white/70" style={{ width: size, height: size, background: PERSONA_COLOR[id] }} />
     : (
@@ -69,10 +73,14 @@ export function AvatarStack({ names }: { names: string[] }) {
 
 export function agencyMark(agency: string) {
   if (/Air Force/i.test(agency)) return 'DAF'
+  if (/\bArmy\b/i.test(agency)) return 'ARMY'
+  if (/Veterans Affairs/i.test(agency)) return 'VA'
+  if (/Customs and Border Protection/i.test(agency)) return 'CBP'
+  if (/Homeland Security/i.test(agency)) return 'DHS'
   if (/National Institutes of Health/i.test(agency)) return 'NIH'
   // School districts go by their initials in full, e.g. Willowmere Unified School District → WUSD.
   if (/School District/i.test(agency)) return agency.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 4).map((w) => w[0]).join('')
-  return agency.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 3).map((w) => w[0]).join('')
+  return agency.replace(/^U\.S\.\s+/, '').split(/\s+/).filter((w) => /^[A-Z]/.test(w)).slice(0, 3).map((w) => w[0]).join('')
 }
 
 export function AgencyMark({ agency, size = 44 }: { agency: string; size?: number }) {

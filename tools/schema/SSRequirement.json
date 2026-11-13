@@ -1,0 +1,104 @@
+{
+ "displayName": "SS Requirement",
+ "description": "A requirement the program office builds before a solicitation: the need, the agent's analysis, the structured requirement and the strategy",
+ "fields": [
+  {
+   "name": "RequirementId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "Title",
+   "type": "STRING"
+  },
+  {
+   "name": "Kind",
+   "type": "STRING"
+  },
+  {
+   "name": "Framework",
+   "type": "STRING"
+  },
+  {
+   "name": "Status",
+   "type": "STRING"
+  },
+  {
+   "name": "Stage",
+   "type": "STRING"
+  },
+  {
+   "name": "Agency",
+   "type": "STRING"
+  },
+  {
+   "name": "Office",
+   "type": "STRING"
+  },
+  {
+   "name": "ContractingOffice",
+   "type": "STRING"
+  },
+  {
+   "name": "Need",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "NeedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "Budget",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "EstimatedValue",
+   "type": "DECIMAL"
+  },
+  {
+   "name": "Psc",
+   "type": "STRING"
+  },
+  {
+   "name": "Naics",
+   "type": "STRING"
+  },
+  {
+   "name": "RequirementJson",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "AnalysisJson",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "StrategyJson",
+   "type": "MULTILINE_TEXT",
+   "lengthLimit": 10000
+  },
+  {
+   "name": "SolicitationId",
+   "type": "STRING"
+  },
+  {
+   "name": "OwnerPersona",
+   "type": "STRING"
+  },
+  {
+   "name": "RequestedBy",
+   "type": "STRING"
+  },
+  {
+   "name": "CreatedAt",
+   "type": "DATETIME_WITH_TZ"
+  },
+  {
+   "name": "UpdatedAt",
+   "type": "DATETIME_WITH_TZ"
+  }
+ ]
+}

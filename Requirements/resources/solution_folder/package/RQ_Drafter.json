@@ -1,0 +1,23 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "RQ_Drafter",
+    "kind": "package",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "03b42054-d596-4c34-a69d-bede00649986",
+    "isOverridable": true,
+    "dependencies": [],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "name": "RQ_Drafter"
+    },
+    "locks": [],
+    "key": "83de81f2-47c5-469c-89d4-b188671941b6",
+    "files": []
+  }
+}

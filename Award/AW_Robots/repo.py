@@ -81,14 +81,24 @@ def rows(entity: str, solicitation_id: str | None = None) -> list[dict]:
     return [r for r in out if solicitation_id is None or r.get("SolicitationId") == solicitation_id]
 
 
+# Data Fabric's own fields on every row it returns. A write must not send them back: since 2026-11-12 one that
+# includes Children fails ("The field 'Children' collides with a reserved response field"); the rest are read-only.
+SYSTEM_FIELDS = {"id", "children", "createdby", "createtime", "updatedby", "updatetime", "recordowner"}
+
+
+def writable(record: dict) -> dict:
+    """The row as a write sends it: the entity's own fields only, so a row read with rows() can be written back."""
+    return {k: v for k, v in record.items() if k.lower() not in SYSTEM_FIELDS}
+
+
 def upsert(entity: str, key_field: str, records: list[dict]) -> tuple[int, int]:
     """BR-06: insert rows whose business key is new, update the rest. Returns (inserted, updated)."""
     if not records:
         return 0, 0
     key = entity_key(entity)
     have = {r[key_field]: r["Id"] for r in rows(entity) if r.get(key_field)}
-    new = [r for r in records if r[key_field] not in have]
-    upd = [{**r, "Id": have[r[key_field]]} for r in records if r[key_field] in have]
+    new = [writable(r) for r in records if r[key_field] not in have]
+    upd = [{**writable(r), "Id": have[r[key_field]]} for r in records if r[key_field] in have]
     for verb, batch in (("insert_records", new), ("update_records", upd)):
         for i in range(0, len(batch), 50):
             chunk = batch[i:i + 50]

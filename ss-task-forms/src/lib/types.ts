@@ -164,7 +164,7 @@ export interface Dataset {
 
 export const STAGES = ['Proposal Intake', 'Individual Evaluation', 'Consensus', 'Price Evaluation', 'Award Decision'] as const
 
-export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'cor' | 'rm'
+export type PersonaId = 'evaluator1' | 'evaluator2' | 'evaluator3' | 'chair' | 'co' | 'ssa' | 'cor' | 'rm' | 'pm' | 'sbp'
 
 export interface Persona {
   id: PersonaId
@@ -200,7 +200,17 @@ export const RM: Persona = {
   id: 'rm', name: 'Nadia Sorensen', label: 'Resource Manager', role: 'Certifies funds and tracks obligations', short: 'NS', taskLabel: 'resource-manager',
 }
 
-export const persona = (id: PersonaId) => (id === 'cor' ? COR : id === 'rm' ? RM : PERSONAS.find((p) => p.id === id)!)
+/** The Program Manager in the requiring activity: owns the need and the requirements document (Requirements). Fictional. */
+export const PM: Persona = {
+  id: 'pm', name: 'Grace Lindqvist', label: 'Program Manager', role: 'Requiring activity · owns the requirement', short: 'GL', taskLabel: 'program-manager',
+}
+
+/** The Small Business Professional, who reviews the set-aside recommendation before the package goes to contracting (Requirements). Fictional. */
+export const SBP: Persona = {
+  id: 'sbp', name: 'Hector Alvarez', label: 'Small Business Professional', role: 'Reviews set-aside recommendations', short: 'HA', taskLabel: 'small-business',
+}
+
+export const persona = (id: PersonaId) => (id === 'cor' ? COR : id === 'rm' ? RM : id === 'pm' ? PM : id === 'sbp' ? SBP : PERSONAS.find((p) => p.id === id)!)
 export const evaluatorBySlot = (slot?: number) => PERSONAS.find((p) => p.slot === slot)
 
 /**

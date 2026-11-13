@@ -1,0 +1,53 @@
+{
+ "displayName": "SS Requester Profile",
+ "description": "A program office person who builds requirements: their agency, office and location fill in a new requirement. Edited on the Requirements app's Settings page",
+ "fields": [
+  {
+   "name": "ProfileId",
+   "type": "STRING",
+   "isRequired": true,
+   "isUnique": true
+  },
+  {
+   "name": "Name",
+   "type": "STRING",
+   "isRequired": true
+  },
+  {
+   "name": "Title",
+   "type": "STRING"
+  },
+  {
+   "name": "Agency",
+   "type": "STRING"
+  },
+  {
+   "name": "Department",
+   "type": "STRING"
+  },
+  {
+   "name": "Office",
+   "type": "STRING"
+  },
+  {
+   "name": "Location",
+   "type": "STRING"
+  },
+  {
+   "name": "ContractingOffice",
+   "type": "STRING"
+  },
+  {
+   "name": "Framework",
+   "type": "STRING"
+  },
+  {
+   "name": "Active",
+   "type": "BOOLEAN"
+  },
+  {
+   "name": "UpdatedAt",
+   "type": "DATETIME_WITH_TZ"
+  }
+ ]
+}

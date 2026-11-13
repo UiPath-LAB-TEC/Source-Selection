@@ -9,9 +9,11 @@ business day before (clocks.prior_business_day), so an alert never lands after t
 from __future__ import annotations
 
 import calendar
+import html
 import json
 import math
 import re
+from urllib.parse import quote
 from datetime import date, timedelta
 
 import clocks
@@ -1046,3 +1048,100 @@ def decided_lines(pkg: dict, dec: dict) -> list[dict]:
     if pkg.get("kind") == "extension":
         return [{**x, "amount": round(x["monthly"] * int(dec.get("months") or 0), 2)} for x in pkg["proposal"]["lines"]]
     return [dict(x) for x in pkg["proposal"]["lines"]]
+
+
+# ── Alert emails: the daily digest to the contract team ────────────────────
+# Each person gets one email a day at most, and only when the watch found something new or more urgent on a contract
+# they're on. The address comes from the contract's own record (CoEmail, CorEmail, RmEmail), by the item's owner.
+
+TEAM = {CO: ("Contracting Officer", "CoEmail"), COR: ("Contracting Officer's Representative", "CorEmail"),
+        RM: ("Resource Manager", "RmEmail")}
+NEEDS_NOW = ("Overdue", "Due soon")
+TONE = {"Overdue": "#b42318", "Due soon": "#b54708", "Upcoming": "#475467", "Info": "#475467"}
+
+
+def changed_alerts(writes: list[dict], existing: dict[str, dict]) -> list[tuple[dict, str]]:
+    """The items a watch run raised or made more urgent, open: (alert, "new" or "more urgent"). Resolved, acknowledged
+    and unchanged items are left out, so the same item is never emailed twice for the same state."""
+    out = []
+    for w in writes:
+        if w.get("Status") != "Open" or not w.get("Title"):
+            continue
+        old = existing.get(w["AlertId"])
+        if not old or old.get("Status") == "Resolved":
+            out.append((w, "new"))
+        elif SEVERITY_RANK.get(w.get("Severity"), 0) > SEVERITY_RANK.get(old.get("Severity"), 0):
+            out.append((w, "more urgent"))
+    return out
+
+
+def alert_digests(changes: list[tuple[dict, list[tuple[dict, str]]]], as_of: str, app_url: str) -> list[dict]:
+    """One email per address: for each contract the person is on, the items that are new or more urgent, most urgent
+    first, each linked to its contract in Contract Management. `changes` is [(contract row, changed_alerts)]."""
+    boxes: dict[str, dict] = {}
+    for contract, items in changes:
+        sol = contract["SolicitationId"]
+        for a, change in items:
+            for label in [s.strip() for s in (a.get("Owner") or "").split(",") if s.strip()]:
+                role, field = TEAM.get(label, (None, None))
+                to = (contract.get(field) or "").strip() if field else ""
+                if not to:
+                    continue
+                box = boxes.setdefault(to.lower(), {"to": to, "roles": [], "contracts": {}})
+                c = box["contracts"].setdefault(sol, {"contract": contract, "items": [], "roles": []})
+                for lst in (box["roles"], c["roles"]):
+                    if role not in lst:
+                        lst.append(role)
+                if all(x["alert"]["AlertId"] != a["AlertId"] for x in c["items"]):
+                    c["items"].append({"alert": a, "change": change})
+    out = []
+    for box in boxes.values():
+        contracts = list(box["contracts"].values())
+        for c in contracts:
+            c["items"].sort(key=lambda x: (-SEVERITY_RANK.get(x["alert"].get("Severity"), 0), x["alert"].get("DueDay") or "9"))
+        items = [x for c in contracts for x in c["items"]]
+        now = sum(1 for x in items if x["alert"].get("Severity") in NEEDS_NOW)
+        subject = (f"Contract Management: {now} item{'s' if now != 1 else ''} need{'s' if now == 1 else ''} action"
+                   if now else f"Contract Management: {len(items)} new item{'s' if len(items) != 1 else ''} coming up")
+        subject += f" ({show_day(as_of)})"
+        out.append({"to": box["to"], "subject": subject, "html": _digest_html(contracts, box["roles"], as_of, app_url), "items": len(items),
+                    "contracts": {sol: {"roles": c["roles"], "titles": [x["alert"]["Title"] for x in c["items"]]} for sol, c in box["contracts"].items()}})
+    return out
+
+
+def _sentences(text: str, limit: int) -> str:
+    """The text up to `limit` characters, cut after its last whole sentence (the full detail is in the app)."""
+    if len(text) <= limit:
+        return text
+    cut = text[:limit]
+    end = cut.rfind(". ")
+    return cut[:end + 1] if end > 0 else cut.rsplit(" ", 1)[0] + "…"
+
+
+def _digest_html(contracts: list[dict], roles: list[str], as_of: str, app_url: str) -> str:
+    e = html.escape
+    n = sum(len(c["items"]) for c in contracts)
+    parts = [f'<div style="font-family:Segoe UI,Arial,sans-serif;font-size:14px;line-height:1.45;color:#101828">',
+             f"<p>The daily contract watch found {n} new or more urgent action item{'s' if n != 1 else ''} on "
+             f"{len(contracts)} contract{'s' if len(contracts) != 1 else ''} where you're the {e(' and the '.join(roles))}.</p>"]
+    for c in contracts:
+        a = c["contract"]
+        link = f"{app_url}/#/a/{quote(a['SolicitationId'])}"
+        parts.append(f'<h3 style="margin:20px 0 2px;font-size:15px"><a href="{e(link)}" style="color:#0a7f8c;text-decoration:none">'
+                     f"{e(a.get('ContractNumber') or a['SolicitationId'])} · {e(a.get('Title') or '')}</a></h3>"
+                     f'<p style="margin:0 0 8px;color:#475467">{e(a.get("AwardeeName") or "")}</p>'
+                     '<table cellpadding="8" style="border-collapse:collapse;width:100%;max-width:680px">')
+        for x in c["items"]:
+            al = x["alert"]
+            sev = al.get("Severity") or "Info"
+            parts.append('<tr style="border-top:1px solid #eaecf0;vertical-align:top">'
+                         f'<td style="white-space:nowrap;width:120px"><b style="color:{TONE.get(sev, "#475467")}">{e(sev)}</b>'
+                         f'<br><span style="color:#475467">{e(show_day(al.get("DueDay"), as_of)) if al.get("DueDay") else ""}</span></td>'
+                         f'<td><b>{e(al["Title"])}</b> <span style="color:#475467">({e(x["change"])})</span>'
+                         f'<br><span style="color:#475467">{e(_sentences(al.get("Detail") or "", 420))}</span>'
+                         f'<br><span style="color:#667085;font-size:12px">{e(al.get("Rule") or "")}</span></td></tr>')
+        parts.append("</table>")
+    parts.append(f'<p style="margin-top:20px"><a href="{e(app_url)}/#/actions" style="color:#0a7f8c">Open your action items in Contract Management</a></p>'
+                 '<p style="color:#98a2b3;font-size:12px">Sent by the daily contract watch. Synthetic demo: the contracts, companies and '
+                 "people in it are fictional.</p></div>")
+    return "".join(parts)

@@ -1,0 +1,41 @@
+{
+  "docVersion": "1.0.0",
+  "resource": {
+    "name": "RQ_Drafter",
+    "kind": "process",
+    "type": "agent",
+    "apiVersion": "orchestrator.uipath.com/v1",
+    "projectKey": "03b42054-d596-4c34-a69d-bede00649986",
+    "isOverridable": true,
+    "dependencies": [
+      {
+        "kind": "package",
+        "name": "RQ_Drafter"
+      }
+    ],
+    "runtimeDependencies": [],
+    "folders": [
+      {
+        "fullyQualifiedName": "solution_folder"
+      }
+    ],
+    "spec": {
+      "type": "Agent",
+      "name": "RQ_Drafter",
+      "package": {
+        "key": "83de81f2-47c5-469c-89d4-b188671941b6"
+      },
+      "targetFrameworkValue": "Portable",
+      "retentionAction": "Delete",
+      "retentionPeriod": 30,
+      "staleRetentionAction": "Delete",
+      "staleRetentionPeriod": 180,
+      "entryPoints": "{\n  \"$schema\": \"https://cloud.uipath.com/draft/2024-12/entry-point\",\n  \"$id\": \"entry-points.json\",\n  \"entryPoints\": [\n    {\n      \"filePath\": \"/content/agent.json\",\n      \"uniqueId\": \"f9992bd5-5f0f-4ca6-ad6b-eee148882f87\",\n      \"type\": \"agent\",\n      \"input\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"docKind\": {\n            \"type\": \"string\",\n            \"description\": \"The document to draft: purchaseDescription, pws, qasp, brandName or section508\"\n          },\n          \"requirement\": {\n            \"type\": \"string\",\n            \"description\": \"JSON: title, kind, agency, office, neededBy, the need, the analyst's summary, codes and flags, and the structured requirement (spec)\"\n          }\n        },\n        \"required\": [\n          \"docKind\",\n          \"requirement\"\n        ]\n      },\n      \"output\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"title\": {\n            \"type\": \"string\",\n            \"description\": \"The document's title, e.g. 'Purchase description: Rugged tablets'\"\n          },\n          \"sections\": {\n            \"type\": \"array\",\n            \"description\": \"The document, in order\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"heading\": {\n                  \"type\": \"string\",\n                  \"description\": \"Numbered heading, e.g. '3. Salient characteristics'\"\n                },\n                \"text\": {\n                  \"type\": \"string\",\n                  \"description\": \"Plain text. Lists as lines starting '- '. No headings inside\"\n                }\n              },\n              \"required\": [\n                \"heading\",\n                \"text\"\n              ]\n            }\n          },\n          \"openQuestions\": {\n            \"type\": \"array\",\n            \"description\": \"What the program office must still supply, one per entry. Empty when nothing is missing\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"required\": [\n          \"title\",\n          \"sections\",\n          \"openQuestions\"\n        ]\n      }\n    }\n  ]\n}\n",
+      "entryPointName": "/content/agent.json",
+      "entryPointUniqueId": "f9992bd5-5f0f-4ca6-ad6b-eee148882f87"
+    },
+    "locks": [],
+    "key": "782908cd-3073-405f-987d-39689944a012",
+    "files": []
+  }
+}
