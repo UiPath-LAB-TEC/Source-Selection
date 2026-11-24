@@ -14,6 +14,7 @@ import { stillOpen } from './TaskDialog'
 import { titled, useTerms } from '@forms/lib/terms'
 import { ADMIN, CERTIFIED_THROUGH, PERSONAS, annualCertifications } from '../lib/types'
 import type { Persona, Solicitation } from '../lib/types'
+import { RunnerRow } from './RunnerPrompt'
 
 /** Open tasks for a persona, counted the way My tasks lists them (tasks on a closed evaluation don't count). */
 function openFor(tasks: ReturnType<typeof useData>['tasks'], p: Persona, sols: Solicitation[] | undefined) {
@@ -59,6 +60,7 @@ function PersonaCard() {
           <ul className="mt-1 space-y-0.5 pl-5 text-[11px] text-muted-foreground">{annualCertifications(t.id).map((c) => <li key={c} className="list-disc">{c}</li>)}</ul>
         </div>}
         <p className="px-2 pb-1.5 pt-1 text-xs text-muted-foreground">One demo user plays every role. Switch to see each official's view.</p>
+        <RunnerRow />
         {PERSONAS.map((p) => option(p))}
         <p className="mt-1.5 border-t border-border px-2 pb-1 pt-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Administration</p>
         {option(ADMIN)}

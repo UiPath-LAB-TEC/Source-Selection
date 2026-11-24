@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from '@ss/hooks/useAuth'
 import { FrameworkProvider } from '@ss/hooks/useFramework'
 import { AwardPersonaProvider } from './hooks/usePersona'
 import { Sidebar } from './components/Sidebar'
+import { RunnerPrompt } from '@ss/components/RunnerPrompt'
 import { LoginScreen } from './components/LoginScreen'
 import { AwardDataProvider, useAwardData } from './lib/data'
 import { Actions } from './pages/Actions'
@@ -53,6 +54,7 @@ function Shell() {
         </main>
       </div>
       <Toaster />
+      <RunnerPrompt />
     </div>
   )
 }

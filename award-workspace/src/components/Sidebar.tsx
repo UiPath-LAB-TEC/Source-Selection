@@ -6,6 +6,7 @@ import { useFramework } from '@forms/lib/terms'
 import { AppSwitcher } from '@ss/components/AppSwitcher'
 import { PersonaAvatar } from '@ss/components/Flair'
 import { ThemeToggle } from '@ss/components/Theme'
+import { RunnerRow } from '@ss/components/RunnerPrompt'
 import { awardTitled, useAwardPersona } from '../hooks/usePersona'
 import { AWARD_PERSONAS } from '../lib/award'
 import { actionsFor } from '../lib/alerts'
@@ -32,6 +33,7 @@ function PersonaCard() {
       </PopoverTrigger>
       <PopoverContent side="top" align="start" className="w-72 p-1.5">
         <p className="px-2 pb-1.5 pt-1 text-xs text-muted-foreground">One demo user plays every role. Switch to see each official's view.</p>
+        <RunnerRow />
         {AWARD_PERSONAS.map((raw) => {
           const p = awardTitled(raw, fw)
           const n = myTasks(tasks, p).length

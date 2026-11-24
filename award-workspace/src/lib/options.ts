@@ -4,7 +4,8 @@ import { Entities } from '@uipath/uipath-typescript/entities'
 import { Processes } from '@uipath/uipath-typescript/processes'
 import { useAuth } from '@ss/hooks/useAuth'
 import { AWARD_ENTITY, AWARD_PROCESS_FOLDER } from '@ss/lib/apps'
-import { DEMO_PANEL_EMAIL, ENTITY } from '@ss/lib/data'
+import { ENTITY } from '@ss/lib/data'
+import { askRunner, RunnerCancelled } from '@ss/lib/runner'
 import { useAwardPersona } from '../hooks/usePersona'
 import type { AlertRow, ScheduleRow } from './award'
 import { useAwardData } from './data'
@@ -28,7 +29,7 @@ export function optionRowId(a: AlertRow): string | undefined {
 /**
  * Start package: the option package starts in Maestro for an option or the extension. The robot gathers the checks and
  * the writer agent drafts the findings; then the Resource Manager certifies the funds and the CO decides, both in
- * Action Center. The item moves to In hand while it runs. Every role is the signed-in demo user, as elsewhere.
+ * Action Center. The item moves to In hand while it runs. Every role is whoever is running the demo, as elsewhere.
  */
 export function useStartPackage() {
   const { sdk } = useAuth()
@@ -39,8 +40,9 @@ export function useStartPackage() {
     if (preview) { toast.info('The preview can’t start a run.'); return }
     setBusy(row.ScheduleId)
     try {
+      const runner = await askRunner()
       const started = await new Processes(sdk).start({ name: OPTION_PROCESS }, { ...AWARD_PROCESS_FOLDER, inputArguments: JSON.stringify({
-        solicitationId: row.SolicitationId, scheduleId: row.ScheduleId, contractingOfficer: DEMO_PANEL_EMAIL, resourceManager: DEMO_PANEL_EMAIL }) })
+        solicitationId: row.SolicitationId, scheduleId: row.ScheduleId, contractingOfficer: runner, resourceManager: runner }) })
       const key = started[0]?.key
       const e = new Entities(sdk)
       const now = new Date().toISOString()
@@ -51,6 +53,7 @@ export function useStartPackage() {
       toast.success('Package started. The robot gathers the checks and the agent drafts the findings; the funds task follows in a minute or two.')
       await reload()
     } catch (err) {
+      if (err instanceof RunnerCancelled) return
       const msg = (err as Error).message
       toast.error(/could not be found/i.test(msg) ? 'The option exercise process is not deployed yet.' : `Could not start the package: ${msg}`)
     } finally {

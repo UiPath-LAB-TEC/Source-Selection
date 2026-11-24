@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAuth } from '../hooks/useAuth'
 import { termsFor } from '@forms/lib/terms'
-import { DEMO_PANEL_EMAIL, planOf, startCase, useData } from './data'
+import { planOf, startCase, useData } from './data'
+import { askRunner, RunnerCancelled } from './runner'
 
 /** Starts the SourceSelection case for a solicitation and refreshes the dataset. */
 export function useStartCase() {
@@ -15,10 +16,12 @@ export function useStartCase() {
       const sol = data?.solicitations.find((s) => s.SolicitationId === id)
       if (!sol) throw new Error(`${id} is not loaded yet.`)
       const plan = planOf(sol)
-      await startCase(sdk, plan, DEMO_PANEL_EMAIL)
+      // Every task in the run goes to whoever is running the demo (asked once, then remembered).
+      await startCase(sdk, plan, await askRunner())
       toast.success(`${termsFor(plan).Process} started for ${id}`)
       await reload()
     } catch (e) {
+      if (e instanceof RunnerCancelled) return
       const msg = (e as Error).message
       toast.error(/could not be found/i.test(msg)
         ? 'The evaluation process is not deployed yet.'

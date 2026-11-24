@@ -21,8 +21,6 @@ export const TASK_FOLDER_ID = 2212168
 export const PROCESS_FOLDER = { folderKey: '2459fe05-621d-4696-9c52-53458ca92c49' }
 /** The Maestro BPMN process that runs the source selection end to end. */
 export const CASE_PROCESS = 'SourceSelectionProcess'
-/** Demo: every panel role is assigned to the signed-in demo user. */
-export const DEMO_PANEL_EMAIL = 'anagh.bhave@uipath.com'
 export const ACTION_CENTER = 'https://cloud.uipath.com/uipathlabs/Playground/actions_/tasks'
 
 export const ENTITY = {
