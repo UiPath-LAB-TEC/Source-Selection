@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth'
 import { PersonaProvider } from './hooks/usePersona'
 import { FrameworkProvider } from './hooks/useFramework'
 import { Sidebar } from './components/Sidebar'
+import { RunnerPrompt } from './components/RunnerPrompt'
 import { LoginScreen } from './components/LoginScreen'
 import { DataProvider, useData } from './lib/data'
 import { Workspace } from './pages/Workspace'
@@ -58,6 +59,7 @@ function Shell() {
         </main>
       </div>
       <Toaster />
+      <RunnerPrompt />
     </div>
   )
 }

@@ -13,7 +13,8 @@ import { Stepper } from '@uipath/apollo-wind/components/ui/stepper'
 import { Textarea } from '@uipath/apollo-wind/components/ui/textarea'
 import { PersonaAvatar } from '../components/Flair'
 import { usePersona } from '../hooks/usePersona'
-import { DEMO_PANEL_EMAIL, planOf, startCase, useData } from '../lib/data'
+import { planOf, startCase, useData } from '../lib/data'
+import { askRunner, RunnerCancelled } from '../lib/runner'
 import { money, when } from '../lib/eval'
 import {
   BASES, SECTION_M_AGENT_LABEL, TEMPLATES, runIgceAgent, runSolicitationAgent, VOLUMES, applySectionM, blankCriteria, check, warmAgents, defaultAssignments, defaultFactors, draftFromPlan, emptyDraft,
@@ -900,6 +901,16 @@ function Wizard({ framework }: { framework: Framework }) {
     const plan = toPlan(d, Object.keys(proposals).sort())
     const existing = data?.solicitations.find((s) => s.SolicitationId === plan.solicitationId)
     if (existing && existing.Status !== 'Proposals Received') { toast.error(`${plan.solicitationId} is already ${existing.Status.toLowerCase()}.`); return }
+    // Every task in the run goes to whoever is running the demo: asked once (before anything is saved), then remembered.
+    let runner = ''
+    if (start && !preview) {
+      try {
+        runner = await askRunner()
+      } catch (e) {
+        if (!(e instanceof RunnerCancelled)) toast.error((e as Error).message)
+        return
+      }
+    }
     setBusy(start ? 'start' : 'save')
     try {
       if (preview) {
@@ -909,7 +920,7 @@ function Wizard({ framework }: { framework: Framework }) {
         await saveSolicitation(sdk, plan, existing?.Id)
         if (start) {
           try {
-            await startCase(sdk, plan, DEMO_PANEL_EMAIL)
+            await startCase(sdk, plan, runner)
             toast.success(`${t.Process} started for ${plan.solicitationId}. Robots are ingesting proposals.`)
           } catch (e) {
             const msg = (e as Error).message

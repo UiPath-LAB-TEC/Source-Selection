@@ -5,7 +5,8 @@ import { Entities } from '@uipath/uipath-typescript/entities'
 import { Processes } from '@uipath/uipath-typescript/processes'
 import { useAuth } from '@ss/hooks/useAuth'
 import { AWARD_ENTITY, AWARD_PROCESS_FOLDER } from '@ss/lib/apps'
-import { DEMO_PANEL_EMAIL, ENTITY, FOLDER } from '@ss/lib/data'
+import { ENTITY, FOLDER } from '@ss/lib/data'
+import { askRunner, RunnerCancelled } from '@ss/lib/runner'
 import { dayOf } from '@award/lib/clocks'
 import { useAwardPersona } from '../hooks/usePersona'
 import type { AlertRow, ScheduleRow } from './award'
@@ -20,7 +21,7 @@ export const deliverablePath = (r: ScheduleRow) => `${r.SolicitationId}/delivera
 /**
  * Record receipt: the contractor's deliverable (the PDF they sent) is filed with the record, the schedule row marks it
  * received, and the review starts in Maestro: the reviewer agent checks it against the contract, then the COR gets the
- * task. Its action item moves to In hand while the review runs. Every role is the signed-in demo user, as elsewhere.
+ * task. Its action item moves to In hand while the review runs. Every role is whoever is running the demo, as elsewhere.
  */
 export function useRecordReceipt() {
   const { sdk } = useAuth()
@@ -31,13 +32,14 @@ export function useRecordReceipt() {
     if (preview) { toast.info('The preview doesn’t save changes.'); return false }
     setBusy(row.ScheduleId)
     try {
+      const cor = await askRunner()
       const path = deliverablePath(row)
       await new Buckets(sdk).uploadFile({ name: 'SS-Records' }, path, file, FOLDER)
       const e = new Entities(sdk)
       const now = new Date().toISOString()
       await e.updateRecord({ name: AWARD_ENTITY.schedule }, row.Id, { ReceivedDay: dayOf(now), Status: 'Received', FilePath: `SS-Records/${path}` })
       const started = await new Processes(sdk).start({ name: REVIEW_PROCESS }, { ...AWARD_PROCESS_FOLDER,
-        inputArguments: JSON.stringify({ solicitationId: row.SolicitationId, scheduleId: row.ScheduleId, cor: DEMO_PANEL_EMAIL }) })
+        inputArguments: JSON.stringify({ solicitationId: row.SolicitationId, scheduleId: row.ScheduleId, cor }) })
       const key = started[0]?.key
       if (key) await e.updateRecord({ name: AWARD_ENTITY.schedule }, row.Id, { ProcessInstanceId: key })
       if (alert) await e.updateRecord({ name: AWARD_ENTITY.alerts }, alert.Id, { Status: 'Acknowledged', ActedBy: persona.name, ActedAt: now, Reason: 'Received; under review' })
@@ -47,6 +49,7 @@ export function useRecordReceipt() {
       await reload()
       return true
     } catch (err) {
+      if (err instanceof RunnerCancelled) return false
       const msg = (err as Error).message
       toast.error(/could not be found/i.test(msg) ? 'The deliverable review process is not deployed yet.' : `Could not record it: ${msg}`)
       return false
